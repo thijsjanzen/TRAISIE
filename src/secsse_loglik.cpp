@@ -74,15 +74,34 @@ Rcpp::List calc_ll(std::unique_ptr<ODE> od,
 Rcpp::List calc_ll_cpp(const Rcpp::IntegerVector& ances,
                        const Rcpp::NumericMatrix& states,
                        const Rcpp::NumericMatrix& forTime,
-                       const Rcpp::RObject& lambdas,
+                       const Rcpp::NumericVector& lambda_cs,
+                       const Rcpp::NumericVector& lambda_as,
                        const Rcpp::NumericVector& mus,
-                       const Rcpp::NumericMatrix& Q,
+                       const Rcpp::NumericVector& gammas,
+                       const Rcpp::NumericMatrix& qs,
+                       const double& p,
                        const std::string& method,
                        double atol,
                        double rtol,
                        bool see_states,
                        bool use_normalization) {
-  auto ll = Rcpp::as<Rcpp::List>(lambdas);
+  try {
+    size_t num_unique_states = (states.ncol() - 1) / 3;
 
-  return calc_ll(std::make_unique<loglik::ode_rhs>(ll, mus, Q), ances, states, forTime, method, atol, rtol, see_states, use_normalization);
+    return calc_ll(std::make_unique<loglik::interval1>(lambda_cs,
+                                                       lambda_as,
+                                                       mus,
+                                                       gammas,
+                                                       qs,
+                                                       p,
+                                                       num_unique_states),
+                                                       ances, states, forTime, method, atol, rtol, see_states, use_normalization);
+  } catch(std::exception &ex) {
+    forward_exception_to_r(ex);
+  } catch (const char* msg) {
+    Rcpp::Rcout << msg << std::endl;
+  } catch(...) {
+    ::Rf_error("c++ exception (unknown reason)");
+  }
+  return NA_REAL;
 }

@@ -127,6 +127,9 @@ inline inodes_t<terse::inode_t> find_inte_nodes(const std::vector<phy_edge_t>& p
 
 template <typename RaIt>
 inline double normalize_loglik(RaIt first, RaIt last) {
+
+  return 0.0;
+
   const auto sabs = std::accumulate(first, last, 0.0, [](const auto& s, const auto& x) {
     return s + std::abs(x);
   });
@@ -152,29 +155,29 @@ public:
   size_t size() const noexcept { return od_->size(); }
 
   void operator()(terse::inode_t& inode) const {
-    const auto d = size();
-    std::vector<double> y[2] = { std::vector<double>(2 * d), std::vector<double>(2 * d) };
+    auto s = size();
+    std::vector<double> y[2] = { std::vector<double>(s), std::vector<double>(s) };
 #ifdef SECSSE_NESTED_PARALLELISM
     tbb::parallel_for(0, 2, [&](size_t i) {
 #else
       for (size_t i = 0; i < 2; ++i) {
 #endif
         auto& dnode = inode.desc[i];
-        std::copy_n(std::begin(*dnode.state), 2 * d, std::begin(y[i]));
+        std::copy_n(std::begin(*dnode.state), s, std::begin(y[i]));
 
 
         NORMALIZER norm;
         do_integrate(y[i], 0.0, dnode.time, SECSSE_DEFAULT_DTF, norm);
-        dnode.loglik = norm.loglik + normalize_loglik(std::begin(y[i]) + d, std::end(y[i]));
+        dnode.loglik = norm.loglik + normalize_loglik(std::begin(y[i]), std::end(y[i]));
       }
 #ifdef SECSSE_NESTED_PARALLELISM
     );
 #endif
-    inode.state->resize(2 * d);
+    inode.state->resize(s);
     od_->mergebranch(y[0], y[1], *inode.state);
     inode.loglik = inode.desc[0].loglik
-    + inode.desc[1].loglik
-    + normalize_loglik(std::begin(*inode.state) + d, std::end(*inode.state));
+                 + inode.desc[1].loglik
+                 + normalize_loglik(std::begin(*inode.state), std::end(*inode.state));
     }
 
     void operator()(std::vector<double>& state, double t0, double t1,
@@ -235,10 +238,10 @@ public:
                              inodes_t<terse::inode_t>& inodes,
                              std::vector<std::vector<double>>& /* in/out */ states)
   {
-    const auto d = integrator.size();
     auto is_dirty = [](const auto& inode) {
       return inode.state->empty() && (inode.desc[0].state->empty() || inode.desc[1].state->empty());
     };
+
     for (auto first = std::begin(inodes); first != std::end(inodes) ;) {
       auto last = std::partition(first, std::end(inodes), std::not_fn(is_dirty));
       tbb::parallel_for_each(first, last, [&](auto& inode) {
@@ -248,13 +251,13 @@ public:
     }
     // collect output
     const auto& root_node = inodes.back();    // the last calculated
-    const auto merge_branch = std::vector<double>(std::begin(*root_node.state) + d, std::end(*root_node.state));
+    const auto merge_branch = std::vector<double>(std::begin(*root_node.state), std::end(*root_node.state));
     std::vector<double> node_M{ *root_node.desc[1].state };
 
 
     integrator(node_M, 0.0, root_node.desc[1].time);
 
-    normalize_loglik(std::begin(node_M) + d, std::end(node_M));
+    normalize_loglik(std::begin(node_M), std::end(node_M));
     const auto tot_loglik = std::accumulate(std::begin(inodes), std::end(inodes), 0.0, [](auto& sum, const auto& node) { return sum + node.loglik; });
     return { tot_loglik, std::move(node_M), std::move(merge_branch) };
   }
