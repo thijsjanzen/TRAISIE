@@ -88,6 +88,23 @@ create_q_matrix_int <- function(masterBlock,
     return(Q)
 }
 
+#' @keywords internal
+get_state_names <- function(state_names, num_concealed_states) {
+  num_obs_states <- length(state_names)
+
+  concealed_state_names <- LETTERS[1:num_concealed_states]
+  all_state_names <- c()
+  cnt <- 1
+  for (j in 1:num_concealed_states) {
+    for (i in 1:num_obs_states) {
+      all_state_names[cnt] <- paste0(state_names[i],
+                                     concealed_state_names[j])
+      cnt <- cnt + 1
+    }
+  }
+  return(all_state_names)
+}
+
 
 #' @title Basic Qmatrix
 #' Sets a Q matrix where double transitions are not allowed
@@ -100,22 +117,6 @@ create_q_matrix_int <- function(masterBlock,
 #' that the number of concealed traits is equal to the number of examined
 #' traits, if you have a different number, you should consider looking at
 #' the function [expand_q_matrix()].
-#' @examples
-#' traits <- sample(c(0,1,2), 45,replace = TRUE) #get some traits
-#' # For a three-state trait
-#' masterBlock <- matrix(99,ncol = 3,nrow = 3,byrow = TRUE)
-#' diag(masterBlock) <- NA
-#' masterBlock[1,2] <- 6
-#' masterBlock[1,3] <- 7
-#' masterBlock[2,1] <- 8
-#' masterBlock[2,3] <- 9
-#' masterBlock[3,1] <- 10
-#' masterBlock[3,2] <- 11
-#' myQ <- q_doubletrans(traits,masterBlock,diff.conceal = FALSE)
-#' # now, it can replace the Q matrix from id_paramPos
-#' num_concealed_states <- 3
-#' param_posit <- id_paramPos(traits,num_concealed_states)
-#' param_posit[[3]] <- myQ
 #' @export
 q_doubletrans <- function(traits, masterBlock, diff.conceal) {
     if (diff.conceal == TRUE &&
@@ -183,11 +184,6 @@ q_doubletrans <- function(traits, masterBlock, diff.conceal) {
 #' @inheritParams default_params_doc
 #'
 #' @return Vector of traits
-#' @examples
-#' # Some data we have prepared
-#' data(traits)
-#' data('phylo_vignette')
-#' traits <- sortingtraits(traits, phylo_vignette)
 #' @export
 sortingtraits <- function(trait_info, phy) {
     trait_info <- as.matrix(trait_info)
@@ -230,10 +226,6 @@ sortingtraits <- function(trait_info, phy) {
 #' @inheritParams default_params_doc
 #'
 #' @return A list that includes the ids of the parameters for ML analysis.
-#' @examples
-#'traits <- sample(c(0,1,2), 45,replace = TRUE) #get some traits
-#'num_concealed_states <- 3
-#'param_posit <- cla_id_paramPos(traits, num_concealed_states)
 #' @export
 cla_id_paramPos <- function(traits, num_concealed_states) {
     idparslist <- list()
@@ -293,31 +285,6 @@ cla_id_paramPos <- function(traits, num_concealed_states) {
 #' @return A list of lambdas, its length would be the same than the number of
 #' trait states * num_concealed_states..
 #' @export
-#' @examples
-#' set.seed(13)
-#' phylotree <- ape::rcoal(12, tip.label = 1:12)
-#' traits <- sample(c(0, 1, 2),
-#'                  ape::Ntip(phylotree), replace = TRUE)
-#' num_concealed_states <- 3
-#' # the idparlist for a ETD model (dual state inheritance model of evolution)
-#' # would be set like this:
-#' idparlist <- secsse::cla_id_paramPos(traits, num_concealed_states)
-#' lambd_and_modeSpe <- idparlist$lambdas
-#' lambd_and_modeSpe[1, ] <- c(1, 1, 1, 2, 2, 2, 3, 3, 3)
-#' idparlist[[1]] <- lambd_and_modeSpe
-#' idparlist[[2]][] <- 0
-#' masterBlock <- matrix(4, ncol = 3, nrow = 3, byrow = TRUE)
-#' diag(masterBlock) <- NA
-#' idparlist[[3]] <- q_doubletrans(traits, masterBlock, diff.conceal = FALSE)
-#' # Now, internally, clasecsse sorts the lambda matrices, so they look like
-#' #  a list with 9 matrices, corresponding to the 9 states
-#' # (0A,1A,2A,0B, etc)
-#'
-#' parameter <- idparlist
-#' lambda_and_modeSpe <- parameter$lambdas
-#' lambda_and_modeSpe[1, ] <- c(0.2, 0.2, 0.2, 0.4, 0.4, 0.4, 0.01, 0.01, 0.01)
-#' parameter[[1]] <- prepare_full_lambdas(traits, num_concealed_states,
-#'                                        lambda_and_modeSpe)
 prepare_full_lambdas <- function(traits,
                                  num_concealed_states,
                                  lambd_and_modeSpe) {
@@ -598,7 +565,7 @@ update_values_transform <- function(trpars,
                                     idpars,
                                     parvals) {
     for (i in seq_along(idpars)) {
-        for (j in 1:3) {
+        for (j in 1:6) {
             id <- which(idparslist[[j]] == idpars[i])
             trpars[[j]][id] <- parvals[i]
         }
@@ -616,7 +583,7 @@ transform_params_normal <- function(idparslist,
                                     idparsfuncdefpar,
                                     trparfuncdefpar) {
     trpars1 <- idparslist
-    for (j in 1:3) {
+    for (j in 1:6) {
         trpars1[[j]][] <- NA
     }
     if (length(idparsfix) != 0) {
@@ -638,8 +605,9 @@ transform_params_normal <- function(idparslist,
                                            idparsfuncdefpar,
                                            trparfuncdefpar)
     }
+
     pars1 <- list()
-    for (j in 1:3) {
+    for (j in 1:6) {
         pars1[[j]] <- trpars1[[j]] / (1 - trpars1[[j]])
     }
     return(pars1)
@@ -651,7 +619,7 @@ secsse_transform_parameters <- function(trparsopt,
                                         idparsopt,
                                         idparsfix,
                                         idparslist,
-                                        structure_func) {
+                                        structure_func = NULL) {
     if (!is.null(structure_func)) {
         idparsfuncdefpar <- structure_func[[1]]
         functions_defining_params <- structure_func[[2]]
@@ -700,13 +668,6 @@ secsse_transform_parameters <- function(trparsopt,
     }
     return(pars1)
 }
-
-condition_root_edge <- function(mergeBranch2,
-                                nodeM) {
-  # note that we don't do maddison conditioning here.
-
-}
-
 
 #' @keywords internal
 condition <- function(cond,
@@ -760,48 +721,6 @@ condition <- function(cond,
     }
     return(mergeBranch2)
 }
-
-#' @keywords internal
-update_complete_tree <- function(phy,
-                                 lambdas,
-                                 mus,
-                                 q_matrix,
-                                 method,
-                                 atol,
-                                 rtol,
-                                 lmb,
-                                 use_normalization) {
-    time_inte <- max(abs(ape::branching.times(phy))) # nolint
-
-    if (is.list(lambdas)) {
-        y <- rep(0, lmb)
-        nodeM <- ct_condition_cpp(rhs = "ode_cla",
-                                  y, # nolint
-                                  time_inte,
-                                  lambdas,
-                                  mus,
-                                  q_matrix,
-                                  method,
-                                  atol,
-                                  rtol,
-                                  use_normalization)
-        nodeM <- c(nodeM, y) # nolint
-    } else {
-        y <- rep(0, 2 * lmb)
-        nodeM <- ct_condition_cpp(rhs = "ode_standard",
-                                  y, # nolint
-                                  time_inte,
-                                  lambdas,
-                                  mus,
-                                  q_matrix,
-                                  method,
-                                  atol,
-                                  rtol,
-                                  use_normalization)
-    }
-    return(nodeM)
-}
-
 
 #' @keywords internal
 create_states <- function(usetraits,
@@ -1235,68 +1154,41 @@ get_rates <- function(lambda_list, all_states, lambda_order) {
   return(to_plot)
 }
 
+#' @keywords internal
+check_arguments <- function(brts = NULL,
+                            parameter = NULL,
+                            phy = NULL,
+                            traits = NULL,
+                            num_observed_states = NULL,
+                            num_hidden_states = NULL,
+                            status = NULL,
+                            sampling_fraction = NULL) {
 
-#' function to visualize the structure of the idparslist
-#' @param idparslist idparslist setup list
-#' @param state_names names of all states (including concealed states)
-#' @return list with two ggplot objects: plot_qmat which visualizes the
-#' q_matrix, and plot_lambda which visualizes the lambda matrices.
-#' @export
-#' @examples
-#' idparslist <- list()
-#' focal_matrix <-
-#' secsse::create_default_lambda_transition_matrix(state_names = c("1", "2"),
-#'                                                 model = "CR")
-#' idparslist[[1]] <-
-#'   secsse::create_lambda_list(state_names = c("1", "2"),
-#'                              num_concealed_states = 2,
-#'                              transition_matrix = focal_matrix,
-#'                              model = "CR")
-#' idparslist[[2]] <- secsse::create_mu_vector(state_names = c("1", "2"),
-#'                                             num_concealed_states = 2,
-#'                                             model = "CR",
-#'                                             lambda_list = idparslist[[1]])
-#' shift_mat <- secsse::create_default_shift_matrix(state_names = c("1", "2"),
-#'                                                  num_concealed_states = 2,
-#'                                                  mu_vector = idparslist[[2]])
-#' idparslist[[3]] <- secsse::create_q_matrix(state_names = c("1", "2"),
-#'                                            num_concealed_states = 2,
-#'                                            shift_matrix = shift_mat,
-#'                                            diff.conceal = FALSE)
-#' p <- plot_idparslist(idparslist, state_names = names(idparslist[[1]]))
-#' p$plot_lambda
-#' p$plot_qmat
-plot_idparslist <- function(idparslist,
-                            state_names) {
-
-  v <- extract_data(idparslist[[3]])
-  colnames(v) <- c("x", "y", "rate")
-  v <- as.data.frame(v)
-
-  v$x <- factor(v$x, levels = state_names)
-  v$y <- factor(v$y, levels = rev(state_names))
-
-  plot_qmat <-
-    ggplot2::ggplot(v,
-                    ggplot2::aes(x = .data[["x"]],
-                                 y = .data[["y"]],
-                                 fill = .data[["rate"]])) +
-    ggplot2::geom_tile()
-
-  to_plot <- get_rates(idparslist[[1]], state_names, state_names)
-
-  to_plot$x <- factor(to_plot$x, levels = state_names)
-  to_plot$y <- factor(to_plot$y, levels = rev(state_names))
-  to_plot$focal_rate <- factor(to_plot$focal_rate, levels = state_names)
-
-  plot_lambda <-
-    ggplot2::ggplot(to_plot,
-                    ggplot2::aes(x = .data[["x"]],
-                                 y = .data[["y"]],
-                                 fill = .data[["rate"]])) +
-    ggplot2::geom_tile() +
-    ggplot2::facet_wrap(~.data[["focal_rate"]])
-
-  return(list("plot_qmat" = plot_qmat,
-              "plot_lambda" = plot_lambda))
+  if (is.null(brts)) {
+    stop("brts not provided")
+  }
+  if (is.null(parameter)) {
+    stop("parameters not provided at all")
+  }
+  if (!is.list(parameter)) {
+    stop("parameters need to be provided as a list")
+  }
+  if (is.null(phy)) {
+    stop("phy not provided")
+  }
+  if (is.null(traits)) {
+    stop("traits not provided")
+  }
+  if (is.null(num_observed_states)) {
+    stop("number of observed states not provided")
+  }
+  if (is.null(num_hidden_states)) {
+    stop("number of hidden states not provided")
+  }
+  if (is.null(status)) {
+    stop("status not provided")
+  }
+  if (is.null(sampling_fraction)) {
+    stop("sampling_fraction not provided")
+  }
 }

@@ -1,15 +1,21 @@
 #' Default parameter documentation
-#' 
-#' This function's purpose is to list all parameter documentation to be 
+#'
+#' This function's purpose is to list all parameter documentation to be
 #' inherited by the relevant functions.
 #'
 #' @param phy phylogenetic tree of class `phylo`, rooted and with
 #'  branch lengths. Alternatively, multiple phylogenetic trees can be provided
 #'  as the `multiPhylo` class.
-#' @param traits vector with trait states for each tip in the phylogeny. The 
-#'  order of the states must be the same as the tree tips. For help, see 
+#' @param traits vector with trait states for each tip in the phylogeny. The
+#'  order of the states must be the same as the tree tips. For help, see
 #'  `vignette("starting_secsse", package = "secsse")`. When providing a
-#'  `multiPhylo` set of multiple phylognies, traits should be a list where 
+#'  `multiPhylo` set of multiple phylognies, traits should be a list where
+#'  each entry in the list corresponds to the matching phylogeny on that
+#'  position.
+#' @param trait vector with trait states for each tip in the phylogeny. The
+#'  order of the states must be the same as the tree tips. For help, see
+#'  `vignette("starting_secsse", package = "secsse")`. When providing a
+#'  `multiPhylo` set of multiple phylognies, traits should be a list where
 #'  each entry in the list corresponds to the matching phylogeny on that
 #'  position.
 #' @param num_concealed_states number of concealed states, generally equivalent
@@ -24,9 +30,9 @@
 #' optimized and/or fixed parameters. The order of id should match
 #' `functions_defining_params`.
 #' @param functions_defining_params a list of functions. Each element will be a
-#'  function which defines a parameter e.g. `id_3 <- (id_1 + id_2) / 2`. See 
+#'  function which defines a parameter e.g. `id_3 <- (id_1 + id_2) / 2`. See
 #'  example.
-#' @param initparsopt a numeric vector with the initial guess of the parameters 
+#' @param initparsopt a numeric vector with the initial guess of the parameters
 #'  to be estimated.
 #' @param idparsfix a numeric vector with the ID of the fixed parameters.
 #' @param parsfix a numeric vector with the value of the fixed parameters.
@@ -34,7 +40,7 @@
 #'  `"proper_cond"` (default). For details, see vignette.
 #' @param root_state_weight the method to weigh the states:
 #'  `"maddison_weights"`, `"proper_weights"` (default) or `"equal_weights"`.
-#'  It can also be specified for the root state: the vector `c(1, 0, 0)` 
+#'  It can also be specified for the root state: the vector `c(1, 0, 0)`
 #'  indicates state 1 was the root state. When
 #'  using a `multiPhylo` object, root_state_weight should be list where each
 #'  entry in the list corresponds to the root_state_weight for each tree.
@@ -42,18 +48,18 @@
 #'  trait state. It must have as many elements as there are trait states. When
 #'  using a `multiPhylo` object, sampling fraction should be list where each
 #'  entry in the list corresponds to the sampling proportion for each tree.
-#' @param tol A numeric vector with the maximum tolerance of the optimization 
+#' @param tol A numeric vector with the maximum tolerance of the optimization
 #'  algorithm. Default is `c(1e-04, 1e-05, 1e-05)`.
 #' @param maxiter max number of iterations. Default is
 #'  `1000 * round((1.25) ^ length(idparsopt))`.
-#' @param num_cycles Number of cycles of the optimization. When set to `Inf`, 
-#'  the optimization will be repeated until the result is, within the 
-#'  tolerance, equal to the starting values, with a maximum of 10 cycles. 
+#' @param num_cycles Number of cycles of the optimization. When set to `Inf`,
+#'  the optimization will be repeated until the result is, within the
+#'  tolerance, equal to the starting values, with a maximum of 10 cycles.
 #' @param is_complete_tree logical specifying whether or not a tree with all its
-#'  extinct species is provided. If set to `TRUE`, it also assumes that all 
+#'  extinct species is provided. If set to `TRUE`, it also assumes that all
 #'  *all* extinct lineages are present on the tree. Defaults to `FALSE`.
 #' @param verbose sets verbose output; default is `TRUE` when `optimmethod` is
-#'  `"simplex"`. If `optimmethod` is set to `"simplex"`, then even if set to 
+#'  `"simplex"`. If `optimmethod` is set to `"simplex"`, then even if set to
 #'  `FALSE`, optimizer output will be shown.
 #' @param num_threads number of threads to be used. Default is one thread.
 #' @param atol A numeric specifying the absolute tolerance of integration.
@@ -62,7 +68,7 @@
 #'  `"odeint::runge_kutta_cash_karp54"`, `"odeint::runge_kutta_fehlberg78"`,
 #'  `"odeint::runge_kutta_dopri5"`, `"odeint::bulirsch_stoer"` and
 #'  `"odeint::runge_kutta4"`. Default method is: `"odeint::bulirsch_stoer"`.
-#' @param parameter list where first vector represents lambdas, the second 
+#' @param parameter list where first vector represents lambdas, the second
 #'  mus and the third transition rates.
 #' @param setting_calculation argument used internally to speed up calculation.
 #'  It should be left blank (default : `setting_calculation = NULL`).
@@ -70,7 +76,7 @@
 #'  0 (no penalty).
 #' @param num_steps number of substeps to show intermediate likelihoods
 #'  along a branch.
-#' @param see_ancestral_states Boolean for whether the ancestral states should 
+#' @param see_ancestral_states Boolean for whether the ancestral states should
 #'  be shown? Defaults to `FALSE`.
 #' @param lambdas speciation rates, in the form of a list of matrices.
 #' @param mus extinction rates, in the form of a vector.
@@ -81,18 +87,18 @@
 #' @param pool_init_states pool of initial states at the crown, in case this is
 #'  different from all available states, otherwise leave at NULL
 #' @param max_spec Maximum number of species in the tree (please note that the
-#'  tree is not conditioned on this number, but that this is a safeguard 
+#'  tree is not conditioned on this number, but that this is a safeguard
 #'  against generating extremely large trees).
 #' @param min_spec Minimum number of species in the tree.
 #' @param max_species_extant Should the maximum number of species be counted in
 #' the reconstructed tree (if TRUE) or in the complete tree (if FALSE).
-#' @param tree_size_hist if TRUE, returns a vector of all found tree sizes. 
-#' @param conditioning can be `"obs_states"`, `"true_states"` or `"none"`, the 
+#' @param tree_size_hist if TRUE, returns a vector of all found tree sizes.
+#' @param conditioning can be `"obs_states"`, `"true_states"` or `"none"`, the
 #'  tree is simulated until one is generated that contains all observed states
 #'  (`"obs_states"`), all true states (e.g. all combinations of obs and hidden
 #'  states), or is always returned (`"none"`). Alternatively, a vector with
 #'  the names of required observed states can be provided, e.g. c("S", "N").
-#' @param non_extinction boolean stating if the tree should be conditioned on 
+#' @param non_extinction boolean stating if the tree should be conditioned on
 #'  non-extinction of the crown lineages. Defaults to `TRUE`.
 #' @param max_tries maximum number of simulations to try to obtain a tree.
 #' @param drop_extinct boolean stating if extinct species should be dropped from
@@ -104,16 +110,16 @@
 #' description.
 #' @param masterBlock matrix of transitions among only examined states, `NA` in
 #'  the main diagonal, used to build the full transition rates matrix.
-#' @param diff.conceal Boolean stating if the concealed states should be 
-#'  different. E.g. that the transition rates for the concealed 
+#' @param diff.conceal Boolean stating if the concealed states should be
+#'  different. E.g. that the transition rates for the concealed
 #'  states are different from the transition rates for the examined states.
-#'  Normally it should be `FALSE` in order to avoid having a huge number of 
+#'  Normally it should be `FALSE` in order to avoid having a huge number of
 #'  parameters.
 #' @param trait_info data frame where first column has species ids and the second
 #'  one is the trait associated information.
 #' @param optimmethod A string with method used for optimization. Default is
-#' `"simplex"`. Alternative is `"subplex"`. Both are called from 
-#' [DDD::optimizer()], simplex is implemented natively in [DDD], while subplex 
+#' `"simplex"`. Alternative is `"subplex"`. Both are called from
+#' [DDD::optimizer()], simplex is implemented natively in [DDD], while subplex
 #' is ultimately called from [subplex::subplex()].
 #' @param lambd_and_modeSpe a matrix with the 4 models of speciation possible.
 #' @param initloglik A numeric with the value of loglikehood obtained prior to
@@ -122,9 +128,9 @@
 #' @param transition_matrix a matrix containing a description of all speciation
 #'  events, where the first column indicates the source state, the second and
 #'  third column indicate the two daughter states, and the fourth column gives
-#'  the rate indicator used. E.g.: `["SA", "S", "A", 1]` for a trait state 
-#'  `"SA"` which upon speciation generates two daughter species with traits 
-#'  `"S"` and `"A"`, where the number 1 is used as indicator for optimization 
+#'  the rate indicator used. E.g.: `["SA", "S", "A", 1]` for a trait state
+#'  `"SA"` which upon speciation generates two daughter species with traits
+#'  `"S"` and `"A"`, where the number 1 is used as indicator for optimization
 #'  of the likelihood.
 #' @param model used model, choice of `"ETD"` (Examined Traits Diversification),
 #'  `"CTD"` (Concealed Traits Diversification) or `"CR"` (Constant Rate).
@@ -137,7 +143,7 @@
 #'  used to infer the rate number to start with.
 #' @param object lambda matrices, `q_matrix` or mu vector.
 #' @param start_at_crown if FALSE, the simulation starts with one species
-#' instead of the two assumed by default by secsse (also in ML), and 
+#' instead of the two assumed by default by secsse (also in ML), and
 #' the resulting crown age will be lower than the set crown age. This allows
 #' for direct comparison with BiSSE and facilitates implementing speciation
 #' effects at the crown.
@@ -151,8 +157,8 @@
 #'    1. lambda matrices
 #'    2. mus
 #'    3. Q matrix
-#'    
-#'  In each entry, integers numbers (1-n) indicate the parameter to be 
+#'
+#'  In each entry, integers numbers (1-n) indicate the parameter to be
 #'  optimized.
 #' @param ml_pars resulting parameter estimates as returned by for instance
 #'  [cla_secsse_ml()], having the same structure as `param_post`.
@@ -163,6 +169,28 @@
 #' no longer needs to assume a speciation event at the start of the tree)
 #' @param use_normalization normalize the density vector during integration,
 #' more accurate but slower (default = TRUE)
+#' @param use_R_version if TRUE (default) uses R based integration. If FALSE,
+#' uses Rcpp implementation (faster)
+#' @param rhs_func rhs function used in R implementation
+#' @param methode used integration method, default is ode45
+#' @param brts branching times, being: island age, colonization time, branching times
+#' @param missnumspec missing number of species
+#' @param num_hidden_states number of hidden states
+#' @param num_observed_states number of observed states
+#' @param datalist a list containing in the first entry: island age and the number of species not present,
+#' then from entry 2 until n it contains individual datasets for which to estimate the loglikelihood together,
+#' each dataset has the following fields: 1) colonist_name, 2) b ranching_times,
+#' 3) stac, 4) missing_species, 5) type1or2, 6) traits, 7) sampling fraction, 8) phylogeny
+#' @param mainland if TRUE, adjust initial conditions for mainland dynamics
+#' @param trait_mainland_ancestor if mainland is TRUE, sets the trait of the mainland ancestor
+#' @param use_Rcpp default is 0: use no Rcpp. Value 1 = use Rcpp for the tree likelihood,
+#' value 2 = use Rcpp for the tree likelihood AND the ODEs along the branches
+#' @param rcpp_methode Used integration methode when using Rcpp to integrate,
+#' options available are:
+#'  `"odeint::runge_kutta_cash_karp54"`, `"odeint::runge_kutta_fehlberg78"`,
+#'  `"odeint::runge_kutta_dopri5"`, `"odeint::bulirsch_stoer"` and
+#'  `"odeint::runge_kutta4"`. Default method is: `"odeint::bulirsch_stoer"`.
+#' @param status indicator for type of inference required
 #' @return Nothing
 #' @keywords internal
 #' @export
@@ -233,6 +261,20 @@ default_params_doc <- function(phy,
                                optimmethod,
                                display_warning,
                                take_into_account_root_edge,
-                               use_normalization) {
+                               use_normalization,
+                               missnumspec,
+                               brts,
+                               use_R_version,
+                               methode,
+                               rhs_func,
+                               use_Rcpp,
+                               datalist,
+                               num_observed_states,
+                               num_hidden_states,
+                               status,
+                               trait,
+                               mainland,
+                               trait_mainland_ancestor,
+                               rcpp_methode) {
   # Nothing
 }
