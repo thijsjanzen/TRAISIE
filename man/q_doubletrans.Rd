@@ -34,20 +34,3 @@ that the number of concealed traits is equal to the number of examined
 traits, if you have a different number, you should consider looking at
 the function \code{\link[=expand_q_matrix]{expand_q_matrix()}}.
 }
-\examples{
-traits <- sample(c(0,1,2), 45,replace = TRUE) #get some traits
-# For a three-state trait
-masterBlock <- matrix(99,ncol = 3,nrow = 3,byrow = TRUE)
-diag(masterBlock) <- NA
-masterBlock[1,2] <- 6
-masterBlock[1,3] <- 7
-masterBlock[2,1] <- 8
-masterBlock[2,3] <- 9
-masterBlock[3,1] <- 10
-masterBlock[3,2] <- 11
-myQ <- q_doubletrans(traits,masterBlock,diff.conceal = FALSE)
-# now, it can replace the Q matrix from id_paramPos
-num_concealed_states <- 3
-param_posit <- id_paramPos(traits,num_concealed_states)
-param_posit[[3]] <- myQ
-}

@@ -72,7 +72,21 @@ default_params_doc(
   optimmethod,
   display_warning,
   take_into_account_root_edge,
-  use_normalization
+  use_normalization,
+  missnumspec,
+  brts,
+  use_R_version,
+  methode,
+  rhs_func,
+  use_Rcpp,
+  datalist,
+  num_observed_states,
+  num_hidden_states,
+  status,
+  trait,
+  mainland,
+  trait_mainland_ancestor,
+  rcpp_methode
 )
 }
 \arguments{
@@ -305,6 +319,48 @@ no longer needs to assume a speciation event at the start of the tree)}
 
 \item{use_normalization}{normalize the density vector during integration,
 more accurate but slower (default = TRUE)}
+
+\item{missnumspec}{missing number of species}
+
+\item{brts}{branching times, being: island age, colonization time, branching times}
+
+\item{use_R_version}{if TRUE (default) uses R based integration. If FALSE,
+uses Rcpp implementation (faster)}
+
+\item{methode}{used integration method, default is ode45}
+
+\item{rhs_func}{rhs function used in R implementation}
+
+\item{use_Rcpp}{default is 0: use no Rcpp. Value 1 = use Rcpp for the tree likelihood,
+value 2 = use Rcpp for the tree likelihood AND the ODEs along the branches}
+
+\item{datalist}{a list containing in the first entry: island age and the number of species not present,
+then from entry 2 until n it contains individual datasets for which to estimate the loglikelihood together,
+each dataset has the following fields: 1) colonist_name, 2) b ranching_times,
+3) stac, 4) missing_species, 5) type1or2, 6) traits, 7) sampling fraction, 8) phylogeny}
+
+\item{num_observed_states}{number of observed states}
+
+\item{num_hidden_states}{number of hidden states}
+
+\item{status}{indicator for type of inference required}
+
+\item{trait}{vector with trait states for each tip in the phylogeny. The
+order of the states must be the same as the tree tips. For help, see
+\code{vignette("starting_secsse", package = "secsse")}. When providing a
+\code{multiPhylo} set of multiple phylognies, traits should be a list where
+each entry in the list corresponds to the matching phylogeny on that
+position.}
+
+\item{mainland}{if TRUE, adjust initial conditions for mainland dynamics}
+
+\item{trait_mainland_ancestor}{if mainland is TRUE, sets the trait of the mainland ancestor}
+
+\item{rcpp_methode}{Used integration methode when using Rcpp to integrate,
+options available are:
+\code{"odeint::runge_kutta_cash_karp54"}, \code{"odeint::runge_kutta_fehlberg78"},
+\code{"odeint::runge_kutta_dopri5"}, \code{"odeint::bulirsch_stoer"} and
+\code{"odeint::runge_kutta4"}. Default method is: \code{"odeint::bulirsch_stoer"}.}
 }
 \value{
 Nothing

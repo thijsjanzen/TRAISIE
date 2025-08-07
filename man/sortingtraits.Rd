@@ -24,9 +24,3 @@ Data checking and trait sorting
 In preparation for likelihood calculation, it orders trait data according
 the tree tips
 }
-\examples{
-# Some data we have prepared
-data(traits)
-data('phylo_vignette')
-traits <- sortingtraits(traits, phylo_vignette)
-}
