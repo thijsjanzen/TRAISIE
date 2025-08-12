@@ -26,7 +26,7 @@ get_initial_conditions2 <- function(status,
   if (length(trait) == 1)
     if (!is.na(trait)) sampling_fraction <- sampling_fraction[1 + trait]
 
-  if (status == 2 && length(brts) > 2) {
+  if (status == 2 && length(brts) > 2 || status == 3 && length(brts) > 2) {
     initial_conditions2 <- c( res[1:n],                      ## DE
                              (res[1:n]) * res[length(res)], ## DM2
                               res[(n + 1):(n + n)],          ## DM3
