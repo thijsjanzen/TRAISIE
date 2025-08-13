@@ -20,7 +20,7 @@ get_initial_conditions2 <- function(status,
   E   <- rep(0, num_unique_states)
   DA3 <- 1
 
-  if (status == 2 && length(brts) > 2) {
+  if (status == 2 && length(brts) > 2 || status == 3 && length(brts) > 2) {
     initial_conditions2 <- c(res[1:n],                      ## DE
                              (res[1:n]) * res[length(res)], ## DM2
                              res[(n + 1):(n + n)],          ## DM3
