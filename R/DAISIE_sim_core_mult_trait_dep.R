@@ -2,6 +2,7 @@
 #'
 #' @inheritParams default_params_doc
 #' @keywords internal
+#' @export
 DAISIE_sim_core_mult_trait_dep <- function(
     time,
     mainland,
