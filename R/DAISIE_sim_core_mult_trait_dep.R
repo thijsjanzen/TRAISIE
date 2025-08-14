@@ -1,4 +1,38 @@
+#' Core simulation for multi-trait, diversity-dependent DAISIE model
+#'
+#' Simulates island biodiversity dynamics under a clade-specific,
+#' multi-trait, diversity-dependent constant-rate process.
+#' This function is an extension of the DAISIE core simulation framework,
+#' supporting multiple observed and hidden trait states.
+#'
+#' @param time Numeric scalar. Total simulation time (island age).
+#' @param mainland Named list of mainland abundances (e.g., \code{list(M1 = 100, M2 = 150)}).
+#' @param island_ontogeny Island ontogeny type (numeric or string). Defaults to \code{0}.
+#' @param sea_level Sea level scenario (string). Defaults to \code{"const"}.
+#' @param hyper_pars List of hyperparameters for the simulation model.
+#' @param area_pars List of parameters controlling island area change (optional).
+#' @param extcutoff Numeric. Extinction cutoff threshold. Defaults to \code{1000}.
+#' @param trait_pars List of trait-dependent rates and parameters.
+#' @param num_observed_states Integer. Number of observed trait states.
+#' @param num_hidden_states Integer. Number of hidden trait states.
+#'
+#' @return A list representing the simulated island, including:
+#'   \item{island_age}{Numeric island age.}
+#'   \item{stt_table}{State-through-time table.}
+#'   \item{island_spec}{Island species data.}
+#'   and other DAISIE-like components.
+#' @details
+#' The simulation proceeds as a continuous-time Markov process,
+#' with event rates (immigration, extinction, anagenesis, cladogenesis,
+#' trait transitions) recalculated after each event. The function
+#' supports multiple observed and hidden states, with final output
+#' collapsing hidden states into observed states.
+#'
+#' @seealso \code{\link{DAISIE_create_island_trait}},
+#'   \code{\link{update_rates_mult_trait}},
+#'   \code{\link{DAISIE_sim_mult_trait_update_state_cr}}
 #' @export
+
 DAISIE_sim_core_mult_trait_dep <- function(
     time,
     mainland,
