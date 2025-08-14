@@ -1,42 +1,4 @@
-#' Reconstruct a Phylogenetic Tree from DAISIE Trait-Dependent Simulation Output
-#'
-#' This function reconstructs a phylogenetic tree (as an \code{ape::phylo} object) from a matrix
-#' of species connection paths and branching times produced by a trait-dependent DAISIE simulation.
-#' It processes string-encoded ancestral paths, aligns them with branching times, builds parent-child
-#' edges, and constructs a valid rooted ultrametric tree.
-#'
-#' @param island_spec_matrix A character vector where each element encodes the ancestry of a species,
-#'        typically taken from the \code{connection} column of the island specification matrix. Each
-#'        string is a space-separated path of branching times (e.g., \code{"NA 1.7 1.3"}).
-#' @param branch_codes A character vector giving the labels for each tip of the tree, typically
-#'        corresponding to the \code{branch_code} of each species (e.g., \code{c("AA", "B", "AB")}).
-#' @param traits_vec A character or numeric vector indicating the trait state of each species,
-#'        typically from column 8 of the island spec matrix. Not used directly, but may be useful
-#'        for downstream annotation.
-#' @param branching_times A numeric or character vector of all valid branching times in the island.
-#'        Used to validate and clean each ancestral path.
-#'
-#' @return A \code{phylo} object (from the \pkg{ape} package), containing:
-#' \itemize{
-#'   \item \code{edge}: A matrix of parent-child node pairs.
-#'   \item \code{edge.length}: Numeric vector of branch lengths.
-#'   \item \code{tip.label}: Vector of labels for each tip (species).
-#'   \item \code{Nnode}: Number of internal nodes.
-#' }
-#'
-#' @details
-#' - Each species' ancestry is encoded as a path of branching times. These paths are first cleaned
-#'   by removing non-matching times.
-#' - Nodes are assigned unique integer labels and parent-child relationships are extracted.
-#' - Edge lengths are computed as differences between successive times.
-#' - Duplicate edges and non-matching times are removed.
-#' - Node numbers are remapped to meet the \code{ape} standard (tips first, then internal nodes).
-#'
-#' The function assumes the input paths are sorted from root to tip. Tip labels must match
-#' the order of \code{island_spec_matrix}.
-#'
-#'
-
+#' @keywords internal
 build_phylo_tree_from_island_spec <- function(island_spec) {
 
 

@@ -1,6 +1,4 @@
-
-
-#########with hidden
+#' @keywords internal
 update_rates_mult_trait <- function(timeval,
                                     total_time,
                                     hyper_pars = hyper_pars,

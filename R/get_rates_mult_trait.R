@@ -1,6 +1,4 @@
-
-
-############### with hidden
+#' @keywords internal
 get_immig_rate <- function(A = 1,
                            num_spec,
                            mainland,

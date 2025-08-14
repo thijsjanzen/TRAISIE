@@ -1,3 +1,4 @@
+#' @keywords internal
 DAISIE_sim_mult_trait_update_state_cr <- function(timeval,
                                                   total_time,
                                                   possible_event,

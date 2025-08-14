@@ -1,3 +1,4 @@
+#' @keywords internal
 DAISIE_create_island_trait <- function(stt_table,
                                        total_time,
                                        island_spec,

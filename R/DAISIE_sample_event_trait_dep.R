@@ -54,7 +54,7 @@
 #'
 #' event <- DAISIE_sample_event_trait_dep(rates, num_observed_states = 2, num_hidden_states = 2)
 #' print(event)
-#'
+#' @keywords internal
 
 
 DAISIE_sample_event_trait_dep <- function(rates, num_observed_states, num_hidden_states) {
