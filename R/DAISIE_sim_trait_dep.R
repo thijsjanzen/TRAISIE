@@ -18,6 +18,8 @@ DAISIE_sim_trait_dep <- function(time,
   fail_msg  <- character(0)
 
   for (rep in seq_len(replicates)) {
+    cat(sprintf("replicate %d/%d ... ", rep, replicates)); flush.console()
+
     res <- tryCatch(
       {
         DAISIE_sim_core_mult_trait_dep(
@@ -42,12 +44,14 @@ DAISIE_sim_trait_dep <- function(time,
         )
       },
       error = function(e) {
-        message(sprintf("[rep %d] Error: %s", rep, conditionMessage(e)))
         fail_idx <<- c(fail_idx, rep)
         fail_msg <<- c(fail_msg, conditionMessage(e))
+        cat("failed\n")
         NULL
       }
     )
+
+    if (!is.null(res)) cat("done\n")
     island_replicates[[rep]] <- res
   }
 
@@ -59,5 +63,5 @@ DAISIE_sim_trait_dep <- function(time,
     message("All replicates completed successfully.")
   }
 
-  return(island_replicates)
+  island_replicates
 }
