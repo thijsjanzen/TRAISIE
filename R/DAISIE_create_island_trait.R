@@ -165,7 +165,13 @@ DAISIE_create_island_trait <- function(stt_table,
 
             # Check the length of mainland and adapt the logic
             root_state <- c()
-            if (length(mainland) == 2) {
+            if (length(mainland) == 1) {
+              # Only M1 in mainland
+
+                root_state <- 1
+
+            }
+            else if (length(mainland) == 2) {
               # Only M1 and M2 are available in mainland
               if (mainland_ancestor_value %in% 1:mainland$M1) {
                 root_state <- c(1, 0)
