@@ -162,6 +162,10 @@ DAISIE_sim_core_mult_trait_dep <- function(
     if (state >= 1 && state <= num_hidden_states) {
       island_spec[i,][8] = "0"
 
+    }
+    if (state >= 1 && state <= num_hidden_states) {
+      island_spec[i,][8] = "0"
+
     } else if (state >= (num_hidden_states + 1) && state <= (2 * num_hidden_states)) {
       island_spec[i,][8] = "1"
       # Colonist species in state
@@ -174,18 +178,15 @@ DAISIE_sim_core_mult_trait_dep <- function(
 
 
   #### Finalize STT ####
-  stt_table <- rbind(
-    stt_table,
-    c(
-      0,
-      stt_table[nrow(stt_table), 2],
-      stt_table[nrow(stt_table), 3],
-      stt_table[nrow(stt_table), 4],
-      stt_table[nrow(stt_table), 5],
-      stt_table[nrow(stt_table), 6],
-      stt_table[nrow(stt_table), 7]
-    )
-  )
+  #stt_table <- rbind(
+   # stt_table,
+   # c(
+    #  0,
+    #  stt_table[nrow(stt_table), 2],
+     # stt_table[nrow(stt_table), 3],
+     # stt_table[nrow(stt_table), 4]
+   # )
+ # )
   island <- DAISIE_create_island_trait(
     stt_table = stt_table,
     total_time = total_time,
