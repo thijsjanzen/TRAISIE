@@ -318,9 +318,6 @@ check_arguments <- function(brts = NULL,
   if (is.null(phy)) {
     stop("phy not provided")
   }
-  if (is.null(traits)) {
-    stop("traits not provided")
-  }
   if (is.null(num_observed_states)) {
     stop("number of observed states not provided")
   }
@@ -332,5 +329,11 @@ check_arguments <- function(brts = NULL,
   }
   if (is.null(sampling_fraction)) {
     stop("sampling_fraction not provided")
+  }
+  # Only require traits if there is more than one state in total
+  total_states <- as.numeric(num_observed_states) * as.numeric(num_hidden_states)
+  if (is.na(total_states)) stop("num_observed_states and num_hidden_states must be numeric")
+  if (total_states > 1 && is.null(traits)) {
+    stop("traits not provided (required when total states > 1)")
   }
 }
