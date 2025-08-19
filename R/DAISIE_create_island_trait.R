@@ -69,33 +69,10 @@ DAISIE_create_island_trait <- function(stt_table,
         )))
 
 
-        if (length(col_times) == 1) {
-          subset_island <- island_spec[which(island_spec[, "Mainland Ancestor"] == as.character(mainland_spec)), ]
-
-          if (!is.matrix(subset_island)) {
-            subset_island <- rbind(subset_island[1:9])
-            colnames(subset_island) <- cnames
-          }
-
-          island_clades_info[[i]] <- DAISIE:::DAISIE_ONEcolonist (
-            total_time,
-            island_spec = subset_island,
-            stt_table = NULL)
-
-
-        } else if (length(col_times) > 1 &&  any(all_spec[, "Species type"] == "I", na.rm = TRUE)) {
+        if ((length(col_times) == 1) ||
+            (length(col_times) > 1 && any(all_spec[, "Species type"] == "I", na.rm = TRUE))) {
 
           subset_island <- island_spec[which(island_spec[, "Mainland Ancestor"] == as.character(mainland_spec)), ]
-
-          if (!is.matrix(subset_island)) {
-            subset_island <- rbind(subset_island[1:9])
-            colnames(subset_island) <- cnames
-          }
-
-          island_clades_info[[i]] <- DAISIE:::DAISIE_ONEcolonist (
-            total_time,
-            island_spec = subset_island,
-            stt_table = NULL)
 
         } else if (length(col_times) > 1 &&  any(all_spec[, "Species type"] != "I", na.rm = TRUE)) {
 
@@ -103,24 +80,21 @@ DAISIE_create_island_trait <- function(stt_table,
             all_spec[, "Colonisation time (BP)"] == island_spec[i, ][["Colonisation time (BP)"]],
             , drop = FALSE
           ]
-
-
-          if (!is.matrix(subset_island)) {
-            subset_island <- rbind(subset_island[1:9])
-            colnames(subset_island) <- cnames
-          }
-
-          island_clades_info[[i]] <- DAISIE:::DAISIE_ONEcolonist (
-            total_time,
-            island_spec = subset_island,
-            stt_table = NULL)
-          island_clades_info[[i]]$stt_table <- NULL
         }
+
+
+        if (!is.matrix(subset_island)) {
+          subset_island <- rbind(subset_island[1:9])
+          colnames(subset_island) <- cnames
+        }
+
+        island_clades_info[[i]] <- DAISIE:::DAISIE_ONEcolonist (
+          total_time,
+          island_spec = subset_island,
+          stt_table = NULL)
+
         island_clades_info[[i]]$stt_table <- NULL
       }
-
-
-
 
 
       # Extracting taxon_list and handling matching colonization times
@@ -170,8 +144,7 @@ DAISIE_create_island_trait <- function(stt_table,
 
               root_state <- 1
 
-            }
-            else if (length(mainland) == 2) {
+            } else if (length(mainland) == 2) {
               # Only M1 and M2 are available in mainland
               if (mainland_ancestor_value %in% 1:mainland$M1) {
                 root_state <- c(1, 0)
@@ -204,24 +177,12 @@ DAISIE_create_island_trait <- function(stt_table,
               warning("mainland contains more than 3 elements. Logic may need adjustment.")
             }
 
-
-
             island_clades_info[[match]]$root_state <- root_state
 
-
-            if (ncol(isla[[1]]) >= 5) {
-              island_clades_info[[match]]$phylogeny <- isla[[1]][, 5]
-            } else {
-              island_clades_info[[match]]$phylogeny <- NA
-              warning("Fifth column not found in isla[[1]], assigned NA")
-            }
-
-            if (ncol(isla[[1]]) >= 9) {
+             if (ncol(isla[[1]]) >= 9) {
 
 
               island_clades_info[[match]]$traits <- as.numeric(isla[[1]][, 8])
-
-
 
             } else {
               island_clades_info[[match]]$traits <- NA
