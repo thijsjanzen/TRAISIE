@@ -159,10 +159,7 @@ DAISIE_sim_core_mult_trait_dep <- function(
   for (i in 1:length(island_spec[,1])) {
 
     state <- as.numeric(island_spec[i,][8])
-    if (state >= 1 && state <= num_hidden_states) {
-      island_spec[i,][8] = "0"
 
-    }
     if (state >= 1 && state <= num_hidden_states) {
       island_spec[i,][8] = "0"
 
