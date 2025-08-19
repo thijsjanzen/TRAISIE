@@ -165,4 +165,4 @@ DAISIE_sim_trait_dep <- function(time,
 }
 
 
-?DAISIE_sim
+
