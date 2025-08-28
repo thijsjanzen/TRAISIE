@@ -139,7 +139,9 @@ calc_init_state_hidden <- function(trait,
     DE[1:num_unique_states] <- sampling_fraction
      E[1:num_unique_states] <- 1 - sampling_fraction
   } else if (trait == trait) {
+
     steps <- num_hidden_states * trait
+    sampling_fraction <- sampling_fraction[1 + trait]
     DE[(steps + 1):(num_hidden_states + steps)] <- sampling_fraction
      E[(steps + 1):(num_hidden_states + steps)] <- 1 - sampling_fraction
   }
@@ -181,12 +183,12 @@ loglik_R_tree <- function(parameter,
                    data = NA)
 
   for (i in seq_along(traits)) {
-    res <- calc_init_state_hidden(trait = traits[i],
+    res <- calc_init_state_hidden(trait = traits[1],
                                           sampling_fraction =
-                                            sampling_fraction[1 + traits[i]],
+                                            sampling_fraction,
                                           num_unique_states = num_unique_states,
                                           num_hidden_states = num_hidden_states,
-                                          mainland = mainland,
+                                          mainland = 100,
                                           trait_mainland_ancestor =
                                             trait_mainland_ancestor)
   states[i, ] <- res
@@ -252,7 +254,7 @@ loglik_cpp_tree <- function(parameter,
   # sf = sampling fraction
   for (i in seq_along(traits)) {
     states[i, ] <- calc_init_state_hidden(traits[i],
-                                          sampling_fraction[1 + traits[i]],
+                                          sampling_fraction,
                                           num_unique_states,
                                           num_hidden_states,
                                           mainland = mainland,
