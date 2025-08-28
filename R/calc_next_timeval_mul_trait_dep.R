@@ -21,3 +21,4 @@ calc_next_timeval <- function(max_rates, timeval, total_time, num_observed_state
   return(list(timeval = timeval, dt = dt))
 }
 
+
