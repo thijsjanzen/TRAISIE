@@ -120,10 +120,11 @@ DAISIE_sim_mult_trait_update_state_cr <- function(timeval,
       # Step 1: get the value of column 2 for the anagenesis row
       col2_value <- island_spec[anagenesis, 2]
 
-      # Step 2: select all rows that have the same column 2 value
+      # Step 2: select all rows that have the same mailand ancestor
       rows_same_col2 <- island_spec[island_spec[, 2] == col2_value, , drop = FALSE]
 
-      # Step 3: check if column 3 is the same for all those rows
+      # Step 3: check if the immigrant species sampled (anagenesis) is unique of if it is a recolonist
+
       if (length(unique(rows_same_col2[, 3])) == 1) {
 
         maxspecID = maxspecID + 1
@@ -144,6 +145,8 @@ DAISIE_sim_mult_trait_update_state_cr <- function(timeval,
         if (!is.null(trait_pars)) {
           island_spec[anagenesis, 8] = as.character(trait_state)
         }
+
+        ### check why this
         island_spec = rbind(island_spec, island_spec[anagenesis, ])
         island_spec = island_spec[-anagenesis, ]
 
