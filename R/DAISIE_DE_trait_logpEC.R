@@ -13,10 +13,10 @@
 #' library(secsse)
 #' data("Galapagos_datalist")
 #' datalist <- Galapagos_datalist
-#' i <- 4
+#' i <- 5
 #' phy <- DDD::brts2phylo(datalist[[i]]$branching_times[-c(1, 2)])
 #' brts <- datalist[[i]]$branching_times
-#' traits <- sample(c(NA, NA), length(brts), replace = TRUE)
+#' traits <- sample(c(0, NA), length(brts), replace = TRUE)
 #' sampling_fraction <- sample(c(1, 1), length(brts), replace = TRUE)
 #'
 #'
