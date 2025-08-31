@@ -1,7 +1,128 @@
-#' apply maximum likelihood to a dataset
-#' @description ml function
-#' @inheritParams default_params_doc
+#' Maximum Likelihood Estimation for the DAISIE Trait Model
+#'
+#' @description
+#' This function estimates the maximum likelihood (ML) for a given dataset using a trait-dependent model.
+#' The model includes parameters for cladogenesis, extinction, colonization, anagenesis, and state transitions.
+#' The optimization is done using the `treeLL::calc_ml` function.
+#'
+#' @usage
+#' calc_ml_trait_model(datalist, num_observed_states, num_hidden_states,
+#'                      idparslist, idparsopt, initvals2, idparsfix, parsfix,
+#'                      atol = 1e-11, rtol = 1e-11, num_threads = 8,
+#'                      verbose = TRUE, use_Rcpp = 2)
+#'
+#' @param datalist A list containing the data used for likelihood calculation.
+#' @param num_observed_states The number of observed trait states.
+#' @param num_hidden_states The number of hidden trait states.
+#' @param idparslist A list containing the model parameters required for the trait-dependent diversification process.
+#' Each element in the list corresponds to a specific set of parameters:
+#'
+#' \itemize{
+#'   \item \code{idparslist[[1]]}: A numeric vector specifying the **cladogenesis rates** (\( \lambda_c \)) for each trait state. Each element in the vector corresponds to the cladogenesis rate for a different state.
+#'   \item \code{idparslist[[2]]}: A numeric vector specifying the **extinction rates** (\( \mu \)) for each trait state. Each element in the vector corresponds to the extinction rate for a different state.
+#'   \item \code{idparslist[[3]]}: A numeric vector specifying the **immigration rates** (\( \gamma \)) for each trait state. Each element in the vector corresponds to the immigration rate for a different state.
+#'   \item \code{idparslist[[4]]}: A numeric vector specifying the **anagenesis rates** (\( \lambda_a \)) for each trait state. Each element in the vector corresponds to the anagenesis rate for a different state.
+#'   \item \code{idparslist[[5]]}: A **transition matrix** for the model, describing the transition rates between all trait states. The matrix is square, and the entries represent the transition rates between states:
+#'     \itemize{
+#'       \item \code{idparslist[[5]][i, j]}: The transition rate from state \(i\) to state \(j\), where \(i\) and \(j\) range from 1 to the total number of states.
+#'       \item Diagonal elements \code{idparslist[[5]][i, i]} represent the self-transition rate are are equal to 0.
+#'     }
+#'   \item \code{idparslist[[6]]}: A fixed value for the parameter \( p \), which specifies the probability that a trait transition results in a new species. If \( p = 1 \), every transition will result in a new species. If \( p = 0 \), the transition does not lead to the creation of a new species.
+#' }
+
+#' @param idparsopt A vector of integers specifying which parameters are to be optimized.
+#' @param initvals2 A numeric vector providing the initial values for the parameters to be optimized.
+#' @param idparsfix A vector of integers specifying which parameters are to be kept fixed.
+#' @param parsfix A vector of values corresponding to the fixed parameters specified in `idparsfix`.
+#' @param atol  A numeric specifying the absolute tolerance of integration.
+#' @param rtol  A numeric specifying the relative tolerance of integration.
+#' @param num_threads number of threads to be used. Default is one thread.
+#' @param verbose sets verbose output; default is TRUE when optimmethod is "simplex". If optimmethod is set to "simplex", then even if set to FALSE, optimizer output will be shown.
+#' @param use_Rcpp Integer. Specifies whether to use C++ for optimization:
+#'   \itemize{
+#'     \item 0: Use R implementation (default).
+#'     \item 1: Use a mix of R and C++.
+#'     \item 2: Use C++ implementation.
+#'   }
+#'
+#' @details
+#' This function runs the maximum likelihood estimation for a dataset based on the trait-dependent model.
+#' The optimization process uses the `treeLL::calc_ml` function to adjust the parameters for the best fit to the data.
+#' The function assumes that the dataset is prepared correctly, and the parameter IDs are provided for both optimization and fixing.
+#'
+#' @value
+#' A list containing the following elements:
+#' \itemize{
+#'   \item `MLpars`: The optimized parameter values.
+#'   \item `ML`: The calculated log-likelihood value for the model.
+#'   \item `conv`: The convergence status of the optimization process.
+#' }
+#'
+#' @examples
+#' \dontrun{
+#' ############## Parameter Estimation
+#' ### Binary State Model without Hidden States
+#'
+#' # Define the parameter list for the model
+#' idparslist <- list()
+#' idparslist[[1]] <- c(1, 1)  # lambda_c
+#' idparslist[[2]] <- c(2, 2)  # mu
+#' idparslist[[3]] <- c(3, 3)  # gamma
+#' idparslist[[4]] <- c(4, 4)  # lambda_a
+#'
+#' # Transition matrix for the model (since there are two trait states)
+#' idparslist[[5]] <- matrix(0, 2, 2)
+#' colnames(idparslist[[5]]) <- c("0", "1")
+#' rownames(idparslist[[5]]) <- colnames(idparslist[[5]])
+#'
+#' # Hidden state transitions (irrelevant here but kept for consistency)
+#' idparslist[[5]][1, 2] <- 5  # 0 -> 1
+#' idparslist[[5]][2, 1] <- 6  # 1 -> 0
+#' idparslist[[5]][1, 1] <- 7  # 0 -> 0
+#' idparslist[[5]][2, 2] <- 7  # 1 -> 1
+#'
+#' # Set p (parameter for anagenesis transition) not to be estimated
+#' idparslist[[6]] <- 8
+#'
+#' # Parameters to optimize
+#' idparsopt <- 1:6
+#' idparsopt <- idparsopt[idparsopt > 0]  # We will optimize parameters 1 to 6
+#'
+#' # Example of starting values for the optimization
+#' initvals2 <- c(1.07, 1.0102, 0.0035, 0.174, 1, 1)
+#'
+#' # Preparing the parameter optimization values
+#' initparsopt <- initvals2
+#' idparsfix = c(0, 7, 8) # We will not optimize parameters 1 to 6
+#' parsfix <- c(0, 0, 0)  # Fixed parameter, qs and p not to be estimated
+#' trparsopt <- initparsopt / (1 + initparsopt)
+#' trparsopt[which(initparsopt == Inf)] <- 1
+#' trparsfix <- parsfix / (1 + parsfix)
+#' trparsfix[which(parsfix == Inf)] <- 1
+#'
+#' # Run the ML estimation with the provided dataset
+#' ml_estimates <- treeLL::calc_ml(datalist,
+#'                                 num_observed_states = 2,
+#'                                 num_hidden_states = 1,
+#'                                 idparslist = idparslist,
+#'                                 idparsopt = idparsopt,
+#'                                 initparsopt = initvals2,
+#'                                 idparsfix = idparsfix,
+#'                                 parsfix = parsfix,
+#'                                 atol = 1e-15,
+#'                                 rtol = 1e-15,
+#'                                 num_threads = 8,
+#'                                 verbose = TRUE,
+#'                                 use_Rcpp = 2)
+#'
+#' # View the results
+#' print(ml_estimates)
+#' }
+#'
+#'
 #' @export
+
+
 calc_ml <- function(datalist,
                     num_observed_states,
                     num_hidden_states,
