@@ -10,7 +10,6 @@
 #'
 #' @examples
 #' library(DAISIE)
-#' library(secsse)
 #' data("Galapagos_datalist")
 #' datalist <- Galapagos_datalist
 #'
@@ -32,14 +31,14 @@
 #' )
 #'
 #' DAISIE_DE_trait_logpES(
-#'   brts                    = data_list1[[17]]$branching_times,
-#'   trait                   = data_list1[[17]]$traits,
+#'   brts                    = brts,
+#'   trait                   = trait,
 #'   status                  = 2,
-#'   sampling_fraction       = data_list1[[17]]$sampling_fraction,
+#'   sampling_fraction       = sampling_fraction,
 #'   parameter               = parameter,
-#'   trait_mainland_ancestor = data_list1[[17]]$branching_times,
+#'   trait_mainland_ancestor = c(1,0),
 #'   num_observed_states     = 2,
-#'   num_hidden_states       = 2,
+#'   num_hidden_states       = 1,
 #'   atol                    = 1e-15,
 #'   rtol                    = 1e-15,
 #'   methode                 = "ode45"

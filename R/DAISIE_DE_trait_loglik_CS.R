@@ -2,6 +2,8 @@
 #' @description umbrella function
 #' @inheritParams default_params_doc
 #' @export
+
+?DAISIE_DE_trait_loglik_CS
 DAISIE_DE_trait_loglik_CS <- function( parameter,
                                        datalist,
                                        methode = "lsodes",

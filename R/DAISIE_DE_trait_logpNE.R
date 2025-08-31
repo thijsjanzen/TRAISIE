@@ -8,7 +8,6 @@
 #'
 #' @examples
 #' library(DAISIE)
-#' library(secsse)
 #' data("Galapagos_datalist")
 #' datalist <- Galapagos_datalist
 #'
@@ -26,13 +25,14 @@
 #'   ), nrow = 2),
 #'   0
 #' )
-#' brts <- datalist[[3]]$branching_times
+#' brts <- datalist[[i]]$branching_times
 #' DAISIE_DE_trait_logpNE(
 #'   brts                    = brts,
 #'   trait                   = trait,
 #'   status                  = 4,
 #'   parameter               = parameter,
-#'   trait_mainland_ancestor = c(1, 0),
+#'   sampling_fraction       = c(1,1),
+#'   trait_mainland_ancestor = c(1,0),
 #'   num_observed_states     = 2,
 #'   num_hidden_states       = 1,
 #'   atol                    = 1e-15,
