@@ -137,45 +137,62 @@ DAISIE_create_island_trait <- function(stt_table,
             # Ensure the "Mainland Ancestor" value is numeric
             mainland_ancestor_value <- as.numeric(isla[[1]][, "Mainland Ancestor"][1])
 
-            # Check the length of mainland and adapt the logic
-            root_state <- c()
-            if (length(mainland) == 1) {
-              # Only M1 in mainland
+             #Check the length of mainland and adapt the logic
+           #  root_state <- c()
+           #  if (length(mainland) == 1) {
+           #     #Only M1 in mainland
+           #
+           #    root_state <- 1
+           #
+           #  } else if (length(mainland) == 2) {
+           #   # Only M1 and M2 are available in mainland
+           #    if (mainland_ancestor_value %in% 1:mainland$M1) {
+           #      root_state <- c(1, 0)
+           #   } else if (mainland_ancestor_value %in% (1 + mainland$M1):(mainland$M1 + mainland$M2)) {
+           #      root_state <- c(0, 1)
+           #    }
+           #  } else if (length(mainland) == 3) {
+           #    # M1, M2, and M3 are available in mainland
+           #    if (mainland_ancestor_value %in% 1:mainland$M1) {
+           #      root_state <- c(1, 0, 0)
+           #    } else if (mainland_ancestor_value %in% (1 + mainland$M1):(mainland$M1 + mainland$M2)) {
+           #      root_state <- c(0, 1, 0)
+           #    } else if (mainland_ancestor_value %in% (1 + mainland$M1 + mainland$M2):(mainland$M1 + mainland$M2 + mainland$M3)) {
+           #      root_state <- c(0, 0, 1)
+           #    }
+           #  } else if (length(mainland) == 4) {
+           #    # M1, M2, and M3 are available in mainland
+           #    if (mainland_ancestor_value %in% 1:mainland$M1) {
+           #      root_state <- c(1, 0, 0, 0)
+           #    } else if (mainland_ancestor_value %in% (1 + mainland$M1):(mainland$M1 + mainland$M2)) {
+           #      root_state <- c(0, 1, 0, 0)
+           #    } else if (mainland_ancestor_value %in% (1 + mainland$M1 + mainland$M2):(mainland$M1 + mainland$M2 + mainland$M3)) {
+           #      root_state <- c(0, 0, 1, 0)
+           #    } else if (mainland_ancestor_value %in% (1 + mainland$M1 + mainland$M2 + mainland$M3):(mainland$M1 + mainland$M2 + mainland$M3 + mainland$M4)) {
+           #      root_state <- c(0, 0, 0, 1)
+           #    }
+           # }
 
-              root_state <- 1
 
-            } else if (length(mainland) == 2) {
-              # Only M1 and M2 are available in mainland
-              if (mainland_ancestor_value %in% 1:mainland$M1) {
-                root_state <- c(1, 0)
-              } else if (mainland_ancestor_value %in% (1 + mainland$M1):(mainland$M1 + mainland$M2)) {
-                root_state <- c(0, 1)
-              }
-            } else if (length(mainland) == 3) {
-              # M1, M2, and M3 are available in mainland
-              if (mainland_ancestor_value %in% 1:mainland$M1) {
-                root_state <- c(1, 0, 0)
-              } else if (mainland_ancestor_value %in% (1 + mainland$M1):(mainland$M1 + mainland$M2)) {
-                root_state <- c(0, 1, 0)
-              } else if (mainland_ancestor_value %in% (1 + mainland$M1 + mainland$M2):(mainland$M1 + mainland$M2 + mainland$M3)) {
-                root_state <- c(0, 0, 1)
-              }
-            } else if (length(mainland) == 4) {
-              # M1, M2, and M3 are available in mainland
-              if (mainland_ancestor_value %in% 1:mainland$M1) {
-                root_state <- c(1, 0, 0, 0)
-              } else if (mainland_ancestor_value %in% (1 + mainland$M1):(mainland$M1 + mainland$M2)) {
-                root_state <- c(0, 1, 0, 0)
-              } else if (mainland_ancestor_value %in% (1 + mainland$M1 + mainland$M2):(mainland$M1 + mainland$M2 + mainland$M3)) {
-                root_state <- c(0, 0, 1, 0)
-              } else if (mainland_ancestor_value %in% (1 + mainland$M1 + mainland$M2 + mainland$M3):(mainland$M1 + mainland$M2 + mainland$M3 + mainland$M4)) {
-                root_state <- c(0, 0, 0, 1)
-              }
-            } else {
-              # Handle cases with more than 3 elements in mainland, if needed
-              # You can add further checks here for more elements in mainland.
-              warning("mainland contains more than 3 elements. Logic may need adjustment.")
-            }
+            # Initialize root_state vector with zeros
+            root_state <- rep(0, length(mainland))
+
+            # Convert mainland list to numeric vector
+            mainland_counts <- unlist(mainland)
+
+            # Compute cumulative sums to identify trait group boundaries
+            cumulative <- cumsum(mainland_counts)
+
+            # Find which group the ancestor belongs to
+            group_index <- which(mainland_ancestor_value <= cumulative)[1]
+
+            # Set the corresponding position to 1 (one-hot encoding)
+            root_state[group_index] <- 1
+
+
+
+
+
 
             island_clades_info[[match]]$root_state <- root_state
 
@@ -230,7 +247,7 @@ DAISIE_create_island_trait <- function(stt_table,
 
       island_clades_info <- island_clades_info[keep]
 
-      island <- append(list ( list (island_age = total_time, not_present = sum (unlist(mainland)) - length(colonists_present) )),
+      island <- append(list (list (island_age = total_time, not_present = sum (unlist(mainland)) - length(colonists_present) )),
                        island_clades_info)
     }
   }
