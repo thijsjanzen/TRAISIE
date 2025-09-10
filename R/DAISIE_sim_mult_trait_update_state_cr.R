@@ -28,24 +28,37 @@ DAISIE_sim_mult_trait_update_state_cr <- function(timeval,
 
       mainland_total = sum(unlist(mainland))
 
-      if (trait_state >= 1 && trait_state <= num_hidden_states) {
-        colonist = DDD::sample2(1 : mainland[[1]], 1)
-      } else if (trait_state > num_hidden_states && trait_state <= 2 * num_hidden_states) {
-        colonist = DDD::sample2((1 + mainland[[1]]) : (mainland[[1]] + mainland[[2]]), 1)
-      } else if (trait_state > 2 * num_hidden_states && trait_state <= 3 * num_hidden_states) {
-        colonist = DDD::sample2((1 + mainland[[1]] + mainland[[2]]) : (mainland[[1]] + mainland[[2]] + mainland[[3]]), 1)
-      } else if (trait_state > 3 * num_hidden_states && trait_state <= 4 * num_hidden_states) {
-        colonist = DDD::sample2((1 + mainland[[1]] + mainland[[2]] + mainland[[3]]) : (mainland[[1]] + mainland[[2]] + mainland[[3]] + mainland[[4]]), 1)
-      }
+      # if (trait_state >= 1 && trait_state <= num_hidden_states) {
+      #   colonist = DDD::sample2(1 : mainland[[1]], 1)
+      # } else if (trait_state > num_hidden_states && trait_state <= (2 * num_hidden_states)) {
+      #   colonist = DDD::sample2((1 + mainland[[1]]) : (mainland[[1]] + mainland[[2]]), 1)
+      # } else if (trait_state > (2 * num_hidden_states) && trait_state <= (3 * num_hidden_states)) {
+      #   colonist = DDD::sample2((1 + mainland[[1]] + mainland[[2]]) : (mainland[[1]] + mainland[[2]] + mainland[[3]]), 1)
+      # } else if (trait_state > (3 * num_hidden_states) && trait_state <= (4 * num_hidden_states)) {
+      #   colonist = DDD::sample2((1 + mainland[[1]] + mainland[[2]] + mainland[[3]]) : (mainland[[1]] + mainland[[2]] + mainland[[3]] + mainland[[4]]), 1)
+      # }
+
+      # Determine which trait block the species belongs to
+      block <- ceiling(trait_state / num_hidden_states)
+
+      # Compute start and end indices for that block
+      start_idx <- if (block == 1) 1 else sum(unlist(mainland[1:(block - 1)])) + 1
+      end_idx   <- sum(unlist(mainland[1:block]))
+
+      # Sample a colonist from the block
+      colonist <- DDD::sample2(start_idx:end_idx, 1)
 
 
-      # Check if species is already present
+
+
       if (length(island_spec[, 1]) != 0) {
         isitthere = which(island_spec[, 1] == colonist)
       } else {
         isitthere = c()
       }
 
+      # Check if species is already present
+      testit::assert(length(isitthere) <= 1)
       if (length(isitthere) == 0) {
         island_spec = rbind(island_spec, c(colonist, colonist, timeval, "I", NA, NA, NA, trait_state, NA))
       }
@@ -58,7 +71,9 @@ DAISIE_sim_mult_trait_update_state_cr <- function(timeval,
     # EXTINCTION (4*i + 2)
     if (possible_event == (4*i + 2)) {
       island_spec_state = which(island_spec[, 8] == as.character(trait_state))
-      extinct = DDD::sample2(island_spec_state, 1)
+
+
+      extinct = DDD::sample2(1:length(island_spec_state), 1)
 
       typeofspecies = island_spec[extinct, 4]
 
@@ -157,8 +172,11 @@ DAISIE_sim_mult_trait_update_state_cr <- function(timeval,
 
     # CLADOGENESIS (4*i + 4)
     if (possible_event == (4*i + 4)) {
+
       island_spec_state = which(island_spec[, 8] == as.character(trait_state))
-      tosplit = DDD::sample2(island_spec_state, 1)
+
+      tosplit = DDD::sample2(1:length(island_spec_state), 1)
+
 
       if (island_spec[tosplit, 4] == "C") {
         island_spec[tosplit, 4] = "C"
@@ -204,6 +222,7 @@ DAISIE_sim_mult_trait_update_state_cr <- function(timeval,
 
   # TRAIT CHANGE
   for (i in 0:(n-1)) {
+
 
     for (j in 1:n) {
       # now each (i,j) pair maps to 4*n + (i * n + j)
