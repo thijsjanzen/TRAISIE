@@ -32,7 +32,7 @@
 #'   \item{ext_rateX}{Extinction rate for trait X (numeric).}
 #'   \item{ana_rateX}{Anagenesis rate for trait X (numeric).}
 #'   \item{clado_rateX}{Cladogenesis rate for trait X (numeric).}
-#'     \item \code{trans_rateX}: A square matrix of transition rates for state changes. This matrix defines the rates at which species transition between different observed trait states. Each element in the matrix \( \text{trans_rate}[i,j] \) represents the rate of transition from state \(i\) to state \(j\).
+#'     \item \code{trans_rateX}: A square matrix of transition rates for state changes. This matrix defines the rates at which species transition between different observed trait states. Each element in the matrix \( \code{trans_rate}[i,j] \) represents the rate of transition from state \(i\) to state \(j\).
 #'       \itemize{
 #'         \item \code{trans_rateX[i, j]}: The rate at which species in state \(i\) transition to state \(j\).
 #'         \item Diagonal elements \code{trans_rate[i, i]} represent the self-transition rate, and is equal to 0.
@@ -47,7 +47,7 @@
 #'   to \code{1} if no hidden state is used.
 #'
 #'
-#' @value
+#' @returns
 #' A list of length \code{replicates}. Each element is the return value from
 #' \code{DAISIE_sim_core_mult_trait_dep()} for that replicate (or \code{NULL} if
 #' the replicate failed).

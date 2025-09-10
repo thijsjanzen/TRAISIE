@@ -13,7 +13,7 @@ solve_branch <- function(interval_func,
                          parameter,
                          trait_mainland_ancestor,
                          methode = "ode45",
-                         rcpp_methode = "odeint::bulirsch_stoer",
+                         rcpp_methode = "odeint::runge_kutta_cash_karp54",
                          atol,
                          rtol,
                          use_Rcpp = 0) {

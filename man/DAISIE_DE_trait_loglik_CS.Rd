@@ -8,7 +8,7 @@ DAISIE_DE_trait_loglik_CS(
   parameter,
   datalist,
   methode = "lsodes",
-  rcpp_methode = "odeint::bulirsch_stoer",
+  rcpp_methode = "odeint::runge_kutta_cash_karp54",
   atol = 1e-15,
   rtol = 1e-15,
   num_observed_states,
@@ -36,7 +36,8 @@ dataset has the following fields: 1) colonist_name, 2) b ranching_times,
 options available are:
  `"odeint::runge_kutta_cash_karp54"`, `"odeint::runge_kutta_fehlberg78"`,
  `"odeint::runge_kutta_dopri5"`, `"odeint::bulirsch_stoer"` and
- `"odeint::runge_kutta4"`. Default method is: `"odeint::bulirsch_stoer"`.}
+ `"odeint::runge_kutta4"`. Default method is:
+ `"odeint::runge_kutta_cash_karp54"`.}
 
 \item{atol}{A numeric specifying the absolute tolerance of integration.}
 

@@ -44,7 +44,7 @@ DAISIE_DE_trait_logpES_max_min_age_hidden <- function(brts,
                                                       atol = 1e-15,
                                                       rtol = 1e-15,
                                                       methode = "ode45",
-                                                      rcpp_methode = "odeint::bulirsch_stoer",
+                                                      rcpp_methode = "odeint::runge_kutta_cash_karp54",
                                                       use_Rcpp = 0) {
   t0   <- brts[1]
   tmax <- brts[2]

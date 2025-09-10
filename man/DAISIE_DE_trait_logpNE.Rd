@@ -8,10 +8,10 @@ DAISIE_DE_trait_logpNE(
   brts,
   status,
   trait,
+  sampling_fraction,
   num_observed_states,
   num_hidden_states,
   trait_mainland_ancestor = NA,
-  sampling_fraction,
   parameter,
   atol = 1e-15,
   rtol = 1e-15,
@@ -33,17 +33,17 @@ order of the states must be the same as the tree tips. For help, see
 each entry in the list corresponds to the matching phylogeny on that
 position.}
 
+\item{sampling_fraction}{vector that states the sampling proportion per
+trait state. It must have as many elements as there are trait states. When
+using a `multiPhylo` object, sampling fraction should be list where each
+entry in the list corresponds to the sampling proportion for each tree.}
+
 \item{num_observed_states}{number of observed states}
 
 \item{num_hidden_states}{number of hidden states}
 
 \item{trait_mainland_ancestor}{if mainland is TRUE, sets the trait of the
 mainland ancestor}
-
-\item{sampling_fraction}{vector that states the sampling proportion per
-trait state. It must have as many elements as there are trait states. When
-using a `multiPhylo` object, sampling fraction should be list where each
-entry in the list corresponds to the sampling proportion for each tree.}
 
 \item{parameter}{list where first vector represents lambdas, the second
 mus and the third transition rates.}
@@ -58,7 +58,8 @@ mus and the third transition rates.}
 options available are:
  `"odeint::runge_kutta_cash_karp54"`, `"odeint::runge_kutta_fehlberg78"`,
  `"odeint::runge_kutta_dopri5"`, `"odeint::bulirsch_stoer"` and
- `"odeint::runge_kutta4"`. Default method is: `"odeint::bulirsch_stoer"`.}
+ `"odeint::runge_kutta4"`. Default method is:
+ `"odeint::runge_kutta_cash_karp54"`.}
 
 \item{use_Rcpp}{default is 0: use no Rcpp. Value 1 = use Rcpp for the tree
 likelihood, value 2 = use Rcpp for the tree likelihood AND the ODEs along
@@ -69,7 +70,6 @@ This function calculates the likelihood of observing a non-endemic lineage with 
 }
 \examples{
 library(DAISIE)
-library(secsse)
 data("Galapagos_datalist")
 datalist <- Galapagos_datalist
 
@@ -87,13 +87,14 @@ parameter <- list(
   ), nrow = 2),
   0
 )
-brts <- datalist[[3]]$branching_times
+brts <- datalist[[i]]$branching_times
 DAISIE_DE_trait_logpNE(
   brts                    = brts,
   trait                   = trait,
   status                  = 4,
   parameter               = parameter,
-  trait_mainland_ancestor = c(1, 0),
+  sampling_fraction       = c(1,1),
+  trait_mainland_ancestor = c(1,0),
   num_observed_states     = 2,
   num_hidden_states       = 1,
   atol                    = 1e-15,

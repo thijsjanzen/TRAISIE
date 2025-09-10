@@ -16,7 +16,7 @@ DAISIE_DE_trait_logpES_max_min_age_hidden(
   atol = 1e-15,
   rtol = 1e-15,
   methode = "ode45",
-  rcpp_methode = "odeint::bulirsch_stoer",
+  rcpp_methode = "odeint::runge_kutta_cash_karp54",
   use_Rcpp = 0
 )
 }
@@ -58,7 +58,8 @@ mainland ancestor}
 options available are:
  `"odeint::runge_kutta_cash_karp54"`, `"odeint::runge_kutta_fehlberg78"`,
  `"odeint::runge_kutta_dopri5"`, `"odeint::bulirsch_stoer"` and
- `"odeint::runge_kutta4"`. Default method is: `"odeint::bulirsch_stoer"`.}
+ `"odeint::runge_kutta4"`. Default method is:
+ `"odeint::runge_kutta_cash_karp54"`.}
 
 \item{use_Rcpp}{default is 0: use no Rcpp. Value 1 = use Rcpp for the tree
 likelihood, value 2 = use Rcpp for the tree likelihood AND the ODEs along

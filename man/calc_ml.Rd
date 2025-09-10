@@ -2,83 +2,43 @@
 % Please edit documentation in R/ml.R
 \name{calc_ml}
 \alias{calc_ml}
-\title{apply maximum likelihood to a dataset}
+\title{Maximum Likelihood Estimation for the DAISIE Trait Model}
 \usage{
-calc_ml(
-  datalist,
-  num_observed_states,
-  num_hidden_states,
-  idparslist,
-  idparsopt,
-  initparsopt,
-  idparsfix,
-  parsfix,
-  cond = "proper_cond",
-  tol = c(1e-04, 1e-05, 1e-07),
-  maxiter = 1000 * round((1.25)^length(idparsopt)),
-  optimmethod = "simplex",
-  methode = "ode45",
-  rcpp_methode = "odeint::bulirsch_stoer",
-  num_cycles = 1,
-  verbose = FALSE,
-  num_threads = 1,
-  atol = 1e-15,
-  rtol = 1e-15,
-  use_Rcpp = 0
-)
+calc_ml_trait_model(datalist, num_observed_states, num_hidden_states,
+                     idparslist, idparsopt, initvals2, idparsfix, parsfix,
+                     atol = 1e-11, rtol = 1e-11, num_threads = 8,
+                     verbose = TRUE, use_Rcpp = 2)
 }
 \arguments{
-\item{datalist}{a list containing in the first entry: island age and the
-number of species not present, then from entry 2 until n it contains
-individual datasets for which to estimate the loglikelihood together, each
-dataset has the following fields: 1) colonist_name, 2) b ranching_times,
-3) stac, 4) missing_species, 5) type1or2, 6) traits, 7) sampling fraction,
-8) phylogeny}
+\item{datalist}{A list containing the data used for likelihood calculation.}
 
-\item{num_observed_states}{number of observed states}
+\item{num_observed_states}{The number of observed trait states.}
 
-\item{num_hidden_states}{number of hidden states}
+\item{num_hidden_states}{The number of hidden trait states.}
 
-\item{idparslist}{overview of parameters and their values.}
+\item{idparslist}{A list containing the model parameters required for the trait-dependent diversification process.
+Each element in the list corresponds to a specific set of parameters:
 
-\item{idparsopt}{a numeric vector with the ID of parameters to be estimated.}
+\itemize{
+  \item \code{idparslist[[1]]}: A numeric vector specifying the **cladogenesis rates** (\( \eqn{\lambda_c} \)) for each trait state. Each element in the vector corresponds to the cladogenesis rate for a different state.
+  \item \code{idparslist[[2]]}: A numeric vector specifying the **extinction rates** (\( \eqn{\mu} \)) for each trait state. Each element in the vector corresponds to the extinction rate for a different state.
+  \item \code{idparslist[[3]]}: A numeric vector specifying the **immigration rates** (\( \eqn{\gamma} \)) for each trait state. Each element in the vector corresponds to the immigration rate for a different state.
+  \item \code{idparslist[[4]]}: A numeric vector specifying the **anagenesis rates** (\( \eqn{\lambda_a} \)) for each trait state. Each element in the vector corresponds to the anagenesis rate for a different state.
+  \item \code{idparslist[[5]]}: A **transition matrix** for the model, describing the transition rates between all trait states. The matrix is square, and the entries represent the transition rates between states:
+    \itemize{
+      \item \code{idparslist[[5]][i, j]}: The transition rate from state \(i\) to state \(j\), where \(i\) and \(j\) range from 1 to the total number of states.
+      \item Diagonal elements \code{idparslist[[5]][i, i]} represent the self-transition rate are are equal to 0.
+    }
+  \item \code{idparslist[[6]]}: A fixed value for the parameter \( p \), which specifies the probability that a trait transition results in a new species. If \( p = 1 \), every transition will result in a new species. If \( p = 0 \), the transition does not lead to the creation of a new species.
+}}
 
-\item{initparsopt}{a numeric vector with the initial guess of the parameters
-to be estimated.}
+\item{idparsopt}{A vector of integers specifying which parameters are to be optimized.}
 
-\item{idparsfix}{a numeric vector with the ID of the fixed parameters.}
+\item{idparsfix}{A vector of integers specifying which parameters are to be kept fixed.}
 
-\item{parsfix}{a numeric vector with the value of the fixed parameters.}
+\item{parsfix}{A vector of values corresponding to the fixed parameters specified in `idparsfix`.}
 
-\item{cond}{condition on the existence of a node root: `"maddison_cond"`,
-`"proper_cond"` (default). For details, see vignette.}
-
-\item{tol}{A numeric vector with the maximum tolerance of the optimization
-algorithm. Default is `c(1e-04, 1e-05, 1e-05)`.}
-
-\item{maxiter}{max number of iterations. Default is
-`1000 * round((1.25) ^ length(idparsopt))`.}
-
-\item{optimmethod}{A string with method used for optimization. Default is
-`"simplex"`. Alternative is `"subplex"`. Both are called from
-[DDD::optimizer()], simplex is implemented natively in the package [DDD],
-while subplex is ultimately called from [subplex::subplex()].}
-
-\item{methode}{used integration method, default is ode45}
-
-\item{rcpp_methode}{Used integration methode when using Rcpp to integrate,
-options available are:
- `"odeint::runge_kutta_cash_karp54"`, `"odeint::runge_kutta_fehlberg78"`,
- `"odeint::runge_kutta_dopri5"`, `"odeint::bulirsch_stoer"` and
- `"odeint::runge_kutta4"`. Default method is: `"odeint::bulirsch_stoer"`.}
-
-\item{num_cycles}{Number of cycles of the optimization. When set to `Inf`,
-the optimization will be repeated until the result is, within the
-tolerance, equal to the starting values, with a maximum of 10 cycles.}
-
-\item{verbose}{sets verbose output; default is `TRUE` when `optimmethod` is
-`"simplex"`. If `optimmethod` is set to `"simplex"`, then even if set to
-`FALSE`, optimizer output will be shown.}
+\item{verbose}{sets verbose output; default is TRUE when optimmethod is "simplex". If optimmethod is set to "simplex", then even if set to FALSE, optimizer output will be shown.}
 
 \item{num_threads}{number of threads to be used. Default is one thread.}
 
@@ -86,10 +46,93 @@ tolerance, equal to the starting values, with a maximum of 10 cycles.}
 
 \item{rtol}{A numeric specifying the relative tolerance of integration.}
 
-\item{use_Rcpp}{default is 0: use no Rcpp. Value 1 = use Rcpp for the tree
-likelihood, value 2 = use Rcpp for the tree likelihood AND the ODEs along
-the branches}
+\item{use_Rcpp}{Integer. Specifies whether to use C++ for optimization:
+\itemize{
+  \item 0: Use R implementation (default).
+  \item 1: Use a mix of R and C++.
+  \item 2: Use C++ implementation.
+}}
+
+\item{initvals2}{A numeric vector providing the initial values for the parameters to be optimized.}
+}
+\value{
+A list containing the following elements:
+\itemize{
+  \item `MLpars`: The optimized parameter values.
+  \item `ML`: The calculated log-likelihood value for the model.
+  \item `conv`: The convergence status of the optimization process.
+}
 }
 \description{
-ml function
+This function estimates the maximum likelihood (ML) for a given dataset using a trait-dependent model.
+The model includes parameters for cladogenesis, extinction, colonization, anagenesis, and state transitions.
+The optimization is done using the `treeLL::calc_ml` function.
+}
+\details{
+This function runs the maximum likelihood estimation for a dataset based on the trait-dependent model.
+The optimization process uses the `treeLL::calc_ml` function to adjust the parameters for the best fit to the data.
+The function assumes that the dataset is prepared correctly, and the parameter IDs are provided for both optimization and fixing.
+}
+\examples{
+\dontrun{
+############## Parameter Estimation
+### Binary State Model without Hidden States
+
+# Define the parameter list for the model
+idparslist <- list()
+idparslist[[1]] <- c(1, 1)  # lambda_c
+idparslist[[2]] <- c(2, 2)  # mu
+idparslist[[3]] <- c(3, 3)  # gamma
+idparslist[[4]] <- c(4, 4)  # lambda_a
+
+# Transition matrix for the model (since there are two trait states)
+idparslist[[5]] <- matrix(0, 2, 2)
+colnames(idparslist[[5]]) <- c("0", "1")
+rownames(idparslist[[5]]) <- colnames(idparslist[[5]])
+
+# Hidden state transitions (irrelevant here but kept for consistency)
+idparslist[[5]][1, 2] <- 5  # 0 -> 1
+idparslist[[5]][2, 1] <- 6  # 1 -> 0
+idparslist[[5]][1, 1] <- 7  # 0 -> 0
+idparslist[[5]][2, 2] <- 7  # 1 -> 1
+
+# Set p (parameter for anagenesis transition) not to be estimated
+idparslist[[6]] <- 8
+
+# Parameters to optimize
+idparsopt <- 1:6
+idparsopt <- idparsopt[idparsopt > 0]  # We will optimize parameters 1 to 6
+
+# Example of starting values for the optimization
+initvals2 <- c(1.07, 1.0102, 0.0035, 0.174, 1, 1)
+
+# Preparing the parameter optimization values
+initparsopt <- initvals2
+idparsfix = c(0, 7, 8) # We will not optimize parameters 1 to 6
+parsfix <- c(0, 0, 0)  # Fixed parameter, qs and p not to be estimated
+trparsopt <- initparsopt / (1 + initparsopt)
+trparsopt[which(initparsopt == Inf)] <- 1
+trparsfix <- parsfix / (1 + parsfix)
+trparsfix[which(parsfix == Inf)] <- 1
+
+# Run the ML estimation with the provided dataset
+ml_estimates <- treeLL::calc_ml(datalist,
+                                num_observed_states = 2,
+                                num_hidden_states = 1,
+                                idparslist = idparslist,
+                                idparsopt = idparsopt,
+                                initparsopt = initvals2,
+                                idparsfix = idparsfix,
+                                parsfix = parsfix,
+                                atol = 1e-15,
+                                rtol = 1e-15,
+                                num_threads = 8,
+                                verbose = TRUE,
+                                use_Rcpp = 2)
+
+# View the results
+print(ml_estimates)
+}
+
+
 }
