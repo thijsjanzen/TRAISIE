@@ -58,6 +58,7 @@
 #'
 #' @examples
 #' \dontrun{
+#'set.seed(21)
 #'trait_pars = list(immig_rate1 = 0.09,
 #'                  ext_rate1 = 0.95,
 #'                  ana_rate1 = 1.4,
@@ -73,12 +74,13 @@
 #'                  K1 = Inf,
 #'                  K2 = Inf,
 #'                  p = 0)
-#'DAISIE_sim_trait_dep (  time = 4,
+#' data <- DAISIE_sim_trait_dep (  time = 4,
 #'                         mainland = list(M1 = 100, M2 = 150),
 #'                         trait_pars = trait_pars,
 #'                         replicates = 1,
 #'                         num_observed_states = 2,
 #'                         num_hidden_states = 1)
+#'
 #' }
 #' @export
 
