@@ -122,15 +122,32 @@ DAISIE_sim_core_mult_trait_dep <- function(
       total_time = total_time,
       num_observed_states = num_observed_states,
       num_hidden_states = num_hidden_states)
+
     timeval <- timeval_and_dt$timeval
 
     if (timeval < total_time) {
+      rates <- update_rates_mult_trait(timeval= timeval,
+                                       total_time = total_time,
+                                       hyper_pars = hyper_pars,
+                                       area_pars = NULL,
+                                       peak = NULL,
+                                       island_ontogeny = NULL,
+                                       sea_level = NULL,
+                                       extcutoff = extcutoff,
+                                       num_spec = num_spec,
+                                       mainland = mainland,
+                                       trait_pars = trait_pars,
+                                       island_spec = island_spec,
+                                       num_observed_states = num_observed_states,
+                                       num_hidden_states = num_hidden_states)
+
 
       possible_event <- DAISIE_sample_event_trait_dep(
         rates = rates,
         num_observed_states = num_observed_states,
         num_hidden_states = num_hidden_states
       )
+
       #print(possible_event)
       updated_state <- DAISIE_sim_mult_trait_update_state_cr(
         timeval = timeval,
@@ -155,23 +172,38 @@ DAISIE_sim_core_mult_trait_dep <- function(
     }
   }
 
-  ### change the true traits to the observed traits because the hidden states are unknown
-  for (i in 1:length(island_spec[,1])) {
+  # ### change the true traits to the observed traits because the hidden states are unknown
+  # for (i in 1:length(island_spec[,1])) {
+  #
+  #   state <- as.numeric(island_spec[i,][8])
+  #
+  #   if (state >= 1 && state <= num_hidden_states) {
+  #     island_spec[i,][8] = "0"
+  #
+  #   } else if (state >= (num_hidden_states + 1) && state <= (2 * num_hidden_states)) {
+  #     island_spec[i,][8] = "1"
+  #     # Colonist species in state
+  #   } else if (state >= (2 * num_hidden_states + 1) && state <= 3 * num_hidden_states) {
+  #     island_spec[i,][8] = "2"
+  #   } else if (state >= (3 * num_hidden_states + 1) && state <= 4 * num_hidden_states) {
+  #     island_spec[i,][8] = "3"
+  #   }
+  # }
 
-    state <- as.numeric(island_spec[i,][8])
 
-    if (state >= 1 && state <= num_hidden_states) {
-      island_spec[i,][8] = "0"
+  # Loop through all rows of island_spec
+  for (i in 1:nrow(island_spec)) {
 
-    } else if (state >= (num_hidden_states + 1) && state <= (2 * num_hidden_states)) {
-      island_spec[i,][8] = "1"
-      # Colonist species in state
-    } else if (state >= (2 * num_hidden_states + 1) && state <= 3 * num_hidden_states) {
-      island_spec[i,][8] = "2"
-    } else if (state >= (3 * num_hidden_states + 1) && state <= 4 * num_hidden_states) {
-      island_spec[i,][8] = "3"
-    }
+    # Get the current state (convert to numeric)
+    state <- as.numeric(island_spec[i, 8])
+
+    # Determine the new block: divide by num_hidden_states, round up, subtract 1
+    new_state <- ceiling(state / num_hidden_states) - 1
+
+    # Assign it back as a character
+    island_spec[i, 8] <- as.character(new_state)
   }
+
 
 
   #### Finalize STT ####
@@ -192,7 +224,7 @@ DAISIE_sim_core_mult_trait_dep <- function(
     trait_pars = trait_pars,
     num_observed_states = num_observed_states,
     num_hidden_states = num_hidden_states)
-  # ordered_stt_times <- sort(island$stt_table[, 1], decreasing = TRUE)
+   ordered_stt_times <- sort(island$stt_table[, 1], decreasing = TRUE)
   # testit::assert(all(ordered_stt_times == island$stt_table[, 1]))
   return(island)
 }
