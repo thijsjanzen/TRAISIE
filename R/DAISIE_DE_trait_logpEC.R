@@ -59,18 +59,19 @@
 #' )
 #'
 #' DAISIE_DE_trait_logpEC(
-#'   brts                    = data_list1,
-#'   phy                     = phy,
-#'   traits                  = traits,
-#'   status                  = 2,
-#'   sampling_fraction       = sampling_fraction,
-#'   parameter               = parameter,
-#'   trait_mainland_ancestor = c(1, 0),
-#'   num_observed_states     = 1,
-#'   num_hidden_states       = 1,
-#'   atol                    = 1e-15,
-#'   rtol                    = 1e-15,
-#'   methode                 = "ode45")
+#'  brts                    = data_list1[[670]]$branching_times,
+#'  phy                     = data_list1[[670]]$phylogeny,
+#'  traits                  = data_list1[[670]]$traits,
+#'  status                  = 2,
+#'  sampling_fraction       = data_list1[[670]]$sampling_fraction[1],
+#'  parameter               = parameter,
+#'  trait_mainland_ancestor = data_list1[[670]]$root_state[1],
+#'  num_observed_states     = 1,
+#'  num_hidden_states       = 1,
+#'  atol                    = 1e-15,
+#'  rtol                    = 1e-15,
+#'  methode                 = "ode45",
+#'  use_Rcpp                = 2)
 
 DAISIE_DE_trait_logpEC <- function(
     brts,
@@ -86,7 +87,7 @@ DAISIE_DE_trait_logpEC <- function(
     atol = 1e-15,
     rtol = 1e-15,
     methode = "ode45",
-    rcpp_methode = "odeint::bulirsch_stoer",
+    rcpp_methode = "odeint::runge_kutta_cash_karp54",
     use_Rcpp = 0
 ) {
 

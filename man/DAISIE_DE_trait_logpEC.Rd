@@ -18,7 +18,7 @@ DAISIE_DE_trait_logpEC(
   atol = 1e-15,
   rtol = 1e-15,
   methode = "ode45",
-  rcpp_methode = "odeint::bulirsch_stoer",
+  rcpp_methode = "odeint::runge_kutta_cash_karp54",
   use_Rcpp = 0
 )
 }
@@ -66,7 +66,8 @@ entry in the list corresponds to the sampling proportion for each tree.}
 options available are:
  `"odeint::runge_kutta_cash_karp54"`, `"odeint::runge_kutta_fehlberg78"`,
  `"odeint::runge_kutta_dopri5"`, `"odeint::bulirsch_stoer"` and
- `"odeint::runge_kutta4"`. Default method is: `"odeint::bulirsch_stoer"`.}
+ `"odeint::runge_kutta4"`. Default method is:
+ `"odeint::runge_kutta_cash_karp54"`.}
 
 \item{use_Rcpp}{default is 0: use no Rcpp. Value 1 = use Rcpp for the tree
 likelihood, value 2 = use Rcpp for the tree likelihood AND the ODEs along
@@ -78,13 +79,12 @@ given known colonization time. It is designed for comparison with DAISIE-based m
 }
 \examples{
 library(DAISIE)
-library(secsse)
 data("Galapagos_datalist")
 datalist <- Galapagos_datalist
-i <- 4
+i <- 5
 phy <- DDD::brts2phylo(datalist[[i]]$branching_times[-c(1, 2)])
 brts <- datalist[[i]]$branching_times
-traits <- sample(c(0, 0), length(brts), replace = TRUE)
+traits <- sample(c(NA, 0), length(brts), replace = TRUE)
 sampling_fraction <- sample(c(1, 1), length(brts), replace = TRUE)
 
 
@@ -102,42 +102,43 @@ parameter <- list(
 )
 
  DAISIE_DE_trait_logpEC(
-  brts                    = brts,
-  phy                     = phy,
-  traits                  = traits,
+  brts                    = data_list1[[670]],
+  phy                     = data_list1[[670]]$phylogeny,
+  traits                  = data_list1[[670]]$traits,
   status                  = 2,
-  sampling_fraction       = sampling_fraction,
+  sampling_fraction       = data_list1[[670]]$sampling_fraction,
   parameter               = parameter,
-  trait_mainland_ancestor = c(1, 0),
-  num_observed_states     = 2,
-  num_hidden_states       = 2,
+  trait_mainland_ancestor = data_list1[[670]]$root_state,
+  num_observed_states     = 1,
+  num_hidden_states       = 1,
   atol                    = 1e-15,
   rtol                    = 1e-15,
   methode                 = "ode45")
 
 # Or DAISIE style:
 parameter <- list(
-  c(2.546591, 2.546591),
-  c(2.678781, 2.678781),
-  c(0.009326754, 0.009326754),
-  c(1.008583, 1.008583),
+  c(2.546591),
+  c(2.678781),
+  c(0.009326754),
+  c(1.008583),
   matrix(c(
-    rep(0, 4)
-  ), nrow = 2),
+    rep(0, 1)
+  ), nrow = 1),
   0
 )
 
 DAISIE_DE_trait_logpEC(
-  brts                    = brts,
-  phy                     = phy,
-  traits                  = traits,
-  status                  = 2,
-  sampling_fraction       = sampling_fraction,
-  parameter               = parameter,
-  trait_mainland_ancestor = c(1, 0),
-  num_observed_states     = 2,
-  num_hidden_states       = 1,
-  atol                    = 1e-15,
-  rtol                    = 1e-15,
-  methode                 = "ode45")
+ brts                    = data_list1[[670]]$branching_times,
+ phy                     = data_list1[[670]]$phylogeny,
+ traits                  = data_list1[[670]]$traits,
+ status                  = 2,
+ sampling_fraction       = data_list1[[670]]$sampling_fraction[1],
+ parameter               = parameter,
+ trait_mainland_ancestor = data_list1[[670]]$root_state[1],
+ num_observed_states     = 1,
+ num_hidden_states       = 1,
+ atol                    = 1e-15,
+ rtol                    = 1e-15,
+ methode                 = "ode45",
+ use_Rcpp                = 2)
 }

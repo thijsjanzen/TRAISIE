@@ -188,7 +188,8 @@
 #' options available are:
 #'  `"odeint::runge_kutta_cash_karp54"`, `"odeint::runge_kutta_fehlberg78"`,
 #'  `"odeint::runge_kutta_dopri5"`, `"odeint::bulirsch_stoer"` and
-#'  `"odeint::runge_kutta4"`. Default method is: `"odeint::bulirsch_stoer"`.
+#'  `"odeint::runge_kutta4"`. Default method is:
+#'  `"odeint::runge_kutta_cash_karp54"`.
 #' @param status indicator for type of inference required
 #' @param trparsopt transformed parameters to optimize
 #' @param trparsfix transformed paramaters that remain fixed

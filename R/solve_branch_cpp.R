@@ -4,7 +4,7 @@ solve_branch_cpp <- function(chosen_func,
                              time,
                              parameter,
                              trait_mainland_ancestor,
-                             methode = "odeint::bulirsch_stoer",
+                             methode = "odeint::runge_kutta_cash_karp54",
                              atol = 1e-15,
                              rtol = 1e-15) {
 

@@ -63,7 +63,8 @@ DAISIE_DE_trait_logp0 <- function(datalist,
                                   num_observed_states,
                                   num_hidden_states,
                                   methode = "ode45",
-                                  rcpp_methode = "odeint::bulirsch_stoer",
+                                  rcpp_methode =
+                                    "odeint::runge_kutta_cash_karp54",
                                   use_Rcpp = 0) {
 
   n <- num_observed_states * num_hidden_states

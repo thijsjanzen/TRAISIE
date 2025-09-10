@@ -18,10 +18,10 @@
 #' Each element in the list corresponds to a specific set of parameters:
 #'
 #' \itemize{
-#'   \item \code{idparslist[[1]]}: A numeric vector specifying the **cladogenesis rates** (\( \lambda_c \)) for each trait state. Each element in the vector corresponds to the cladogenesis rate for a different state.
-#'   \item \code{idparslist[[2]]}: A numeric vector specifying the **extinction rates** (\( \mu \)) for each trait state. Each element in the vector corresponds to the extinction rate for a different state.
-#'   \item \code{idparslist[[3]]}: A numeric vector specifying the **immigration rates** (\( \gamma \)) for each trait state. Each element in the vector corresponds to the immigration rate for a different state.
-#'   \item \code{idparslist[[4]]}: A numeric vector specifying the **anagenesis rates** (\( \lambda_a \)) for each trait state. Each element in the vector corresponds to the anagenesis rate for a different state.
+#'   \item \code{idparslist[[1]]}: A numeric vector specifying the **cladogenesis rates** (\( \eqn{\lambda_c} \)) for each trait state. Each element in the vector corresponds to the cladogenesis rate for a different state.
+#'   \item \code{idparslist[[2]]}: A numeric vector specifying the **extinction rates** (\( \eqn{\mu} \)) for each trait state. Each element in the vector corresponds to the extinction rate for a different state.
+#'   \item \code{idparslist[[3]]}: A numeric vector specifying the **immigration rates** (\( \eqn{\gamma} \)) for each trait state. Each element in the vector corresponds to the immigration rate for a different state.
+#'   \item \code{idparslist[[4]]}: A numeric vector specifying the **anagenesis rates** (\( \eqn{\lambda_a} \)) for each trait state. Each element in the vector corresponds to the anagenesis rate for a different state.
 #'   \item \code{idparslist[[5]]}: A **transition matrix** for the model, describing the transition rates between all trait states. The matrix is square, and the entries represent the transition rates between states:
 #'     \itemize{
 #'       \item \code{idparslist[[5]][i, j]}: The transition rate from state \(i\) to state \(j\), where \(i\) and \(j\) range from 1 to the total number of states.
@@ -50,7 +50,7 @@
 #' The optimization process uses the `treeLL::calc_ml` function to adjust the parameters for the best fit to the data.
 #' The function assumes that the dataset is prepared correctly, and the parameter IDs are provided for both optimization and fixing.
 #'
-#' @value
+#' @returns
 #' A list containing the following elements:
 #' \itemize{
 #'   \item `MLpars`: The optimized parameter values.
@@ -136,7 +136,7 @@ calc_ml <- function(datalist,
                     maxiter = 1000 * round((1.25) ^ length(idparsopt)),
                     optimmethod = "simplex",
                     methode = "ode45",
-                    rcpp_methode = "odeint::bulirsch_stoer",
+                    rcpp_methode = "odeint::runge_kutta_cash_karp54",
                     num_cycles = 1,
                     verbose = FALSE,
                     num_threads = 1,
