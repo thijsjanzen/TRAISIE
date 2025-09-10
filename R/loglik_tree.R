@@ -134,7 +134,20 @@ calc_init_state_hidden <- function(trait,
   E   <- rep(0, num_unique_states)
   DA3 <- 1
 
+  if (num_unique_states == 1)
+  {
 
+      DE[1:num_unique_states] <- sampling_fraction
+      E[1:num_unique_states] <- 1 - sampling_fraction
+
+
+    if (mainland) {
+
+      DM3[1:num_unique_states] <- 1
+    }
+
+
+  } else {
   if (is.na(trait)) {
     DE[1:num_unique_states] <- sampling_fraction
      E[1:num_unique_states] <- 1 - sampling_fraction
@@ -143,13 +156,14 @@ calc_init_state_hidden <- function(trait,
     steps <- num_hidden_states * trait
     sampling_fraction <- sampling_fraction[1 + trait]
     DE[(steps + 1):(num_hidden_states + steps)] <- sampling_fraction
-     E[(steps + 1):(num_hidden_states + steps)] <- 1 - sampling_fraction
+    E[(steps + 1):(num_hidden_states + steps)] <- 1 - sampling_fraction
   }
 
 
   if (mainland) {
     steps <- num_hidden_states * trait_mainland_ancestor
     DM3[(steps + 1):(num_hidden_states + steps)] <- 1
+  }
   }
 
 
@@ -188,7 +202,7 @@ loglik_R_tree <- function(parameter,
                                             sampling_fraction,
                                           num_unique_states = num_unique_states,
                                           num_hidden_states = num_hidden_states,
-                                          mainland = 100,
+                                          mainland = mainland,
                                           trait_mainland_ancestor =
                                             trait_mainland_ancestor)
   states[i, ] <- res
