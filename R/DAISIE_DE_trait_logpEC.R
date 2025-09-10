@@ -33,40 +33,40 @@
 #' )
 #'
 #'  DAISIE_DE_trait_logpEC(
-#'   brts                    = brts,
-#'   phy                     = phy,
-#'   traits                  = traits,
+#'   brts                    = data_list1[[670]],
+#'   phy                     = data_list1[[670]]$phylogeny,
+#'   traits                  = data_list1[[670]]$traits,
 #'   status                  = 2,
-#'   sampling_fraction       = sampling_fraction,
+#'   sampling_fraction       = data_list1[[670]]$sampling_fraction,
 #'   parameter               = parameter,
-#'   trait_mainland_ancestor = c(1, 0),
-#'   num_observed_states     = 2,
-#'   num_hidden_states       = 2,
+#'   trait_mainland_ancestor = data_list1[[670]]$root_state,
+#'   num_observed_states     = 1,
+#'   num_hidden_states       = 1,
 #'   atol                    = 1e-15,
 #'   rtol                    = 1e-15,
 #'   methode                 = "ode45")
 #'
 #' # Or DAISIE style:
 #' parameter <- list(
-#'   c(2.546591, 2.546591),
-#'   c(2.678781, 2.678781),
-#'   c(0.009326754, 0.009326754),
-#'   c(1.008583, 1.008583),
+#'   c(2.546591),
+#'   c(2.678781),
+#'   c(0.009326754),
+#'   c(1.008583),
 #'   matrix(c(
-#'     rep(0, 4)
-#'   ), nrow = 2),
+#'     rep(0, 1)
+#'   ), nrow = 1),
 #'   0
 #' )
 #'
 #' DAISIE_DE_trait_logpEC(
-#'   brts                    = brts,
+#'   brts                    = data_list1,
 #'   phy                     = phy,
 #'   traits                  = traits,
 #'   status                  = 2,
 #'   sampling_fraction       = sampling_fraction,
 #'   parameter               = parameter,
 #'   trait_mainland_ancestor = c(1, 0),
-#'   num_observed_states     = 2,
+#'   num_observed_states     = 1,
 #'   num_hidden_states       = 1,
 #'   atol                    = 1e-15,
 #'   rtol                    = 1e-15,
