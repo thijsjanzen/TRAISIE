@@ -4,7 +4,11 @@ dist_gamma_tma <- function(gamma,
                            num_unique_states) {
 
   dist_gamma <- c()
+  if ( num_unique_states == 1){
 
+    dist_gamma <- gamma
+
+   } else {
   if (sum(is.na(trait_mainland_ancestor)) ==
       length(trait_mainland_ancestor)) {
     # this is always true if we don't know the tma,
@@ -19,9 +23,10 @@ dist_gamma_tma <- function(gamma,
 
     dist_gamma <- (gamma * s) / num_hidden_states
   }
-
+}
   return(dist_gamma)
 }
+
 
 
 #' @keywords internal

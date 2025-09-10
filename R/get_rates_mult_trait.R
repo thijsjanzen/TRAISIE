@@ -16,11 +16,11 @@ get_immig_rate <- function(A = 1,
 
     if (i >= 1 && i <= num_hidden_states) {
       mainland_n <- mainland[[1]]
-    } else if (i > num_hidden_states && i <= 2 * num_hidden_states) {
+    } else if (i > num_hidden_states && i <= (2 * num_hidden_states)) {
       mainland_n <- mainland[[2]]
-    } else if (i > 2 * num_hidden_states && i <= 3 * num_hidden_states) {
+    } else if (i > (2 * num_hidden_states) && i <= (3 * num_hidden_states)) {
       mainland_n <- mainland[[3]]
-    } else if (i > 3 * num_hidden_states && i <= 4 * num_hidden_states) {
+    } else if (i > (3 * num_hidden_states) && i <= (4 * num_hidden_states)) {
       mainland_n <- mainland[[4]]
     }
 
