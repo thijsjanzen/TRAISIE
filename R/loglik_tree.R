@@ -136,7 +136,7 @@ calc_init_state_hidden <- function(trait,
 
   if (num_unique_states == 1)
   {
-
+      sampling_fraction = sampling_fraction[1 ]
       DE[1:num_unique_states] <- sampling_fraction
       E[1:num_unique_states] <- 1 - sampling_fraction
 
@@ -262,6 +262,8 @@ loglik_cpp_tree <- function(parameter,
 
   number_of_lineages <- length(phy$tip.label)
   num_unique_states <- length(parameter[[1]])
+
+
   states <- matrix(nrow = number_of_lineages + phy$Nnode,
                    ncol = 3 * length(parameter[[1]]) + 1,
                    data = NA)
