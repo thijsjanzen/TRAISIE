@@ -250,7 +250,7 @@ DAISIE_sim_mult_trait_update_state_cr <- function(timeval,
 
   if (total_time >= timeval) {
     # Initialize a vector to hold counts for each state
-    counts <- c(total_time - timeval)
+
 
     # Loop through each trait state (1 to n)
     for (state in 1:n) {
@@ -264,12 +264,19 @@ DAISIE_sim_mult_trait_update_state_cr <- function(timeval,
 
 
       # Append the counts for this state to the counts vector
-      counts <- c(counts, nI, nA, nC)
+
     }
 
     # Update the stt_table with the new counts for each state
-    stt_table <- rbind(stt_table, counts)
+    stt_table <- rbind(stt_table,
+                       c(total_time - timeval,
+                         length(which(island_spec[, 4] == "I")),
+                         length(which(island_spec[, 4] == "A")),
+                         length(which(island_spec[, 4] == "C"))))
   }
+
+  # Add a final row of zeros
+  #stt_table <- rbind(stt_table, rep(0, ncol(stt_table)))
 
   updated_state <- list(island_spec = island_spec,
                         maxspecID = maxspecID,

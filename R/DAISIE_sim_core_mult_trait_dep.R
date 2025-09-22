@@ -49,7 +49,7 @@ DAISIE_sim_core_mult_trait_dep <- function(
   #### Initialization ####
   timeval <- 0
   total_time <- time
-  island_ontogeny <- DAISIE:::translate_island_ontogeny(island_ontogeny)
+  #island_ontogeny <- DAISIE:::translate_island_ontogeny(island_ontogeny)
   sea_level <- DAISIE:::translate_sea_level(sea_level)
 
 
@@ -107,7 +107,7 @@ DAISIE_sim_core_mult_trait_dep <- function(
                                      sea_level = NULL,
                                      extcutoff = extcutoff,
                                      num_spec = num_spec,
-                                     mainland = mainland,
+                                     mainland= mainland,
                                      trait_pars = trait_pars,
                                      island_spec = island_spec,
                                      num_observed_states = num_observed_states,
@@ -192,6 +192,7 @@ DAISIE_sim_core_mult_trait_dep <- function(
 
 
   # Loop through all rows of island_spec
+  if (length(island_spec) > 0){
   for (i in 1:nrow(island_spec)) {
 
     # Get the current state (convert to numeric)
@@ -203,19 +204,20 @@ DAISIE_sim_core_mult_trait_dep <- function(
     # Assign it back as a character
     island_spec[i, 8] <- as.character(new_state)
   }
+  }
 
 
 
   #### Finalize STT ####
-  #stt_table <- rbind(
-   # stt_table,
-   # c(
-    #  0,
-    #  stt_table[nrow(stt_table), 2],
-     # stt_table[nrow(stt_table), 3],
-     # stt_table[nrow(stt_table), 4]
-   # )
- # )
+  stt_table <- rbind(
+    stt_table,
+    c(
+      0,
+      stt_table[nrow(stt_table), 2],
+      stt_table[nrow(stt_table), 3],
+      stt_table[nrow(stt_table), 4]
+    )
+  )
   island <- DAISIE_create_island_trait(
     stt_table = stt_table,
     total_time = total_time,
@@ -225,6 +227,6 @@ DAISIE_sim_core_mult_trait_dep <- function(
     num_observed_states = num_observed_states,
     num_hidden_states = num_hidden_states)
    ordered_stt_times <- sort(island$stt_table[, 1], decreasing = TRUE)
-  # testit::assert(all(ordered_stt_times == island$stt_table[, 1]))
+   testit::assert(all(ordered_stt_times == island$stt_table[, 1]))
   return(island)
 }
