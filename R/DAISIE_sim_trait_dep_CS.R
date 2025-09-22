@@ -1,7 +1,7 @@
 
 DAISIE_sim_trait_dep_CS <- function (total_time, mainland, trait_pars, replicates, nonoceanic_pars, prop_type2_pool,
-                                     replicates_apply_type2, sample_freq, hyper_pars, area_pars,
-                                     cond, verbose, files_to_write = 0, num_observed_states, num_hidden_states)
+                                     replicates_apply_type2, sample_freq = 25, hyper_pars, area_pars,
+                                     cond, verbose = TRUE, files_to_write = 0, num_observed_states, num_hidden_states)
 {
   island_replicates <- list()
 
