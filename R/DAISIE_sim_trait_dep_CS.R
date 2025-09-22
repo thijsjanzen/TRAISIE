@@ -18,7 +18,7 @@ DAISIE_sim_trait_dep_CS <- function (total_time, mainland, trait_pars, replicate
     mainland_total <- sum(unlist(mainland))
     while (number_present < cond) {
       for (m_spec in 1: mainland_total) {
-        full_list[[m_spec]] <- DAISIE_sim_core_mult_trait_dep(
+        full_list[[m_spec]] <- DAISIE_sim_core_mult_trait_dep_CS(
           time = total_time,
           mainland = 1 ,
           sea_level = "const",
