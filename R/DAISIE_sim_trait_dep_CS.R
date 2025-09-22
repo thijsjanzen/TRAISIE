@@ -1,7 +1,7 @@
 
 DAISIE_sim_trait_dep_CS <- function (total_time, mainland, trait_pars, replicates, nonoceanic_pars, prop_type2_pool,
-                              replicates_apply_type2, sample_freq, hyper_pars, area_pars,
-                              cond, verbose, files_to_write = 0, num_observed_states, num_hidden_states)
+                                     replicates_apply_type2, sample_freq, hyper_pars, area_pars,
+                                     cond, verbose, files_to_write = 0, num_observed_states, num_hidden_states)
 {
   island_replicates <- list()
 
@@ -15,12 +15,28 @@ DAISIE_sim_trait_dep_CS <- function (total_time, mainland, trait_pars, replicate
       number_present <- 0
     }
 
-    mainland_total <- sum(unlist(mainland))
+
     while (number_present < cond) {
-      for (m_spec in 1: mainland_total) {
-        full_list[[m_spec]] <- DAISIE_sim_core_mult_trait_dep_CS(
+
+      # counts per mainland group (e.g., c(M1, M2, M3, ...))
+      counts <- unlist(mainland)
+      G      <- length(counts)
+      cum    <- cumsum(counts)
+      n_tot  <- sum(counts)
+
+      full_list <- vector("list", n_tot)
+
+      for (m_spec in seq_len(n_tot)) {
+        # which group does this mainland species belong to?
+        g <- which(m_spec <= cum)[1]
+
+        # one-hot root state
+        root <- rep(0L, G); root[g] <- 1L
+
+        # run model with group-specific mainland vector
+        full_list[[m_spec]] <- DAISIE_sim_core_mult_trait_dep(
           time = total_time,
-          mainland = 1 ,
+          mainland = as.list(root),          # e.g., list(1,0,0,...) for group g
           sea_level = "const",
           extcutoff = 300,
           area_pars = area_pars,
@@ -29,11 +45,14 @@ DAISIE_sim_trait_dep_CS <- function (total_time, mainland, trait_pars, replicate
           num_observed_states = num_observed_states,
           num_hidden_states = num_hidden_states
         )
+
+        if (!is.null(full_list[[m_spec]])) {
+          full_list[[m_spec]]$root_state <- root
+        }
       }
 
 
-      stac_vec <- unlist(full_list)[which(names(unlist(full_list)) ==
-                                            "stac")]
+      stac_vec <- unlist(full_list)[which(names(unlist(full_list)) == "stac")]
       present <- which(stac_vec != 0)
       number_present <- length(present)
     }
@@ -43,26 +62,11 @@ DAISIE_sim_trait_dep_CS <- function (total_time, mainland, trait_pars, replicate
     }
   }
 
-
-  if (files_to_write > 0) {
-    for (filenum in 1:files_to_write) {
-      chunks <- ceiling(seq_along(1:replicates)/files_to_write)
-      start <- min(which(chunks == filenum))
-      end <- max(which(chunks == filenum))
-      island_reps <- island_replicates[start:end]
-      save(start, end, island_reps, file = paste0("DAISIE_sims",
-                                                  start, "-", end, ".Rdata"))
-    }
-  }
-
-
-
   if (files_to_write == 0) {
     island_replicates <- DAISIE:::DAISIE_format_CS(island_replicates = island_replicates,
                                                    time = total_time, M = mainland[[1]], sample_freq = sample_freq,
                                                    verbose = verbose)
   }
-
 
   if (files_to_write > 0) {
     rm(island_replicates)
@@ -80,5 +84,3 @@ DAISIE_sim_trait_dep_CS <- function (total_time, mainland, trait_pars, replicate
   }
   return(island_replicates)
 }
-
-
