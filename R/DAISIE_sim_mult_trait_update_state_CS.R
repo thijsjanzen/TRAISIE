@@ -1,4 +1,4 @@
-DAISIE_sim_mult_trait_update_state_cr <- function(timeval,
+DAISIE_sim_mult_trait_update_state_CS <- function(timeval,
                                                   total_time,
                                                   possible_event,
                                                   maxspecID,
