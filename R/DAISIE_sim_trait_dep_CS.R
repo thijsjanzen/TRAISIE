@@ -1,7 +1,14 @@
 
-DAISIE_sim_trait_dep_CS <- function (total_time, mainland, trait_pars, replicates, nonoceanic_pars, prop_type2_pool,
-                                     replicates_apply_type2, sample_freq = 25, hyper_pars, area_pars,
-                                     cond, verbose = TRUE, files_to_write = 0, num_observed_states, num_hidden_states)
+DAISIE_sim_trait_dep_CS <- function (total_time,
+                                     mainland,
+                                     trait_pars,
+                                     replicates,
+                                     sample_freq = 100,
+                                     cond = 0,
+                                     verbose = TRUE,
+                                     files_to_write = 0,
+                                     num_observed_states,
+                                     num_hidden_states)
 {
   island_replicates <- list()
 
@@ -28,7 +35,9 @@ DAISIE_sim_trait_dep_CS <- function (total_time, mainland, trait_pars, replicate
 
       for (m_spec in seq_len(n_tot)) {
         # which group does this mainland species belong to?
-        g <- which(m_spec <= cum)[1]
+
+
+
 
         # one-hot root state
         root <- rep(0L, G); root[g] <- 1L
@@ -36,11 +45,7 @@ DAISIE_sim_trait_dep_CS <- function (total_time, mainland, trait_pars, replicate
         # run model with group-specific mainland vector
         full_list[[m_spec]] <- DAISIE_sim_core_mult_trait_dep(
           time = total_time,
-          mainland = as.list(root),          # e.g., list(1,0,0,...) for group g
-          sea_level = "const",
-          extcutoff = 300,
-          area_pars = area_pars,
-          hyper_pars = hyper_pars,
+          mainland = as.list(root),          # e.g., list(1,0,0,...)
           trait_pars = trait_pars,
           num_observed_states = num_observed_states,
           num_hidden_states = num_hidden_states
@@ -49,6 +54,8 @@ DAISIE_sim_trait_dep_CS <- function (total_time, mainland, trait_pars, replicate
         if (!is.null(full_list[[m_spec]])) {
           full_list[[m_spec]]$root_state <- root
         }
+
+
       }
 
 

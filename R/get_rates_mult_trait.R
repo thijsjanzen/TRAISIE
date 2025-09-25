@@ -2,8 +2,7 @@
 
 ############ hidden
 
-get_immig_rate <- function(A = 1,
-                           num_spec,
+get_immig_rate <- function(num_spec,
                            mainland,
                            trait_pars,
                            island_spec = NULL,
@@ -14,16 +13,16 @@ get_immig_rate <- function(A = 1,
   for (i in 1:(num_observed_states*num_hidden_states)) {
 
 
-    if (i >= 1 && i <= num_hidden_states) {
-      mainland_n <- mainland[[1]]
-    } else if (i > num_hidden_states && i <= (2 * num_hidden_states)) {
-      mainland_n <- mainland[[2]]
-    } else if (i > (2 * num_hidden_states) && i <= (3 * num_hidden_states)) {
-      mainland_n <- mainland[[3]]
-    } else if (i > (3 * num_hidden_states) && i <= (4 * num_hidden_states)) {
-      mainland_n <- mainland[[4]]
-    }
-
+    #if (i >= 1 && i <= num_hidden_states) {
+    #  mainland_n <- mainland[[1]]
+   # } else if (i > num_hidden_states && i <= (2 * num_hidden_states)) {
+   #   mainland_n <- mainland[[2]]
+   # } else if (i > (2 * num_hidden_states) && i <= (3 * num_hidden_states)) {
+   #   mainland_n <- mainland[[3]]
+   # } else if (i > (3 * num_hidden_states) && i <= (4 * num_hidden_states)) {
+   #   mainland_n <- mainland[[4]]
+   # }
+    mainland_n <- mainland[[i]]
 
     gam <- trait_pars[[paste("immig_rate", i, sep = "")]]
     num_spec_trait <- length(which(island_spec[, 8] == as.character(i)))
@@ -46,10 +45,7 @@ get_immig_rate <- function(A = 1,
 
 ##################
 
-get_ext_rate <- function(hyper_pars,
-                         extcutoff = 1000,
-                         num_spec,
-                         A = 1,
+get_ext_rate <- function(num_spec,
                          trait_pars,
                          island_spec = NULL,
                          num_observed_states,
@@ -89,9 +85,7 @@ get_ana_rate <- function(island_spec = NULL,
 
 ##############
 
-get_clado_rate <- function(hyper_pars,
-                           num_spec,
-                           A,
+get_clado_rate <- function(num_spec,
                            trait_pars,
                            island_spec = NULL,
                            num_observed_states,
@@ -122,7 +116,8 @@ get_clado_rate <- function(hyper_pars,
 get_trans_rate <- function(trait_pars,
                            island_spec,
                            num_observed_states,
-                           num_hidden_states, p) {
+                           num_hidden_states,
+                           p) {
   trans_list <- list()
 
   for (i in 1:((num_observed_states*num_hidden_states)^2)) {

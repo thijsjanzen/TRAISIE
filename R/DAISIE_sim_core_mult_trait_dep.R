@@ -7,11 +7,6 @@
 #'
 #' @param time Numeric scalar. Total simulation time (island age).
 #' @param mainland Named list of mainland abundances (e.g., \code{list(M1 = 100, M2 = 150)}).
-#' @param island_ontogeny Island ontogeny type (numeric or string). Defaults to \code{0}.
-#' @param sea_level Sea level scenario (string). Defaults to \code{"const"}.
-#' @param hyper_pars List of hyperparameters for the simulation model.
-#' @param area_pars List of parameters controlling island area change (optional).
-#' @param extcutoff Numeric. Extinction cutoff threshold. Defaults to \code{1000}.
 #' @param trait_pars List of trait-dependent rates and parameters.
 #' @param num_observed_states Integer. Number of observed trait states.
 #' @param num_hidden_states Integer. Number of hidden trait states.
@@ -36,11 +31,6 @@
 DAISIE_sim_core_mult_trait_dep <- function(
     time,
     mainland,
-    island_ontogeny = 0,
-    sea_level = "const",
-    hyper_pars,
-    area_pars,
-    extcutoff = 1000,
     trait_pars,
     num_observed_states,
     num_hidden_states
@@ -49,8 +39,6 @@ DAISIE_sim_core_mult_trait_dep <- function(
   #### Initialization ####
   timeval <- 0
   total_time <- time
-  #island_ontogeny <- DAISIE:::translate_island_ontogeny(island_ontogeny)
-  sea_level <- DAISIE:::translate_sea_level(sea_level)
 
 
   testit::assert(length(trait_pars) > 5)
@@ -98,21 +86,14 @@ DAISIE_sim_core_mult_trait_dep <- function(
 
   #### Start Monte Carlo iterations ####
   while (timeval < total_time) {
-    rates <- update_rates_mult_trait(timeval= timeval,
+    rates <- update_rates_mult_trait(timeval = timeval,
                                      total_time = total_time,
-                                     hyper_pars = hyper_pars,
-                                     area_pars = NULL,
-                                     peak = NULL,
-                                     island_ontogeny = NULL,
-                                     sea_level = NULL,
-                                     extcutoff = extcutoff,
                                      num_spec = num_spec,
                                      mainland= mainland,
                                      trait_pars = trait_pars,
                                      island_spec = island_spec,
                                      num_observed_states = num_observed_states,
                                      num_hidden_states = num_hidden_states)
-
 
 
 
@@ -128,12 +109,6 @@ DAISIE_sim_core_mult_trait_dep <- function(
     if (timeval < total_time) {
       rates <- update_rates_mult_trait(timeval= timeval,
                                        total_time = total_time,
-                                       hyper_pars = hyper_pars,
-                                       area_pars = NULL,
-                                       peak = NULL,
-                                       island_ontogeny = NULL,
-                                       sea_level = NULL,
-                                       extcutoff = extcutoff,
                                        num_spec = num_spec,
                                        mainland = mainland,
                                        trait_pars = trait_pars,
@@ -142,11 +117,9 @@ DAISIE_sim_core_mult_trait_dep <- function(
                                        num_hidden_states = num_hidden_states)
 
 
-      possible_event <- DAISIE_sample_event_trait_dep(
-        rates = rates,
-        num_observed_states = num_observed_states,
-        num_hidden_states = num_hidden_states
-      )
+      possible_event <- DAISIE_sample_event_trait_dep( rates = rates,
+                                                       num_observed_states = num_observed_states,
+                                                       num_hidden_states = num_hidden_states)
 
       #print(possible_event)
       updated_state <- DAISIE_sim_mult_trait_update_state_cr(
