@@ -28,20 +28,17 @@ DAISIE_sim_mult_trait_update_state_cr <- function(timeval,
 
       mainland_total = sum(unlist(mainland))
 
-      colonist <- DDD::sample2(
-        (1 + sum(mainland[1:(trait_state - 1)])) : sum(mainland[1:trait_state]),
-        1
-      )
+
 
       # Determine which trait block the species belongs to
-     # block <- ceiling(trait_state / num_hidden_states)
+      block <- ceiling(trait_state / num_hidden_states)
 
       # Compute start and end indices for that block
-      #start_idx <- if (block == 1) 1 else sum(unlist(mainland[1:(block - 1)])) + 1
-      #end_idx   <- sum(unlist(mainland[1:block]))
+      start_idx <- if (block == 1) 1 else sum(unlist(mainland[1:(block - 1)])) + 1
+      end_idx   <- sum(unlist(mainland[1:block]))
 
       # Sample a colonist from the block
-     # colonist <- DDD::sample2(start_idx:end_idx, 1)
+      colonist <- DDD::sample2(start_idx:end_idx, 1)
 
 
 

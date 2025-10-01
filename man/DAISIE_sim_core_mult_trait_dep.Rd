@@ -7,10 +7,6 @@
 DAISIE_sim_core_mult_trait_dep(
   time,
   mainland,
-  island_ontogeny = 0,
-  sea_level = "const",
-  hyper_pars,
-  area_pars,
   extcutoff = 1000,
   trait_pars,
   num_observed_states,
@@ -21,14 +17,6 @@ DAISIE_sim_core_mult_trait_dep(
 \item{time}{Numeric scalar. Total simulation time (island age).}
 
 \item{mainland}{Named list of mainland abundances (e.g., \code{list(M1 = 100, M2 = 150)}).}
-
-\item{island_ontogeny}{Island ontogeny type (numeric or string). Defaults to \code{0}.}
-
-\item{sea_level}{Sea level scenario (string). Defaults to \code{"const"}.}
-
-\item{hyper_pars}{List of hyperparameters for the simulation model.}
-
-\item{area_pars}{List of parameters controlling island area change (optional).}
 
 \item{extcutoff}{Numeric. Extinction cutoff threshold. Defaults to \code{1000}.}
 

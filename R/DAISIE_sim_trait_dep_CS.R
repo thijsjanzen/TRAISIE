@@ -1,4 +1,5 @@
 
+
 DAISIE_sim_trait_dep_CS <- function (total_time,
                                      mainland,
                                      trait_pars,
@@ -34,9 +35,10 @@ DAISIE_sim_trait_dep_CS <- function (total_time,
       full_list <- vector("list", n_tot)
 
       for (m_spec in seq_len(n_tot)) {
+
+
         # which group does this mainland species belong to?
-
-
+        g <- which(m_spec <= cum)[1]
 
 
         # one-hot root state
