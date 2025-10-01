@@ -26,6 +26,9 @@ inline std::vector<double> make_dist_g(const Rcpp::NumericVector& tma,
                                        const Rcpp::NumericVector& gamma,
                                        const size_t num_unique_states) {
   std::vector<double> dist_gamma(gamma.begin(), gamma.end());
+
+  if (num_unique_states == 1) return(dist_gamma);
+
   if (Rcpp::NumericVector::is_na(tma[0])) {
     // tma not known, please note that entire vector is NA in this case
     for (auto& i : dist_gamma) i *= 1.0 / num_unique_states;

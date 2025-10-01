@@ -49,12 +49,6 @@ DAISIE_DE_trait_loglik_CS <- function( parameter,
   vec_loglikelihood <- rep(NA, length(datalist) - 1) # first entry is not data
 
   for (i in 2:length(datalist)) {
-
-    if (i == 6) {
-      a <- 5;
-      cat("hello\n")
-    }
-
     stac <- datalist[[i]]$stac
     brts <- datalist[[i]]$branching_times
     traits <- datalist[[i]]$traits
