@@ -136,7 +136,7 @@ calc_init_state_hidden <- function(trait,
 
   if (num_unique_states == 1)
   {
-      sampling_fraction = sampling_fraction[1 ]
+      sampling_fraction = sampling_fraction[1]
       DE[1:num_unique_states] <- sampling_fraction
       E[1:num_unique_states] <- 1 - sampling_fraction
 
@@ -144,6 +144,7 @@ calc_init_state_hidden <- function(trait,
     if (mainland) {
 
       DM3[1:num_unique_states] <- 1
+      DA3 <- 0
     }
 
 
@@ -163,6 +164,7 @@ calc_init_state_hidden <- function(trait,
   if (mainland) {
     steps <- num_hidden_states * trait_mainland_ancestor
     DM3[(steps + 1):(num_hidden_states + steps)] <- 1
+    DA3 <- 0
   }
   }
 

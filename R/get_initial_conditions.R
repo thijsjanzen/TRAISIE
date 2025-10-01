@@ -49,6 +49,7 @@ get_initial_conditions2 <- function(status,
       DE[1:n] <- sampling_fraction
       E[1:n] <- 1 - sampling_fraction
       DM3[1:n] <- 1
+      DA3 <- 0
     } else if (status == 4) {
 
 

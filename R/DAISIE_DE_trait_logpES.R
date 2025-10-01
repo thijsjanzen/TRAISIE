@@ -58,13 +58,18 @@ DAISIE_DE_trait_logpES <- function(brts,
                                      "odeint::runge_kutta_cash_karp54",
                                    use_Rcpp = 0) {
 
-  check_arguments(brts, parameter,
-                  phy = 0,
-                  trait,
-                  num_observed_states,
-                  num_hidden_states,
-                  status,
-                  sampling_fraction = sampling_fraction)
+
+    check_arguments(brts, parameter,
+                    phy = 0,
+                    trait,
+                    num_observed_states,
+                    num_hidden_states,
+                    status,
+                    sampling_fraction = sampling_fraction)
+
+
+
+
 
   # Unpack times from brts
   t0   <- brts[1]

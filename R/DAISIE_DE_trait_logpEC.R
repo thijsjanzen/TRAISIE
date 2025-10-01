@@ -15,9 +15,11 @@
 #' i <- 5
 #' phy <- DDD::brts2phylo(datalist[[i]]$branching_times[-c(1, 2)])
 #' brts <- datalist[[i]]$branching_times
-#' traits <- sample(c(NA, 0), length(brts), replace = TRUE)
-#' sampling_fraction <- sample(c(1, 1), length(brts), replace = TRUE)
-#'
+#' traits <- sample(c(1, 0), length(brts), replace = TRUE)
+#' num_observed_states     =  1
+#' num_hidden_states       =  1
+#' sampling_fraction       =  sample(c(1, 1), num_observed_states, replace = TRUE)
+#' trait_mainland_ancestor = c(1, 0)
 #'
 #' parameter <- list(
 #'   c(2.546591, 1.2, 1, 0.2),
@@ -33,18 +35,19 @@
 #' )
 #'
 #'  DAISIE_DE_trait_logpEC(
-#'   brts                    = data_list1[[670]],
-#'   phy                     = data_list1[[670]]$phylogeny,
-#'   traits                  = data_list1[[670]]$traits,
+#'   brts                    = brts,
+#'   phy                     = phy,
+#'   traits                  = traits,
 #'   status                  = 2,
-#'   sampling_fraction       = data_list1[[670]]$sampling_fraction,
+#'   sampling_fraction       = sampling_fraction,
 #'   parameter               = parameter,
-#'   trait_mainland_ancestor = data_list1[[670]]$root_state,
-#'   num_observed_states     = 1,
-#'   num_hidden_states       = 1,
+#'   trait_mainland_ancestor =  trait_mainland_ancestor,
+#'   num_observed_states     =  num_observed_states,
+#'   num_hidden_states       =  num_hidden_states,
 #'   atol                    = 1e-15,
 #'   rtol                    = 1e-15,
-#'   methode                 = "ode45")
+#'   methode                 = "ode45",
+#'   use_Rcpp                = 2)
 #'
 #' # Or DAISIE style:
 #' parameter <- list(
@@ -59,13 +62,13 @@
 #' )
 #'
 #' DAISIE_DE_trait_logpEC(
-#'  brts                    = data_list1[[670]]$branching_times,
-#'  phy                     = data_list1[[670]]$phylogeny,
-#'  traits                  = data_list1[[670]]$traits,
+#'  brts                    = brts,
+#'  phy                     = phy,
+#'  traits                  = traits,
 #'  status                  = 2,
-#'  sampling_fraction       = data_list1[[670]]$sampling_fraction[1],
+#'  sampling_fraction       = sampling_fraction,
 #'  parameter               = parameter,
-#'  trait_mainland_ancestor = data_list1[[670]]$root_state[1],
+#'  trait_mainland_ancestor = trait_mainland_ancestor,
 #'  num_observed_states     = 1,
 #'  num_hidden_states       = 1,
 #'  atol                    = 1e-15,
@@ -91,8 +94,12 @@ DAISIE_DE_trait_logpEC <- function(
     use_Rcpp = 0
 ) {
 
-  check_arguments(brts, parameter, phy, traits, num_observed_states,
-                  num_hidden_states, status, sampling_fraction)
+
+
+    check_arguments(brts, parameter, phy, traits, num_observed_states,
+                    num_hidden_states, status, sampling_fraction)
+
+
 
   if (length(brts) < 3) {
     stop("need at least three branching times")
