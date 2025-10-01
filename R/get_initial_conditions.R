@@ -41,13 +41,13 @@ get_initial_conditions2 <- function(status,
     } else if (status == 2 && length(brts) == 2) {
 
 
-        DE[1:n] <- sampling_fraction
-        E[1:n]  <- 1 - sampling_fraction
+        DE[1:n] <- sampling_fraction[1:n]
+        E[1:n]  <- 1 - sampling_fraction[1:n]
 
 
     } else if (status == 3 && length(brts) == 2) {
-      DE[1:n] <- sampling_fraction
-      E[1:n] <- 1 - sampling_fraction
+      DE[1:n] <- sampling_fraction[1:n]
+      E[1:n] <- 1 - sampling_fraction[1:n]
       DM3[1:n] <- 1
     } else if (status == 4) {
 
@@ -62,8 +62,8 @@ get_initial_conditions2 <- function(status,
     } else if (status == 9)  {
 
 
-        DE[1:n] <- sampling_fraction
-        E[1:n]  <- 1 - sampling_fraction
+        DE[1:n] <- sampling_fraction[1:n]
+        E[1:n]  <- 1 - sampling_fraction[1:n]
 
     }
   }else {
@@ -209,8 +209,8 @@ get_initial_conditions3 <- function(status,
                              res[length(res)])                                      ## DA3
   } else if (status == 5) {
 
-      DE[1:n] <- sampling_fraction
-      E[1:n]  <- 1 - sampling_fraction
+      DE[1:n] <- sampling_fraction[1:n]
+      E[1:n]  <- 1 - sampling_fraction[1:n]
 
 
     initial_conditions3 <- c(DE, DM1, DM2, DM3, E, DA2, DA3)
