@@ -42,16 +42,28 @@ DAISIE_sim_trait_dep_CS <- function (total_time,
 
 
         # one-hot root state
-        root <- rep(0L, G); root[g] <- 1L
+        root <- rep(0L, num_observed_states)
+
+        n <- num_observed_states* num_hidden_states
+        if (g %in% 1:n) {
+          gg <- ceiling(g / num_hidden_states)
+        }
+
+
+
+        root[gg] <- 1L
+        mainland_root <- rep(0L, n)
+        mainland_root[g] <- 1L
 
         # run model with group-specific mainland vector
         full_list[[m_spec]] <- DAISIE_sim_core_mult_trait_dep(
           time = total_time,
-          mainland = as.list(root),          # e.g., list(1,0,0,...)
+          mainland = as.list(mainland_root),          # e.g., list(1,0,0,...)
           trait_pars = trait_pars,
           num_observed_states = num_observed_states,
           num_hidden_states = num_hidden_states
         )
+
 
         if (!is.null(full_list[[m_spec]])) {
           full_list[[m_spec]]$root_state <- root
@@ -93,3 +105,4 @@ DAISIE_sim_trait_dep_CS <- function (total_time,
   }
   return(island_replicates)
 }
+
