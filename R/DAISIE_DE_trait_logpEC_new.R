@@ -1,13 +1,13 @@
 
- DAISIE_DE_trait_logpEC1(
+DAISIE_DE_trait_logpEC1(
   brts                    = brts,
   phy                     = phy,
   traits                  = traits,
   status                  = 2,
   sampling_fraction       = sampling_fraction,
   parameter               = parameter,
-  trait_mainland_ancestor = c(1, 0),
-   Mainland_pool_size_vec = c(3000, 3000),   # <--- NEW ARGUMENT
+  trait_mainland_ancestor = c(0,1),
+  Mainland_pool_size_vec = c(3000, 3000),   # <--- NEW ARGUMENT
   num_observed_states     = 2,
   num_hidden_states       = 2,
   atol                    = 1e-15,
@@ -79,16 +79,14 @@
        )
 
        # weighted contribution of (obs_state, hidden_state = h)
-       Lk_vec[h] <- exp(Lk_h_log) * Mainland_pool_size_vec[obs_state] / M
+       Lk_vec[h] <- exp(Lk_h_log) * Mainland_pool_size_vec[obs_state] / (M*num_hidden_states)
      }
 
      # sum over hidden states
      return(log(sum(Lk_vec)))
    }
 
-   # ------------------------------------------------------------------
-   # CASE 2 : MAINLAND TRAIT UNKNOWN → mixture over observed states
-   # ------------------------------------------------------------------
+
 
    # ---------------------------------------------------------------------
    # CASE 2 : TRAIT OF MAINLAND ANCESTOR UNKNOWN (trait_mainland_ancestor = NA)
@@ -134,7 +132,7 @@
        }
 
        # Sum over hidden states and apply weight of observed trait i
-       Lk_obs_vec[i] <- sum(Lk_hidden_vec) * Mainland_pool_size_vec[i] / M
+       Lk_obs_vec[i] <- sum(Lk_hidden_vec) * Mainland_pool_size_vec[i] / (M*num_hidden_states)
      }
 
      # Sum over observed states
