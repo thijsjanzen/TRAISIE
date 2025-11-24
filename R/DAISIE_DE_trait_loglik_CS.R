@@ -8,7 +8,7 @@ DAISIE_DE_trait_loglik_CS <- function( parameter,
                                        datalist,
                                        methode = "lsodes",
                                        rcpp_methode =
-                                         "odeint::runge_kutta_cash_karp54",
+                                       "odeint::runge_kutta_cash_karp54",
                                        atol = 1e-15,
                                        rtol = 1e-15,
                                        num_observed_states,
@@ -196,3 +196,4 @@ DAISIE_DE_trait_loglik_CS <- function( parameter,
  # cat(vec_loglikelihood, loglik,"\n")
   return(loglik)
 }
+
