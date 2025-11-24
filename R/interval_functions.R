@@ -4,24 +4,20 @@ dist_gamma_tma <- function(gamma,
                            num_unique_states) {
 
   dist_gamma <- c()
-  if ( num_unique_states == 1){
+  if (num_unique_states == 1){
 
     dist_gamma <- gamma
 
    } else {
   if (sum(is.na(trait_mainland_ancestor)) ==
       length(trait_mainland_ancestor)) {
-    # this is always true if we don't know the tma,
-    # because if one is NA, then all must be NA
-    dist_gamma <- gamma / num_unique_states
-  } else {
-    num_hidden_states <- length(gamma) / length(trait_mainland_ancestor)
-    s <- c()
-    for (i in seq_along(trait_mainland_ancestor)) {
-      s <- c(s, rep(trait_mainland_ancestor[i], num_hidden_states))
-    }
+    dist_gamma <- gamma
 
-    dist_gamma <- (gamma * s) / num_hidden_states
+  } else {
+    s <- rep(0, num_unique_states)
+    trait_index <- which(trait_mainland_ancestor == 1)
+    s[trait_index] <- 1
+    dist_gamma <- gamma * s
   }
 }
   return(dist_gamma)
