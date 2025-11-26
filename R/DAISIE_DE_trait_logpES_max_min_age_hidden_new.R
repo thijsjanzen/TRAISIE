@@ -10,6 +10,21 @@
 #' datalist <- Biwa_datalist
 #'
 #'
+#'
+#' parameter <- list(
+#'   c(2.546591, 2.546591, 2.546591, 2.546591),
+#'   c(2.678781, 2.678781, 2.678781, 2.678781),
+#'   c(0.009326754, 0.009326754, 0.009326754, 0.009326754),
+#'   c(1.008583, 1.008583, 1.008583, 1.008583),
+#'   matrix(c(
+#'     0,    0,    0,  0,
+#'     0,    0,    0.00,0.00,
+#'     rep(0, 8)
+#'   ), nrow = 4),
+#'   1
+#' )
+#'
+#'
 #' parameter <- list(
 #'   c(2.546591, 1.2, 1, 0.2),
 #'   c(2.678781, 2, 1.9, 3),
@@ -79,7 +94,7 @@ DAISIE_DE_trait_logpES_max_min_age_hidden <- function(
                                            rtol                    = rtol,
                                            methode                 = "ode45",
                                            rcpp_methode            = rcpp_methode,
-                                           use_Rcpp                = 2)
+                                           use_Rcpp                = use_Rcpp)
     Lk_vec[i] <- Lk_log # ideally this should not be needed if the function above does not do logtransformation
   }
 
@@ -120,7 +135,7 @@ DAISIE_DE_trait_logpES_max_min_age_hidden <- function(
     }
   }
   log_Lk <- log(sum(Lk_vec * weights))
-  return(log_Lk)
+  return( list (loglik = log_Lk, lik_states = Lk_vec, weights = weights))
 }
 
 

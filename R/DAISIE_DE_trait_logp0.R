@@ -10,6 +10,21 @@
 #' data("Galapagos_datalist")
 #' datalist <- Galapagos_datalist
 #'
+#'
+#'
+#' parameter <- list(
+#'   c(2.546591, 2.546591, 2.546591, 2.546591),
+#'   c(2.678781, 2.678781, 2.678781, 2.678781),
+#'   c(0.009326754, 0.009326754, 0.009326754, 0.009326754),
+#'   c(1.008583, 1.008583, 1.008583, 1.008583),
+#'   matrix(c(
+#'     0,    0,    0,  0,
+#'     0,    0,    0.00,0.00,
+#'     rep(0, 8)
+#'   ), nrow = 4),
+#'   1
+#' )
+#'
 #' parameter <- list(
 #'   c(2.546591, 1.2, 1, 0.2),
 #'   c(2.678781, 2, 1.9, 3),
@@ -27,10 +42,10 @@
 #' DAISIE_DE_trait_logp0(
 #'   datalist,
 #'   parameter               = parameter,
-#'   trait_mainland_ancestor = c(400/800,400/800),
 #'   num_observed_states     = 2,
 #'   num_hidden_states       = 2,
 #'   atol                    = 1e-15,
+#' trait_mainland_ancestor   =  c(1/5, 2/5),
 #'   rtol                    = 1e-15,
 #'   methode                 = "ode45",
 #'   rcpp_methode ="odeint::runge_kutta_cash_karp54",
@@ -45,7 +60,7 @@ DAISIE_DE_trait_logp0 <- function(
     rtol = 1e-15,
     num_observed_states,
     num_hidden_states,
-    trait_mainland_ancestor= trait_mainland_ancestor_extended,
+    trait_mainland_ancestor = NA,
     methode = "ode45",
     rcpp_methode ="odeint::runge_kutta_cash_karp54",
     use_Rcpp = 2) {
@@ -106,7 +121,7 @@ DAISIE_DE_trait_logp0 <- function(
     }
   }
   log_Lk <- log(sum(Lk_vec * weights))
-  return(log_Lk)
+  return( list (loglik = log_Lk, lik_states = Lk_vec, weights = weights))
 }
 
 DAISIE_DE_trait_logp0_core <- function(datalist,

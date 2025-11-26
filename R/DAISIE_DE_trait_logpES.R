@@ -17,6 +17,21 @@
 #' brts <- datalist[[i]]$branching_times
 #' trait <- 0
 #' sampling_fraction <- c(1,1)
+#'
+#' parameter <- list(
+#'   c(2.546591, 2.546591, 2.546591, 2.546591),
+#'   c(2.678781, 2.678781, 2.678781, 2.678781),
+#'   c(0.009326754, 0.009326754, 0.009326754, 0.009326754),
+#'   c(1.008583, 1.008583, 1.008583, 1.008583),
+#'   matrix(c(
+#'     0,    0,    0,  0,
+#'     0,    0,    0.00,0.00,
+#'     rep(0, 8)
+#'   ), nrow = 4),
+#'   1
+#' )
+#'
+#'
 #' parameter <- list(
 #'   c(2.546591, 1.2, 1, 0.2),
 #'   c(2.678781, 2, 1.9, 3),
@@ -34,7 +49,7 @@
 #' status = 2
 #' DAISIE_DE_trait_logpES(
 #'   brts                    = brts,
-#'   trait                  = trait,
+#'   trait                   = trait,
 #'   status                  = status,
 #'   sampling_fraction       = sampling_fraction,
 #'   parameter               = parameter,
@@ -123,7 +138,7 @@ DAISIE_DE_trait_logpES <- function(
     }
   }
   log_Lk <- log(sum(Lk_vec * weights))
-  return(log_Lk)
+  return( list (loglik = log_Lk, lik_states = Lk_vec, weights = weights))
 }
 
 
