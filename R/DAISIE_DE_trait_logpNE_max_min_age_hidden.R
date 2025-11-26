@@ -34,6 +34,7 @@
 #'   num_observed_states   = 2,
 #'   num_hidden_states     = 2,
 #'   trait_mainland_ancestor = NA,
+#'   sampling_fraction       = c(1,1),
 #'   atol                  = 1e-15,
 #'   rtol                  = 1e-15,
 #'   methode               = "ode45",
@@ -51,6 +52,7 @@ DAISIE_DE_trait_logpNE_max_min_age_hidden <- function(
     status,
     atol = 1e-15,
     rtol = 1e-15,
+    sampling_fraction = c(1,1),
     methode = "ode45",
     rcpp_methode = "odeint::runge_kutta_cash_karp54",
     use_Rcpp = 2
@@ -74,7 +76,7 @@ DAISIE_DE_trait_logpNE_max_min_age_hidden <- function(
                                                               rtol                    = rtol,
                                                               methode                 = "ode45",
                                                               rcpp_methode            = rcpp_methode,
-                                                              use_Rcpp                = 2)
+                                                              use_Rcpp                = use_Rcpp)
     Lk_vec[i] <- Lk_log # ideally this should not be needed if the function above does not do logtransformation
   }
 
@@ -98,7 +100,12 @@ DAISIE_DE_trait_logpNE_max_min_age_hidden <- function(
         s[((j - 1) * num_hidden_states + 1):(j * num_hidden_states)] <- rep(trait_mainland_ancestor[j], num_hidden_states)
         # you could also write s <- c(s, rep(trait_mainland_ancestor[j],num_hidden_states))
         weights_j <- Lk_vec[((j - 1) * num_hidden_states + 1):(j * num_hidden_states)]
-        weights_j <- weights_j/sum(weights_j)
+        if (sum(weights_j) == 0)
+        {
+          weights_j <- weights_j/1
+        }else{
+          weights_j <- weights_j/sum(weights_j)
+        }
         weights1 <- c(weights1, weights_j)
       }
       weights1 <- weights1 * s/sum(weights1)
@@ -115,7 +122,7 @@ DAISIE_DE_trait_logpNE_max_min_age_hidden <- function(
     }
   }
   log_Lk <- log(sum(Lk_vec * weights))
-  return(log_Lk)
+  return( list (loglik = log_Lk, lik_states = Lk_vec, weights = weights))
 }
 
 
@@ -128,8 +135,8 @@ DAISIE_DE_trait_logpNE_max_min_age_hidden_core <-
   function(brts,
            trait,
            status,
-           sampling_fraction = c(1,1),
            parameter,
+           sampling_fraction = c(1,1),
            trait_mainland_ancestor = NA,
            num_observed_states,
            num_hidden_states,

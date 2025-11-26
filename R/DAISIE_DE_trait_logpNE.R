@@ -32,7 +32,7 @@
 #' parameter <- list(
 #'   c(2.546591, 1.2, 1, 0.2),
 #'   c(2.678781, 2, 1.9, 3),
-#'   c(0.009326754, 0.003, 0.002, 0.2),
+#'   c(0.009326754, 0.009326754, 0.009326754, 0.009326754),
 #'   c(1.008583, 1, 2, 1.5),
 #'   matrix(c(
 #'     0,    .001,    0.005,  0,
@@ -40,7 +40,7 @@
 #'     0.005,    000,    0,  0.005,
 #'     0,   0.005,  0.005,0.00
 #'   ), nrow = 4),
-#'   0
+#'   1
 #' )
 #' DAISIE_DE_trait_logpNE(
 #'   brts                    = brts,
@@ -48,7 +48,7 @@
 #'   status                  = 4,
 #'   sampling_fraction       = sampling_fraction,
 #'   parameter               = parameter,
-#'   trait_mainland_ancestor = c(15/30, 15/30),
+#'   trait_mainland_ancestor = c(1, 0),
 #'   num_observed_states     = 2,
 #'   num_hidden_states       = 2,
 #'   atol                    = 1e-15,
@@ -113,12 +113,18 @@ DAISIE_DE_trait_logpNE <- function(
       ### the following calculates the terms before the + sign
       s <- numeric(num_observed_states * num_hidden_states)
       # you could also do s <- c() and use line 92
+
       weights1 <- c()
       for(j in 1:length(trait_mainland_ancestor)) {
         s[((j - 1) * num_hidden_states + 1):(j * num_hidden_states)] <- rep(trait_mainland_ancestor[j], num_hidden_states)
         # you could also write s <- c(s, rep(trait_mainland_ancestor[j],num_hidden_states))
         weights_j <- Lk_vec[((j - 1) * num_hidden_states + 1):(j * num_hidden_states)]
-        weights_j <- weights_j/sum(weights_j)
+        if (sum(weights_j) == 0)
+        {
+          weights_j <- weights_j/1
+        }else{
+          weights_j <- weights_j/sum(weights_j)
+        }
         weights1 <- c(weights1, weights_j)
       }
       weights1 <- weights1 * s/sum(weights1)
@@ -135,7 +141,7 @@ DAISIE_DE_trait_logpNE <- function(
     }
   }
   log_Lk <- log(sum(Lk_vec * weights))
-  return(log_Lk)
+  return( list (loglik = log_Lk, lik_states = Lk_vec, weights = weights))
 }
 
 
