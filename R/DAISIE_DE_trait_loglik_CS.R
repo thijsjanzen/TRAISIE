@@ -16,11 +16,12 @@ DAISIE_DE_trait_loglik_CS <- function( parameter,
                                        cond = 1,
                                        num_threads = 1,
                                        verbose = FALSE,
-                                       use_Rcpp = 0)
+                                       use_Rcpp = use_Rcpp)
 
 {
   logcond <- 0 # default value gives no effect
 
+  prob_dis_L0 <- c(datalist[[1]]$M0/datalist[[1]]$not_present, datalist[[1]]$M1/datalist[[1]]$not_present)
   if (length(parameter) >= 6) {
     logp0 <- DAISIE_DE_trait_logp0(datalist = datalist,
                                    parameter = parameter,
@@ -28,26 +29,27 @@ DAISIE_DE_trait_loglik_CS <- function( parameter,
                                    rtol = rtol,
                                    num_observed_states = num_observed_states,
                                    num_hidden_states = num_hidden_states,
+                                   trait_mainland_ancestor =  prob_dis_L0,
                                    methode = methode,
                                    use_Rcpp = use_Rcpp)
     if (is.null(datalist[[1]]$not_present)) {
-      loglik <- (datalist[[1]]$not_present_type1 + datalist[[1]]$not_present_type2) * logp0
+      loglik <- (datalist[[1]]$not_present_type1 + datalist[[1]]$not_present_type2) * logp0$loglik
       numimm <- (datalist[[1]]$not_present_type1 + datalist[[1]]$not_present_type2) + length(datalist) - 1
     } else {
-      loglik <- datalist[[1]]$not_present * logp0
+      loglik <- datalist[[1]]$not_present * logp0$loglik
       numimm <- datalist[[1]]$not_present + length(datalist) - 1
     }
 
     ### condition on at least one successful colonization
-    logcond <- (cond == 1) * log(1 - exp(numimm * logp0))
+    logcond <- (cond == 1) * log(1 - exp(numimm * logp0$loglik))
     for (i in 2:length(datalist)) {
       datalist[[i]]$type1or2 <- 1
     }
   }
 
   loglik <- loglik - logcond
-  vec_loglikelihood <- rep(NA, length(datalist) - 1) # first entry is not data
 
+  vec_loglikelihood <- rep(NA, length(datalist) - 1) # first entry is not data
   for (i in 2:length(datalist)) {
     stac <- datalist[[i]]$stac
     brts <- datalist[[i]]$branching_times
@@ -189,7 +191,7 @@ DAISIE_DE_trait_loglik_CS <- function( parameter,
       stop("Unknown stac value: ", stac)
     }
 
-    vec_loglikelihood[i - 1] <- loglikelihood
+    vec_loglikelihood[i - 1] <- loglikelihood$loglik
   }
 
   loglik <- sum(vec_loglikelihood) + loglik
