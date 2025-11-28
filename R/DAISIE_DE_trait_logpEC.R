@@ -119,7 +119,12 @@ DAISIE_DE_trait_logpEC <- function(
         s[((j - 1) * num_hidden_states + 1):(j * num_hidden_states)] <- rep(trait_mainland_ancestor[j], num_hidden_states)
         # you could also write s <- c(s, rep(trait_mainland_ancestor[j],num_hidden_states))
         weights_j <- Lk_vec[((j - 1) * num_hidden_states + 1):(j * num_hidden_states)]
-        weights_j <- weights_j/sum(weights_j)
+        if (sum(weights_j) == 0)
+        {
+          weights_j <- weights_j/1
+        }else{
+          weights_j <- weights_j/sum(weights_j)
+        }
         weights1 <- c(weights1, weights_j)
       }
       weights1 <- weights1 * s/sum(weights1)
@@ -129,7 +134,12 @@ DAISIE_DE_trait_logpEC <- function(
       weights2 <- Lk_vec * (1 - sum(trait_mainland_ancestor))/sum(Lk_vec)
 
       weights <- weights1 + weights2
-      weights <- weights/sum(weights)
+
+      if (all(weights == 0)) {
+        weights <- weights
+      } else {
+        weights <- weights / sum(weights)
+      }
 
     } else { # this is the case where nothing is provided, i.e. NA
       weights <- Lk_vec/sum(Lk_vec)

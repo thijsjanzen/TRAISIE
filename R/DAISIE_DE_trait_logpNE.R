@@ -40,11 +40,11 @@
 #'     0.005,    000,    0,  0.005,
 #'     0,   0.005,  0.005,0.00
 #'   ), nrow = 4),
-#'   1
+#'   0
 #' )
 #' DAISIE_DE_trait_logpNE(
 #'   brts                    = brts,
-#'   trait                  = trait,
+#'   trait                   = trait,
 #'   status                  = 4,
 #'   sampling_fraction       = sampling_fraction,
 #'   parameter               = parameter,
@@ -134,10 +134,18 @@ DAISIE_DE_trait_logpNE <- function(
       weights2 <- Lk_vec * (1 - sum(trait_mainland_ancestor))/sum(Lk_vec)
 
       weights <- weights1 + weights2
-      weights <- weights/sum(weights)
+
+      if (all(weights == 0)) {
+        weights <- weights
+      } else {
+        weights <- weights / sum(weights)
+      }
+
+
 
     } else { # this is the case where nothing is provided, i.e. NA
       weights <- Lk_vec/sum(Lk_vec)
+
     }
   }
   log_Lk <- log(sum(Lk_vec * weights))

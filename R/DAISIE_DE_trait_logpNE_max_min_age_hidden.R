@@ -33,7 +33,7 @@
 #'   parameter             = parameter,
 #'   num_observed_states   = 2,
 #'   num_hidden_states     = 2,
-#'   trait_mainland_ancestor = NA,
+#'   trait_mainland_ancestor = c(1,0),
 #'   sampling_fraction       = c(1,1),
 #'   atol                  = 1e-15,
 #'   rtol                  = 1e-15,
@@ -115,7 +115,12 @@ DAISIE_DE_trait_logpNE_max_min_age_hidden <- function(
       weights2 <- Lk_vec * (1 - sum(trait_mainland_ancestor))/sum(Lk_vec)
 
       weights <- weights1 + weights2
-      weights <- weights/sum(weights)
+
+      if (all(weights == 0)) {
+        weights <- weights
+      } else {
+        weights <- weights / sum(weights)
+      }
 
     } else { # this is the case where nothing is provided, i.e. NA
       weights <- Lk_vec/sum(Lk_vec)
