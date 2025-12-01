@@ -11,9 +11,10 @@ DAISIE_DE_trait_logp0(
   rtol = 1e-15,
   num_observed_states,
   num_hidden_states,
+  trait_mainland_ancestor = NA,
   methode = "ode45",
   rcpp_methode = "odeint::runge_kutta_cash_karp54",
-  use_Rcpp = 0
+  use_Rcpp = 2
 )
 }
 \arguments{
@@ -34,6 +35,9 @@ mus and the third transition rates.}
 \item{num_observed_states}{number of observed states}
 
 \item{num_hidden_states}{number of hidden states}
+
+\item{trait_mainland_ancestor}{if mainland is TRUE, sets the trait of the
+mainland ancestor}
 
 \item{methode}{used integration method, default is ode45}
 
@@ -58,29 +62,7 @@ library(DAISIE)
 data("Galapagos_datalist")
 datalist <- Galapagos_datalist
 
-parameter <- list(
-  c(2.546591, 1.2, 1, 0.2),
-  c(2.678781, 2, 1.9, 3),
-  c(0.009326754, 0.003, 0.002, 0.2),
-  c(1.008583, 1, 2, 1.5),
-  matrix(c(
-    0,    1,    0.5,  0,
-    0,    0,    0.002,0.005,
-    rep(0, 8)
-  ), nrow = 4),
-  0
-)
 
-# Compute log‐likelihood under the DE‐trait model
-DAISIE_DE_trait_logp0(
-  datalist            = datalist,
-  parameter           = parameter,
-  num_observed_states     = 2,
-  num_hidden_states       = 2,
-  atol                = 1e-5,
-  rtol                = 1e-5,
-  methode             = "ode45"
-)
 
 parameter <- list(
   c(2.546591, 2.546591, 2.546591, 2.546591),
@@ -88,18 +70,37 @@ parameter <- list(
   c(0.009326754, 0.009326754, 0.009326754, 0.009326754),
   c(1.008583, 1.008583, 1.008583, 1.008583),
   matrix(c(
-    rep(0, 16)
+    0,    0,    0,  0,
+    0,    0,    0.00,0.00,
+    rep(0, 8)
   ), nrow = 4),
-  0
+  1
 )
-# Compute log‐likelihood under the DE‐trait model
+
+parameter <- list(
+  c(2.546591, 1.2, 1, 0.2),
+  c(2.678781, 2, 1.9, 3),
+  c(0.009326754, 0.003, 0.002, 0.2),
+  c(1.008583, 1, 2, 1.5),
+  matrix(c(
+    0,    .001,    0.005,  0,
+    .001,    0,    0.000,0.005,
+    0.005,    000,    0,  0.005,
+    0,   0.005,  0.005,0.00
+  ), nrow = 4),
+  1
+)
+
 DAISIE_DE_trait_logp0(
-  datalist            = datalist,
-  parameter           = parameter,
+  datalist,
+  parameter               = parameter,
   num_observed_states     = 2,
   num_hidden_states       = 2,
-  atol                = 1e-15,
-  rtol                = 1e-15,
-  methode             = "ode45"
-)
+  atol                    = 1e-15,
+trait_mainland_ancestor   =  c(1/4, 3/4),
+  rtol                    = 1e-15,
+  methode                 = "ode45",
+  rcpp_methode ="odeint::runge_kutta_cash_karp54",
+  use_Rcpp                = 2)
+
 }

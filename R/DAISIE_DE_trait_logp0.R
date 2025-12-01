@@ -65,9 +65,7 @@ DAISIE_DE_trait_logp0 <- function(
     rcpp_methode ="odeint::runge_kutta_cash_karp54",
     use_Rcpp = 2) {
 
-  Lk_vec <- numeric(num_observed_states * num_hidden_states)
-
-  for (i in seq_len(num_observed_states * num_hidden_states)) { #loop over all possible states, observed and hidden, one by one
+  loglik_func <- function(i) {
     trait_mainland_ancestor_extended <- rep(0,num_observed_states * num_hidden_states)
     trait_mainland_ancestor_extended[i] <- 1 #set only the trait of interest to 1
 
@@ -81,11 +79,13 @@ DAISIE_DE_trait_logp0 <- function(
                                      methode = "ode45",
                                      rcpp_methode = rcpp_methode,
                                      use_Rcpp = use_Rcpp)
-    Lk_vec[i] <- Lk
+    return(Lk)
   }
+  indices <-  seq_len(num_observed_states * num_hidden_states)
+  Lk_vec <- sapply(indices, loglik_func)
 
   ## added !all(is.na(trait_mainland_ancestor)) because when trait_mainland_ancestor = NA,  length(trait_mainland_ancestor) = length(trait_mainland_ancestor_extended) = 1
-  if(!any(is.na(trait_mainland_ancestor)) && length(trait_mainland_ancestor) == length(trait_mainland_ancestor_extended)) { #this is the case where a full probability distribution is specified across all observed and hidden states
+  if(!any(is.na(trait_mainland_ancestor)) && length(trait_mainland_ancestor) == num_observed_states * num_hidden_states) { #this is the case where a full probability distribution is specified across all observed and hidden states
     weights <- trait_mainland_ancestor/sum(trait_mainland_ancestor)
   } else {
     if(all(is.numeric(trait_mainland_ancestor))) { # this is the case when only a probability distribution is specified for the observed states; this could be c(M0/M, M1/M)

@@ -6,23 +6,27 @@
 \usage{
 DAISIE_DE_trait_logpES_max_min_age_hidden(
   brts,
-  trait,
-  status,
-  sampling_fraction = 1,
   parameter,
-  trait_mainland_ancestor = NA,
+  trait,
   num_observed_states,
   num_hidden_states,
+  trait_mainland_ancestor,
+  status,
+  sampling_fraction,
+  Mainland_pool_size_vec = NULL,
   atol = 1e-15,
   rtol = 1e-15,
   methode = "ode45",
   rcpp_methode = "odeint::runge_kutta_cash_karp54",
-  use_Rcpp = 0
+  use_Rcpp = 2
 )
 }
 \arguments{
 \item{brts}{branching times, being: island age, colonization time, branching
 times}
+
+\item{parameter}{list where first vector represents lambdas, the second
+mus and the third transition rates.}
 
 \item{trait}{vector with trait states for each tip in the phylogeny. The
 order of the states must be the same as the tree tips. For help, see
@@ -31,22 +35,19 @@ order of the states must be the same as the tree tips. For help, see
 each entry in the list corresponds to the matching phylogeny on that
 position.}
 
+\item{num_observed_states}{number of observed states}
+
+\item{num_hidden_states}{number of hidden states}
+
+\item{trait_mainland_ancestor}{if mainland is TRUE, sets the trait of the
+mainland ancestor}
+
 \item{status}{indicator for type of inference required}
 
 \item{sampling_fraction}{vector that states the sampling proportion per
 trait state. It must have as many elements as there are trait states. When
 using a `multiPhylo` object, sampling fraction should be list where each
 entry in the list corresponds to the sampling proportion for each tree.}
-
-\item{parameter}{list where first vector represents lambdas, the second
-mus and the third transition rates.}
-
-\item{trait_mainland_ancestor}{if mainland is TRUE, sets the trait of the
-mainland ancestor}
-
-\item{num_observed_states}{number of observed states}
-
-\item{num_hidden_states}{number of hidden states}
 
 \item{atol}{A numeric specifying the absolute tolerance of integration.}
 
@@ -73,18 +74,38 @@ with the trait state `i`, and for which only the estimated maximum and minimum a
 library(DAISIE)
 data("Biwa_datalist")
 datalist <- Biwa_datalist
+
+
+
+parameter <- list(
+  c(2.546591, 2.546591, 2.546591, 2.546591),
+  c(2.678781, 2.678781, 2.678781, 2.678781),
+  c(0.009326754, 0.009326754, 0.009326754, 0.009326754),
+  c(1.008583, 1.008583, 1.008583, 1.008583),
+  matrix(c(
+    0,    0,    0,  0,
+    0,    0,    0.00,0.00,
+    rep(0, 8)
+  ), nrow = 4),
+  1
+)
+
+
 parameter <- list(
   c(2.546591, 1.2, 1, 0.2),
   c(2.678781, 2, 1.9, 3),
   c(0.009326754, 0.003, 0.002, 0.2),
   c(1.008583, 1, 2, 1.5),
   matrix(c(
-    0,    1,    0.5,  0,
+    0,    .001,    0.005,  0,
     0,    0,    0.002,0.005,
-    rep(0, 8)
+    0,    .1000,    0,  0,
+    0,    0,    0.100,0.00
   ), nrow = 4),
-  0, c(1,0)
+  1
 )
+
+
 
 
 DAISIE_DE_trait_logpES_max_min_age_hidden(
@@ -94,8 +115,11 @@ DAISIE_DE_trait_logpES_max_min_age_hidden(
   parameter             = parameter,
   num_observed_states   = 2,
   num_hidden_states     = 2,
-  atol                  = 1e-10,
-  rtol                  = 1e-10,
-  methode               = "ode45"
+  atol                  = 1e-15,
+  rtol                  = 1e-15,
+  methode               = "ode45",
+  trait_mainland_ancestor = NA,
+  sampling_fraction     = c(1,1),
+  use_Rcpp = 2
 )
 }

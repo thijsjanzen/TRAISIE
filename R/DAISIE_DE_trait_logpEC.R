@@ -71,9 +71,7 @@ DAISIE_DE_trait_logpEC <- function(
     use_Rcpp = 2
 ) {
 
-  Lk_vec <- numeric(num_observed_states * num_hidden_states)
-
-  for (i in seq_len(num_observed_states * num_hidden_states)) { #loop over all possible states, observed and hidden, one by one
+  calc_Lk_log <- function(i) {
     trait_mainland_ancestor_extended <- rep(0,num_observed_states * num_hidden_states)
     trait_mainland_ancestor_extended[i] <- 1 #set only the trait of interest to 1
 
@@ -94,11 +92,14 @@ DAISIE_DE_trait_logpEC <- function(
       rcpp_methode            = rcpp_methode,
       use_Rcpp                = use_Rcpp
     )
-    Lk_vec[i] <- Lk_log # ideally this should not be needed if the function above does not do logtransformation
+    return(Lk_log)
   }
 
+  indices_vec <- seq_len(num_observed_states * num_hidden_states)
+  Lk_vec <- sapply(indices_vec, calc_Lk_log)
+
   ## added !all(is.na(trait_mainland_ancestor)) because when trait_mainland_ancestor = NA,  length(trait_mainland_ancestor) = length(trait_mainland_ancestor_extended) = 1
-  if(!all(is.na(trait_mainland_ancestor)) && length(trait_mainland_ancestor) == length(trait_mainland_ancestor_extended)) { #this is the case where a full probability distribution is specified across all observed and hidden states
+  if(!all(is.na(trait_mainland_ancestor)) && length(trait_mainland_ancestor) == num_observed_states * num_hidden_states) { #this is the case where a full probability distribution is specified across all observed and hidden states
 
      weights <- trait_mainland_ancestor/sum(trait_mainland_ancestor)
 
@@ -124,7 +125,7 @@ DAISIE_DE_trait_logpEC <- function(
       weights1 <- weights1 * s/sum(weights1)
 
 
-      weights2 <- Lk_vec * (1 - sum(trait_mainland_ancestor))/sum(Lk_vec)
+      weights2 <- Lk_vec * (1 - sum(trait_mainland_ancestor)) / sum(Lk_vec)
 
       weights <- weights1 + weights2
 

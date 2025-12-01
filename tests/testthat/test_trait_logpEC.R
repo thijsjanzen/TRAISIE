@@ -35,7 +35,7 @@ test_that("logpEC", {
                       stac = 2,
                       missnumspec = 0,
                       datalist = datalist)
-    testthat::expect_equal(res1, res2)
+    testthat::expect_equal(res1$loglik, res2)
 
     res3 <-  DAISIE_DE_trait_logpEC(
       brts                    = brts,
@@ -44,6 +44,7 @@ test_that("logpEC", {
       status                  = 2,
       sampling_fraction       = sampling_fraction,
       parameter               = parameter,
+      trait_mainland_ancestor = NA,
       num_observed_states     = 1,
       num_hidden_states       = 1,
       atol                    = 1e-10,
@@ -60,6 +61,7 @@ test_that("logpEC", {
       status                  = 2,
       sampling_fraction       = sampling_fraction,
       parameter               = parameter,
+      trait_mainland_ancestor = NA,
       num_observed_states     = 1,
       num_hidden_states       = 1,
       atol                    = 1e-10,

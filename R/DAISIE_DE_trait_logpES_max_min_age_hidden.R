@@ -8,18 +8,38 @@
 #' library(DAISIE)
 #' data("Biwa_datalist")
 #' datalist <- Biwa_datalist
+#'
+#'
+#'
+#' parameter <- list(
+#'   c(2.546591, 2.546591, 2.546591, 2.546591),
+#'   c(2.678781, 2.678781, 2.678781, 2.678781),
+#'   c(0.009326754, 0.009326754, 0.009326754, 0.009326754),
+#'   c(1.008583, 1.008583, 1.008583, 1.008583),
+#'   matrix(c(
+#'     0,    0,    0,  0,
+#'     0,    0,    0.00,0.00,
+#'     rep(0, 8)
+#'   ), nrow = 4),
+#'   1
+#' )
+#'
+#'
 #' parameter <- list(
 #'   c(2.546591, 1.2, 1, 0.2),
 #'   c(2.678781, 2, 1.9, 3),
 #'   c(0.009326754, 0.003, 0.002, 0.2),
 #'   c(1.008583, 1, 2, 1.5),
 #'   matrix(c(
-#'     0,    1,    0.5,  0,
+#'     0,    .001,    0.005,  0,
 #'     0,    0,    0.002,0.005,
-#'     rep(0, 8)
+#'     0,    .1000,    0,  0,
+#'     0,    0,    0.100,0.00
 #'   ), nrow = 4),
-#'   0, c(1,0)
+#'   1
 #' )
+#'
+#'
 #'
 #'
 #' DAISIE_DE_trait_logpES_max_min_age_hidden(
@@ -29,11 +49,107 @@
 #'   parameter             = parameter,
 #'   num_observed_states   = 2,
 #'   num_hidden_states     = 2,
-#'   atol                  = 1e-10,
-#'   rtol                  = 1e-10,
-#'   methode               = "ode45"
+#'   atol                  = 1e-15,
+#'   rtol                  = 1e-15,
+#'   methode               = "ode45",
+#'   trait_mainland_ancestor = NA,
+#'   sampling_fraction     = c(1,1),
+#'   use_Rcpp = 2
 #' )
-DAISIE_DE_trait_logpES_max_min_age_hidden <- function(brts,
+
+
+
+DAISIE_DE_trait_logpES_max_min_age_hidden <- function(
+    brts,
+    parameter,
+    trait,
+    num_observed_states,
+    num_hidden_states,
+    trait_mainland_ancestor, #this should contain either a full probability distribution across all states, only the observed states, or NA
+    status,
+    sampling_fraction,
+    Mainland_pool_size_vec = NULL,
+    atol = 1e-15,
+    rtol = 1e-15,
+    methode = "ode45",
+    rcpp_methode = "odeint::runge_kutta_cash_karp54",
+    use_Rcpp = 2
+) {
+
+  lik_func <- function(i) {
+    trait_mainland_ancestor_extended <- rep(0,num_observed_states * num_hidden_states)
+    trait_mainland_ancestor_extended[i] <- 1 #set only the trait of interest to 1
+
+    Lk_log <- DAISIE_DE_trait_logpES_max_min_age_hidden_core (brts,
+                                                              parameter               = parameter,
+                                                              trait                   = trait,
+                                                              num_observed_states     = num_observed_states,
+                                                              num_hidden_states       = num_hidden_states,
+                                                              trait_mainland_ancestor = trait_mainland_ancestor_extended,
+                                                              status                  = status,
+                                                              sampling_fraction       = sampling_fraction,
+                                                              atol                    = atol,
+                                                              rtol                    = rtol,
+                                                              methode                 = "ode45",
+                                                              rcpp_methode            = rcpp_methode,
+                                                              use_Rcpp                = use_Rcpp)
+    return(Lk_log)
+  }
+
+  indices <-  seq_len(num_observed_states * num_hidden_states)
+  Lk_vec <- sapply(indices, lik_func)
+
+  ## added !all(is.na(trait_mainland_ancestor)) because when trait_mainland_ancestor = NA,  length(trait_mainland_ancestor) = length(trait_mainland_ancestor_extended) = 1
+  if(!all(is.na(trait_mainland_ancestor)) && length(trait_mainland_ancestor) == num_observed_states * num_hidden_states) { #this is the case where a full probability distribution is specified across all observed and hidden states
+    weights <- trait_mainland_ancestor/sum(trait_mainland_ancestor)
+  } else {
+    if(all(is.numeric(trait_mainland_ancestor))) { # this is the case when only a probability distribution is specified for the observed states; this could be c(M0/M, M1/M)
+
+      s <- numeric(num_observed_states * num_hidden_states)
+
+      weights1 <- c()
+      for(j in 1:length(trait_mainland_ancestor)) {
+        s[((j - 1) * num_hidden_states + 1):(j * num_hidden_states)] <- rep(trait_mainland_ancestor[j], num_hidden_states)
+
+        weights_j <- Lk_vec[((j - 1) * num_hidden_states + 1):(j * num_hidden_states)]
+
+        if (sum(weights_j) == 0)
+        {
+          weights_j <- weights_j/1
+        }else{
+          weights_j <- weights_j/sum(weights_j)
+        }
+        weights1 <- c(weights1, weights_j)
+      }
+      weights1 <- weights1 * s/sum(weights1)
+
+
+      weights2 <- Lk_vec * (1 - sum(trait_mainland_ancestor))/sum(Lk_vec)
+
+      weights <- weights1 + weights2
+
+      if (all(weights == 0)) {
+        weights <- weights
+      } else {
+        weights <- weights / sum(weights)
+      }
+
+    } else { # this is the case where nothing is provided, i.e. NA
+      weights <- Lk_vec/sum(Lk_vec)
+    }
+  }
+  log_Lk <- log(sum(Lk_vec * weights))
+  return( list (loglik = log_Lk, lik_states = Lk_vec, weights = weights))
+}
+
+
+
+
+
+
+
+
+DAISIE_DE_trait_logpES_max_min_age_hidden_core <- function(brts,
                                                       trait,
                                                       status,
                                                       sampling_fraction = 1,
@@ -139,6 +255,6 @@ DAISIE_DE_trait_logpES_max_min_age_hidden <- function(brts,
 
   # Extract log-likelihood
   Lk <- solution4[2,][length(solution4[2,])]
-  logLkb <- log(Lk)
-  return(logLkb)
+
+  return(Lk)
 }

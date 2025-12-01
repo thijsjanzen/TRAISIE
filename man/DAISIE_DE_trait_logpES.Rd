@@ -6,25 +6,26 @@
 \usage{
 DAISIE_DE_trait_logpES(
   brts,
-  status,
+  parameter,
   trait,
-  sampling_fraction,
   num_observed_states,
   num_hidden_states,
-  trait_mainland_ancestor = NA,
-  parameter,
+  trait_mainland_ancestor,
+  status,
+  sampling_fraction,
   atol = 1e-15,
   rtol = 1e-15,
   methode = "ode45",
   rcpp_methode = "odeint::runge_kutta_cash_karp54",
-  use_Rcpp = 0
+  use_Rcpp = 2
 )
 }
 \arguments{
 \item{brts}{branching times, being: island age, colonization time, branching
 times}
 
-\item{status}{indicator for type of inference required}
+\item{parameter}{list where first vector represents lambdas, the second
+mus and the third transition rates.}
 
 \item{trait}{vector with trait states for each tip in the phylogeny. The
 order of the states must be the same as the tree tips. For help, see
@@ -33,11 +34,6 @@ order of the states must be the same as the tree tips. For help, see
 each entry in the list corresponds to the matching phylogeny on that
 position.}
 
-\item{sampling_fraction}{vector that states the sampling proportion per
-trait state. It must have as many elements as there are trait states. When
-using a `multiPhylo` object, sampling fraction should be list where each
-entry in the list corresponds to the sampling proportion for each tree.}
-
 \item{num_observed_states}{number of observed states}
 
 \item{num_hidden_states}{number of hidden states}
@@ -45,8 +41,12 @@ entry in the list corresponds to the sampling proportion for each tree.}
 \item{trait_mainland_ancestor}{if mainland is TRUE, sets the trait of the
 mainland ancestor}
 
-\item{parameter}{list where first vector represents lambdas, the second
-mus and the third transition rates.}
+\item{status}{indicator for type of inference required}
+
+\item{sampling_fraction}{vector that states the sampling proportion per
+trait state. It must have as many elements as there are trait states. When
+using a `multiPhylo` object, sampling fraction should be list where each
+entry in the list corresponds to the sampling proportion for each tree.}
 
 \item{atol}{A numeric specifying the absolute tolerance of integration.}
 
@@ -74,34 +74,51 @@ library(DAISIE)
 data("Galapagos_datalist")
 datalist <- Galapagos_datalist
 
-i <- 7
+i <- 9
 brts <- datalist[[i]]$branching_times
 trait <- 0
 sampling_fraction <- c(1,1)
 
-
 parameter <- list(
-  c(2.546591, 2.546591),
-  c(2.678781, 2.678781),
-  c(0.009326754, 0.009326754),
-  c(1.008583, 1.008583),
+  c(2.546591, 2.546591, 2.546591, 2.546591),
+  c(2.678781, 2.678781, 2.678781, 2.678781),
+  c(0.009326754, 0.009326754, 0.009326754, 0.009326754),
+  c(1.008583, 1.008583, 1.008583, 1.008583),
   matrix(c(
-    rep(0, 4)
-  ), nrow = 2),
-  0
+    0,    0,    0,  0,
+    0,    0,    0.00,0.00,
+    rep(0, 8)
+  ), nrow = 4),
+  1
 )
 
+
+parameter <- list(
+  c(2.546591, 1.2, 1, 0.2),
+  c(2.678781, 2, 1.9, 3),
+  c(0.009326754, 0.003, 0.002, 0.2),
+  c(1.008583, 1, 2, 1.5),
+  matrix(c(
+    0,    .001,    0.005,  0,
+    .001,    0,    0.000,0.005,
+    0.005,    000,    0,  0.005,
+    0,   0.005,  0.005,0.00
+  ), nrow = 4),
+  1
+)
+
+status = 2
 DAISIE_DE_trait_logpES(
   brts                    = brts,
   trait                   = trait,
-  status                  = 2,
+  status                  = status,
   sampling_fraction       = sampling_fraction,
   parameter               = parameter,
-  trait_mainland_ancestor = c(1,0),
+  trait_mainland_ancestor = NA,
   num_observed_states     = 2,
-  num_hidden_states       = 1,
+  num_hidden_states       = 2,
   atol                    = 1e-15,
   rtol                    = 1e-15,
-  methode                 = "ode45"
-)
+  methode                 = "ode45",
+  use_Rcpp                = 2)
 }
