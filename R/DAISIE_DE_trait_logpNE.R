@@ -149,7 +149,6 @@ DAISIE_DE_trait_logpNE <- function(
 
 
 
-
 DAISIE_DE_trait_logpNE_core <- function(brts,
                                    status,
                                    trait,
