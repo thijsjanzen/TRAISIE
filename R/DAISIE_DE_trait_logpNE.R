@@ -37,9 +37,103 @@
 #'   num_hidden_states       = 1,
 #'   atol                    = 1e-15,
 #'   rtol                    = 1e-15,
-#'   methode                 = "ode45"
-#' )
-DAISIE_DE_trait_logpNE <- function(brts,
+#'   methode                 = "ode45",
+#'   use_Rcpp                = 2)
+#'
+#'
+
+DAISIE_DE_trait_logpNE <- function(
+    brts,
+    parameter,
+    trait,
+    num_observed_states,
+    num_hidden_states,
+    trait_mainland_ancestor, #this should contain either a full probability distribution across all states, only the observed states, or NA
+    status,
+    sampling_fraction,
+    Mainland_pool_size_vec = NULL,
+    atol = 1e-15,
+    rtol = 1e-15,
+    methode = "ode45",
+    rcpp_methode = "odeint::runge_kutta_cash_karp54",
+    use_Rcpp = 2
+) {
+
+
+  Lk_vec <- numeric(num_observed_states * num_hidden_states)
+
+  for (i in seq_len(num_observed_states * num_hidden_states)) { #loop over all possible states, observed and hidden, one by one
+    trait_mainland_ancestor_extended <- rep(0,num_observed_states * num_hidden_states)
+    trait_mainland_ancestor_extended[i] <- 1 #set only the trait of interest to 1
+
+    Lk_log <- DAISIE_DE_trait_logpNE_core (brts                    = brts,
+                                           parameter               = parameter,
+                                           trait                   = trait,
+                                           num_observed_states     = num_observed_states,
+                                           num_hidden_states       = num_hidden_states,
+                                           trait_mainland_ancestor = trait_mainland_ancestor_extended,
+                                           status                  = status,
+                                           sampling_fraction       = sampling_fraction,
+                                           atol                    = atol,
+                                           rtol                    = rtol,
+                                           methode                 = "ode45",
+                                           rcpp_methode            = rcpp_methode,
+                                           use_Rcpp                = use_Rcpp)
+    Lk_vec[i] <- Lk_log # ideally this should not be needed if the function above does not do logtransformation
+  }
+
+  ## added !all(is.na(trait_mainland_ancestor)) because when trait_mainland_ancestor = NA,  length(trait_mainland_ancestor) = length(trait_mainland_ancestor_extended) = 1
+  if(!all(is.na(trait_mainland_ancestor)) && length(trait_mainland_ancestor) == length(trait_mainland_ancestor_extended)) { #this is the case where a full probability distribution is specified across all observed and hidden states
+    weights <- trait_mainland_ancestor/sum(trait_mainland_ancestor)
+  }  else {
+    if(all(is.numeric(trait_mainland_ancestor))) { # this is the case when only a probability distribution is specified for the observed states; this could be c(M0/M, M1/M)
+
+
+
+      s <- numeric(num_observed_states * num_hidden_states)
+      # you could also do s <- c() and use line 92
+
+      weights1 <- c()
+      for(j in 1:length(trait_mainland_ancestor)) {
+        s[((j - 1) * num_hidden_states + 1):(j * num_hidden_states)] <- rep(trait_mainland_ancestor[j], num_hidden_states)
+        # you could also write s <- c(s, rep(trait_mainland_ancestor[j],num_hidden_states))
+        weights_j <- Lk_vec[((j - 1) * num_hidden_states + 1):(j * num_hidden_states)]
+        if (sum(weights_j) == 0)
+        {
+          weights_j <- weights_j/1
+        }else{
+          weights_j <- weights_j/sum(weights_j)
+        }
+        weights1 <- c(weights1, weights_j)
+      }
+      weights1 <- weights1 * s/sum(weights1)
+
+
+      weights2 <- Lk_vec * (1 - sum(trait_mainland_ancestor))/sum(Lk_vec)
+
+      weights <- weights1 + weights2
+
+      if (all(weights == 0)) {
+        weights <- weights
+      } else {
+        weights <- weights / sum(weights)
+      }
+
+
+
+    } else { # this is the case where nothing is provided, i.e. NA
+      weights <- Lk_vec/sum(Lk_vec)
+
+    }
+  }
+  log_Lk <- log(sum(Lk_vec * weights))
+  return( list (loglik = log_Lk, lik_states = Lk_vec, weights = weights))
+}
+
+
+
+
+DAISIE_DE_trait_logpNE_core <- function(brts,
                                    status,
                                    trait,
                                    sampling_fraction,
