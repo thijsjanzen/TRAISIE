@@ -8,18 +8,18 @@ dist_gamma_tma <- function(gamma,
 
     dist_gamma <- gamma
 
-   } else {
-  if (sum(is.na(trait_mainland_ancestor)) ==
-      length(trait_mainland_ancestor)) {
-    dist_gamma <- gamma
-
   } else {
-    s <- rep(0, num_unique_states)
-    trait_index <- which(trait_mainland_ancestor == 1)
-    s[trait_index] <- 1
-    dist_gamma <- gamma * s
+    if (sum(is.na(trait_mainland_ancestor)) ==
+        length(trait_mainland_ancestor)) {
+      dist_gamma <- gamma
+
+    } else {
+      s <- rep(0, num_unique_states)
+      trait_index <- which(trait_mainland_ancestor == 1)
+      s[trait_index] <- 1
+      dist_gamma <- gamma * s
+    }
   }
-}
   return(dist_gamma)
 }
 
@@ -184,12 +184,12 @@ interval4 <- function(t, state, parameter) {
                                  n)
 
     dDM1 <- -(lambdac + mu + sum(dist_gamma) + lambdaa + t_vec) * DM1 +
-            (mu + lambdaa * E + lambdac * E * E + p * q_mult_E) * DA1 +
-            (1 - p) * q_mult_DM1  + sum(dist_gamma * DM1)
+      (mu + lambdaa * E + lambdac * E * E + p * q_mult_E) * DA1 +
+      (1 - p) * q_mult_DM1  + sum(dist_gamma * DM1)
 
     dE <- mu - (mu + lambdac + t_vec) * E +
-          lambdac * E * E +
-          q_mult_E
+      lambdac * E * E +
+      q_mult_E
 
     dDA1 <- -sum(dist_gamma) * DA1 + sum(dist_gamma * DM1)
 

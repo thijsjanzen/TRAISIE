@@ -9,6 +9,7 @@ test_that("logpNE_max_min_age_coltime", {
                                               trait                 = 0,
                                               status                = 8,
                                               parameter             = parameter,
+                                              trait_mainland_ancestor = NA,
                                               num_observed_states   = 1,
                                               num_hidden_states     = 1,
                                               sampling_fraction     = 1,
@@ -25,13 +26,14 @@ test_that("logpNE_max_min_age_coltime", {
                                                missnumspec = 0,
                                                datalist = datalist)
 
-    testthat::expect_equal(res1, res2, tolerance = 0.01)
+    testthat::expect_equal(res1$loglik, res2, tolerance = 0.01)
 
     res3 <-  DAISIE_DE_trait_logpNE_max_min_age_hidden(
                                               brts                  = brts,
                                               trait                 = 0,
                                               status                = 8,
                                               parameter             = parameter,
+                                              trait_mainland_ancestor = NA,
                                               num_observed_states   = 1,
                                               num_hidden_states     = 1,
                                               sampling_fraction     = 1,

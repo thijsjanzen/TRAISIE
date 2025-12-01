@@ -10,7 +10,7 @@ DAISIE_DE_trait_logpES(
   trait,
   num_observed_states,
   num_hidden_states,
-  trait_mainland_ancestor,
+  trait_mainland_ancestor = NA,
   status,
   sampling_fraction,
   atol = 1e-15,

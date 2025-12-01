@@ -29,7 +29,8 @@ DAISIE_DE_trait_loglik_CS <- function( parameter,
                                    num_observed_states = num_observed_states,
                                    num_hidden_states = num_hidden_states,
                                    methode = methode,
-                                   use_Rcpp = use_Rcpp)
+                                   use_Rcpp = use_Rcpp)$loglik
+
     if (is.null(datalist[[1]]$not_present)) {
       loglik <- (datalist[[1]]$not_present_type1 + datalist[[1]]$not_present_type2) * logp0
       numimm <- (datalist[[1]]$not_present_type1 + datalist[[1]]$not_present_type2) + length(datalist) - 1
@@ -189,7 +190,7 @@ DAISIE_DE_trait_loglik_CS <- function( parameter,
       stop("Unknown stac value: ", stac)
     }
 
-    vec_loglikelihood[i - 1] <- loglikelihood
+    vec_loglikelihood[i - 1] <- loglikelihood$loglik
   }
 
   loglik <- sum(vec_loglikelihood) + loglik

@@ -18,6 +18,7 @@ test_that("logpES", {
       trait                   = trait,
       status                  = 1,
       parameter               = parameter,
+      trait_mainland_ancestor = NA,
       num_observed_states     = 1,
       num_hidden_states       = 1,
       sampling_fraction       = 1,
@@ -34,7 +35,7 @@ test_that("logpES", {
       missnumspec = 0,
       datalist = datalist)
 
-    testthat::expect_equal(res1, res2)
+    testthat::expect_equal(res1$loglik, res2)
 
     res3 <-  treeLL::DAISIE_DE_trait_logpNE(
       brts                    = brts,

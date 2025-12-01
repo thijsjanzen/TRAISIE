@@ -31,15 +31,20 @@ inline std::vector<double> make_dist_g(const Rcpp::NumericVector& tma,
 
   if (Rcpp::NumericVector::is_na(tma[0])) {
     // tma not known, please note that entire vector is NA in this case
-    for (auto& i : dist_gamma) i *= 1.0 / num_unique_states;
+    return(dist_gamma);
   } else {
     // no NAs, we are good:
-    auto num_hidden_states = gamma.size() / tma.size();
     for (size_t i = 0; i < dist_gamma.size(); ++i) {
-      auto s = tma[i / num_hidden_states];
-      dist_gamma[i] *= s * 1.0 / num_hidden_states;
+      dist_gamma[i] *= tma[i];
     }
   }
+
+  std::cerr << "c++gamma: ";
+  for (auto i : dist_gamma) {
+    std::cerr << i << " ";
+  } std::cerr << "\n";
+  std::cerr.flush();
+
   return dist_gamma;
 }
 

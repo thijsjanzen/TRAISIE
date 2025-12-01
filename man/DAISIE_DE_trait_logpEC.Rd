@@ -11,7 +11,7 @@ DAISIE_DE_trait_logpEC(
   traits,
   num_observed_states,
   num_hidden_states,
-  trait_mainland_ancestor,
+  trait_mainland_ancestor = NA,
   status,
   sampling_fraction,
   num_threads = 5,

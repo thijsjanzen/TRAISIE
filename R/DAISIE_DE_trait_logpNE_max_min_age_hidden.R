@@ -48,7 +48,7 @@ DAISIE_DE_trait_logpNE_max_min_age_hidden <- function(
     trait,
     num_observed_states,
     num_hidden_states,
-    trait_mainland_ancestor, #this should contain either a full probability distribution across all states, only the observed states, or NA
+    trait_mainland_ancestor = NA, #this should contain either a full probability distribution across all states, only the observed states, or NA
     status,
     atol = 1e-15,
     rtol = 1e-15,

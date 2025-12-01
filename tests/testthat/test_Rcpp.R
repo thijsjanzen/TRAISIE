@@ -18,9 +18,9 @@ test_that("R vs Rcpp", {
 
   parameters <- list()
   parameters[[1]] <- lambda_c
-  parameters[[2]] <- lambda_a
-  parameters[[3]] <- mus
-  parameters[[4]] <- gammas
+  parameters[[2]] <- mus
+  parameters[[3]] <- gammas
+  parameters[[4]] <- lambda_a
   parameters[[5]] <- NA    # placeholder
   parameters[[6]] <- p
 
@@ -37,9 +37,9 @@ test_that("R vs Rcpp", {
 
   parameters[[5]] <- expanded_matrix
 
-  all_tma <- list(c(1, 0),
-                  c(0, 1),
-                  c(NA, NA))
+  all_tma <- list(c(1, 1, 0, 0),
+                  c(0, 0, 1, 1),
+                  c(NA, NA, NA, NA))
 
   for (i in seq_along(all_tma)) {
 
@@ -56,7 +56,8 @@ test_that("R vs Rcpp", {
                                        num_hidden_states = 2,
                                        sampling_fraction = c(1, 1),
                                        trait_mainland_ancestor = all_tma[[i]])
-
+    cat(res_hidden, "\n")
+    cat(res_cpp, "\n")
     testthat::expect_equal(res_hidden, res_cpp)
   }
 })
