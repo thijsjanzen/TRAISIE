@@ -104,14 +104,8 @@ DAISIE_DE_trait_logpEC <- function(
 
   }  else {
     if(all(is.numeric(trait_mainland_ancestor))) { # this is the case when only a probability distribution is specified for the observed states; this could be c(M0/M, M1/M)
-      ###weights <- c(
-      #M0/M*lik_0A/L0 + (M-M0-M1)/M*lik_0A/L,
-      #M0/M*lik_0B/L0 + (M-M0-M1)/M*lik_0B/L,
-      #M1/M*lik_1A/L1 + (M-M0-M1)/M*lik_1A/L,
-      #M1/M*lik_1B/L1 + (M-M0-M1)/M*lik_1B/L
-      #)
 
-      ### the following calculates the terms before the + sign
+
       s <- numeric(num_observed_states * num_hidden_states)
       # you could also do s <- c() and use line 92
       weights1 <- c()
@@ -129,7 +123,6 @@ DAISIE_DE_trait_logpEC <- function(
       }
       weights1 <- weights1 * s/sum(weights1)
 
-      ### the following calculates the terms after the + sign
 
       weights2 <- Lk_vec * (1 - sum(trait_mainland_ancestor))/sum(Lk_vec)
 
