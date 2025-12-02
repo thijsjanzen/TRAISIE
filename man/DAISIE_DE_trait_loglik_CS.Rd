@@ -16,7 +16,7 @@ DAISIE_DE_trait_loglik_CS(
   cond = 1,
   num_threads = 1,
   verbose = FALSE,
-  use_Rcpp = 0
+  use_Rcpp = use_Rcpp
 )
 }
 \arguments{
