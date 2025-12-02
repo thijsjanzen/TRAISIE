@@ -39,12 +39,6 @@ inline std::vector<double> make_dist_g(const Rcpp::NumericVector& tma,
     }
   }
 
-  std::cerr << "c++gamma: ";
-  for (auto i : dist_gamma) {
-    std::cerr << i << " ";
-  } std::cerr << "\n";
-  std::cerr.flush();
-
   return dist_gamma;
 }
 

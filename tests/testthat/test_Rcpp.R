@@ -56,8 +56,6 @@ test_that("R vs Rcpp", {
                                        num_hidden_states = 2,
                                        sampling_fraction = c(1, 1),
                                        trait_mainland_ancestor = all_tma[[i]])
-    cat(res_hidden, "\n")
-    cat(res_cpp, "\n")
     testthat::expect_equal(res_hidden, res_cpp)
   }
 })

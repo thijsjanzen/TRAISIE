@@ -199,15 +199,14 @@ loglik_R_tree <- function(parameter,
                    data = NA)
 
   for (i in seq_along(traits)) {
-    res <- calc_init_state_hidden(trait = traits[1],
-                                          sampling_fraction =
-                                            sampling_fraction,
-                                          num_unique_states = num_unique_states,
-                                          num_hidden_states = num_hidden_states,
-                                          mainland = mainland,
-                                          trait_mainland_ancestor =
-                                            trait_mainland_ancestor)
-  states[i, ] <- res
+    res <- calc_init_state_hidden(trait = traits[i],
+                                  sampling_fraction = sampling_fraction,
+                                  num_unique_states = num_unique_states,
+                                  num_hidden_states = num_hidden_states,
+                                  mainland = mainland,
+                                  trait_mainland_ancestor =
+                                    trait_mainland_ancestor)
+    states[i, ] <- res
   }
 
   phy$node.label <- NULL

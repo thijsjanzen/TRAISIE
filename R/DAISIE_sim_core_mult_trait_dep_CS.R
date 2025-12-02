@@ -91,7 +91,6 @@ DAISIE_sim_core_mult_trait_dep_CS <- function(
   while (timeval < total_time) {
     rates <- update_rates_mult_trait(timeval= timeval,
                                      total_time = total_time,
-                                     extcutoff = extcutoff,
                                      num_spec = num_spec,
                                      mainland= mainland,
                                      trait_pars = trait_pars,
@@ -114,7 +113,6 @@ DAISIE_sim_core_mult_trait_dep_CS <- function(
     if (timeval < total_time) {
       rates <- update_rates_mult_trait(timeval= timeval,
                                        total_time = total_time,
-                                       extcutoff = extcutoff,
                                        num_spec = num_spec,
                                        mainland = mainland,
                                        trait_pars = trait_pars,
@@ -139,8 +137,7 @@ DAISIE_sim_core_mult_trait_dep_CS <- function(
         stt_table = stt_table,
         trait_pars = trait_pars,
         num_observed_states = num_observed_states,
-        num_hidden_states = num_hidden_states,
-        mainland = mainland
+        num_hidden_states = num_hidden_states
       )
 
 

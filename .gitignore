@@ -17,3 +17,5 @@ src/RcppExports.o
 *.so
 *.tmp
 .DS_Store
+*.so
+*.o
