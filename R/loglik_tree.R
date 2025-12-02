@@ -199,7 +199,7 @@ loglik_R_tree <- function(parameter,
                    data = NA)
 
   for (i in seq_along(traits)) {
-    res <- calc_init_state_hidden(trait = traits[1],
+    res <- calc_init_state_hidden(trait = traits[i],
                                           sampling_fraction =
                                             sampling_fraction,
                                           num_unique_states = num_unique_states,
