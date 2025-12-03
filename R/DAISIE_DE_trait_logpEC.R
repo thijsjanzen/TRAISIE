@@ -303,7 +303,7 @@ DAISIE_DE_trait_logpEC_core <- function(
                               use_Rcpp = use_Rcpp)
   }
 
-  # Extract log-likelihood from final solution
+  # Extract likelihood from final solution
   Lk <- solution4[2, length(solution4[2, ])]
 
   return(Lk)
