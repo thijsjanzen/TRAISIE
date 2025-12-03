@@ -195,7 +195,6 @@ DAISIE_DE_trait_loglik_CS <- function( parameter,
   }
 
   loglik <- sum(vec_loglikelihood) + loglik
- # cat(vec_loglikelihood, loglik,"\n")
   return(loglik)
 }
 
