@@ -23,7 +23,6 @@ DAISIE_sim_trait_dep_CS <- function (total_time,
       number_present <- 0
     }
 
-
     while (number_present < cond) {
 
       # counts per mainland group (e.g., c(M1, M2, M3, ...))

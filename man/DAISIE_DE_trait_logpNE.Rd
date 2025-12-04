@@ -49,6 +49,8 @@ trait state. It must have as many elements as there are trait states. When
 using a `multiPhylo` object, sampling fraction should be list where each
 entry in the list corresponds to the sampling proportion for each tree.}
 
+\item{Mainland_pool_size_vec}{TODO!!!!!}
+
 \item{atol}{A numeric specifying the absolute tolerance of integration.}
 
 \item{rtol}{A numeric specifying the relative tolerance of integration.}

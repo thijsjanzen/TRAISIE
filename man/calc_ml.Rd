@@ -4,10 +4,28 @@
 \alias{calc_ml}
 \title{Maximum Likelihood Estimation for the DAISIE Trait Model}
 \usage{
-calc_ml_trait_model(datalist, num_observed_states, num_hidden_states,
-                     idparslist, idparsopt, initvals2, idparsfix, parsfix,
-                     atol = 1e-11, rtol = 1e-11, num_threads = 8,
-                     verbose = TRUE, use_Rcpp = 2)
+calc_ml(
+  datalist,
+  num_observed_states,
+  num_hidden_states,
+  idparslist,
+  idparsopt,
+  initparsopt,
+  idparsfix,
+  parsfix,
+  cond = "proper_cond",
+  tol = c(1e-04, 1e-05, 1e-07),
+  maxiter = 2000 * round((1.25)^length(idparsopt)),
+  optimmethod = "simplex",
+  methode = "ode45",
+  rcpp_methode = "odeint::runge_kutta_cash_karp54",
+  num_cycles = 1,
+  verbose = FALSE,
+  num_threads = 1,
+  atol = 1e-15,
+  rtol = 1e-15,
+  use_Rcpp = 0
+)
 }
 \arguments{
 \item{datalist}{A list containing the data used for likelihood calculation.}

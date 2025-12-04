@@ -62,7 +62,10 @@ for (i in 1:(num_states^2)) {
   rates[[paste0("trans_rate", i)]] <- runif(1, 0.01, 0.1)
 }
 
-event <- DAISIE_sample_event_trait_dep(rates, num_observed_states = 2, num_hidden_states = 2)
+event <- DAISIE:::DAISIE_sample_event_trait_dep(
+                  rates,
+                  num_observed_states = 2,
+                  num_hidden_states = 2)
 print(event)
 }
 \keyword{internal}

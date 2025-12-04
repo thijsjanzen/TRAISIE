@@ -52,11 +52,12 @@
 #'   rates[[paste0("trans_rate", i)]] <- runif(1, 0.01, 0.1)
 #' }
 #'
-#' event <- DAISIE_sample_event_trait_dep(rates, num_observed_states = 2, num_hidden_states = 2)
+#' event <- DAISIE:::DAISIE_sample_event_trait_dep(
+#'                   rates,
+#'                   num_observed_states = 2,
+#'                   num_hidden_states = 2)
 #' print(event)
 #' @keywords internal
-
-
 DAISIE_sample_event_trait_dep <- function(rates, num_observed_states, num_hidden_states) {
 
 

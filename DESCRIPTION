@@ -26,7 +26,9 @@ Imports:
  deSolve,
  ape,
  Rcpp (>= 1.0.10),
- RcppParallel
+ RcppParallel,
+ digest,
+ testit
 Suggests: 
  secsse,
  DAISIE,

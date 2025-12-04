@@ -28,19 +28,28 @@
 #'   \code{DAISIE_sim_core_mult_trait_dep()}, which includes parameters for cladogenesis, extinction, colonization, anagenesis, and state transitions. These parameters define the evolutionary processes within the model for each observed trait state and its possible transitions. The components of \code{trait_pars} are as follows:
 #'
 #'   \itemize{
-#'   \item{immig_rateX}{Immigration rate for trait X (numeric).}
-#'   \item{ext_rateX}{Extinction rate for trait X (numeric).}
-#'   \item{ana_rateX}{Anagenesis rate for trait X (numeric).}
-#'   \item{clado_rateX}{Cladogenesis rate for trait X (numeric).}
-#'     \item \code{trans_rateX}: A square matrix of transition rates for state changes. This matrix defines the rates at which species transition between different observed trait states. Each element in the matrix \( \code{trans_rate}[i,j] \) represents the rate of transition from state \(i\) to state \(j\).
+#'     \item{immig_rateX}{Immigration rate for trait X (numeric).}
+#'     \item{ext_rateX}{Extinction rate for trait X (numeric).}
+#'     \item{ana_rateX}{Anagenesis rate for trait X (numeric).}
+#'     \item{clado_rateX}{Cladogenesis rate for trait X (numeric).}
+#'     \item{\code{trans_rateX}}{A square matrix of transition rates for state changes.
+#'   This matrix defines the rates at which species transition between different
+#'   observed trait states. Each element in the matrix \( \code{trans_rate}[i,j] \)
+#'   represents the rate of transition from state \(i\) to state \(j\).
 #'       \itemize{
-#'         \item \code{trans_rateX[i, j]}: The rate at which species in state \(i\) transition to state \(j\).
-#'         \item Diagonal elements \code{trans_rate[i, i]} represent the self-transition rate, and is equal to 0.
+#'         \item{\code{trans_rateX[i, j]}}{The rate at which species in state \(i\) transition to state \(j\).}
+#'         \item{Diagonal elements}{\code{trans_rate[i, i]} represent the self-transition rate, and is equal to 0.}
 #'       }
-#'     \item \code{KX}: A numeric vector specifying the carrying capacity (\( K \)) for each observed state. This defines the maximum number of species that can exist in each observed trait state due to ecological or environmental constraints.
-#'     \item \code{p}: A scalar value specifying the probability that a trait transition between states is accompanied by anagenesis. If \( p = 1 \), every transition will result in a new species. If \( p = 0 \), the transition does not lead to the creation of a new species.
+#'     }
+#'     \item{\code{KX}}{A numeric vector specifying the carrying capacity (\( K \))
+#'         for each observed state. This defines the maximum number of species that
+#'         can exist in each observed trait state due to ecological or environmental
+#'         constraints.}
+#'     \item{\code{p}}{A scalar value specifying the probability that a trait
+#'         transition between states is accompanied by anagenesis. If \( p = 1 \),
+#'         every transition will result in a new species. If \( p = 0 \), the
+#'         transition does not lead to the creation of a new species.}
 #'   }
-
 #' @param replicates Integer. Number of independent island replicates to simulate.
 #' @param num_observed_states Integer (>= 1). Number of **observed** trait states.
 #' @param num_hidden_states Integer (>= 1). Number of **hidden** trait states; set
@@ -97,7 +106,7 @@ DAISIE_sim_trait_dep <- function(time,
   fail_msg  <- character(0)
 
   for (rep in seq_len(replicates)) {
-    cat(sprintf("replicate %d/%d ... ", rep, replicates)); flush.console()
+    cat(sprintf("replicate %d/%d ... ", rep, replicates)); utils::flush.console()
 
     res <- tryCatch(
       {

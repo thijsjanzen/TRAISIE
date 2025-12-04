@@ -84,7 +84,8 @@ default_params_doc(
   trait_mainland_ancestor,
   rcpp_methode,
   trparsopt,
-  trparsfix
+  trparsfix,
+  Mainland_pool_size_vec
 )
 }
 \arguments{
@@ -356,6 +357,8 @@ options available are:
 \item{trparsopt}{transformed parameters to optimize}
 
 \item{trparsfix}{transformed paramaters that remain fixed}
+
+\item{Mainland_pool_size_vec}{TODO!!!!!}
 }
 \value{
 Nothing

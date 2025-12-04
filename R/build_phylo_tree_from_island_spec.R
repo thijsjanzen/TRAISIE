@@ -66,7 +66,7 @@ build_phylo_tree_from_island_spec <- function(island_spec) {
   # Step 2: Create value → label map
   all_vals <- unique(unlist(strsplit(cleaned_history, " ")))
   all_vals <- all_vals[all_vals != "NA" & all_vals != ""]
-  label_map <- setNames(seq_along(all_vals), all_vals)
+  label_map <- stats::setNames(seq_along(all_vals), all_vals)
 
   # Step 3: Recode each row with unique terminal node
   used_numbers <- c()
@@ -125,7 +125,7 @@ build_phylo_tree_from_island_spec <- function(island_spec) {
 
   edge_lengths <- unlist(lapply(time_vecs_with_zero, function(times) {
     if (length(times) < 2) return(numeric(0))
-    head(times, -1) - tail(times, -1)
+    utils::head(times, -1) - utils::tail(times, -1)
   }))
 
   if (length(duplicate_indices) > 0) {
@@ -141,7 +141,7 @@ build_phylo_tree_from_island_spec <- function(island_spec) {
   internal_nodes <- sort(setdiff(all_nodes, tip_nodes))
 
   node_order <- c(tip_nodes, internal_nodes)
-  node_map <- setNames(seq_along(node_order), node_order)
+  node_map <- stats::setNames(seq_along(node_order), node_order)
 
   edge_remapped <- matrix(
     c(node_map[as.character(edges[, 1])], node_map[as.character(edges[, 2])]),

@@ -1,5 +1,5 @@
 
-
+#' @keywords internal
 DAISIE_create_island_trait <- function(stt_table,
                                        total_time,
                                        island_spec,
@@ -69,7 +69,7 @@ DAISIE_create_island_trait <- function(stt_table,
           colnames(all_spec) <- cnames
         }
 
-        col_times <- unique(na.omit(suppressWarnings(
+        col_times <- unique(stats::na.omit(suppressWarnings(
           as.numeric(all_spec[, "Colonisation time (BP)"])
         )))
 

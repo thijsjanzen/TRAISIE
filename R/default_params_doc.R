@@ -193,6 +193,7 @@
 #' @param status indicator for type of inference required
 #' @param trparsopt transformed parameters to optimize
 #' @param trparsfix transformed paramaters that remain fixed
+#' @param Mainland_pool_size_vec TODO!!!!!
 #' @return Nothing
 #' @keywords internal
 #' @export
@@ -275,6 +276,7 @@ default_params_doc <- function(phy,
                                trait_mainland_ancestor,
                                rcpp_methode,
                                trparsopt,
-                               trparsfix) {
+                               trparsfix,
+                               Mainland_pool_size_vec) {
   # Nothing
 }
