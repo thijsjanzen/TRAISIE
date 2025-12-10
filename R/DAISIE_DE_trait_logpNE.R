@@ -43,6 +43,7 @@
 #'
 
 DAISIE_DE_trait_logpNE <- function(
+    datalist,
     brts,
     parameter,
     trait,
@@ -87,29 +88,19 @@ DAISIE_DE_trait_logpNE <- function(
   }  else {
     if(all(is.numeric(trait_mainland_ancestor))) { # this is the case when only a probability distribution is specified for the observed states; this could be c(M0/M, M1/M)
 
-
-
+      ### the following calculates the terms before the + sign
       s <- numeric(num_observed_states * num_hidden_states)
-      # you could also do s <- c() and use line 92
-
       weights1 <- c()
       for(j in 1:length(trait_mainland_ancestor)) {
         s[((j - 1) * num_hidden_states + 1):(j * num_hidden_states)] <- rep(trait_mainland_ancestor[j], num_hidden_states)
-        # you could also write s <- c(s, rep(trait_mainland_ancestor[j],num_hidden_states))
-        weights_j <- Lk_vec[((j - 1) * num_hidden_states + 1):(j * num_hidden_states)]
-        if (sum(weights_j) == 0)
-        {
-          weights_j <- weights_j/1
-        }else{
-          weights_j <- weights_j/sum(weights_j)
-        }
-        weights1 <- c(weights1, weights_j)
+
+        weights1 <- s
+        weights1 <- s/sum(s)
+
       }
-      weights1 <- weights1 * s/sum(weights1)
 
-
-      weights2 <- Lk_vec * (1 - sum(trait_mainland_ancestor))/sum(Lk_vec)
-
+      ### the following calculates the terms after the + sign
+      weights2 <- 1 - sum(trait_mainland_ancestor)
       weights <- weights1 + weights2
 
       if (all(weights == 0)) {
@@ -118,11 +109,31 @@ DAISIE_DE_trait_logpNE <- function(
         weights <- weights / sum(weights)
       }
 
-
-
     } else { # this is the case where nothing is provided, i.e. NA
-      weights <- Lk_vec/sum(Lk_vec)
+      M0 <- datalist[[1]]$M0
+      M1 <- datalist[[1]]$M1
+      M <- datalist[[1]]$not_present
+      trait_mainland_ancestor <- c(M0/M, M1/M)
+      s <- numeric(num_observed_states * num_hidden_states)
 
+      weights1 <- c()
+      for(j in 1:length(trait_mainland_ancestor)) {
+        s[((j - 1) * num_hidden_states + 1):(j * num_hidden_states)] <- rep(trait_mainland_ancestor[j], num_hidden_states)
+
+        weights1 <- s
+        weights1 <- s/sum(s)
+      }
+
+      ### the following calculates the terms after the + sign
+
+      weights2 <- 1 - sum(trait_mainland_ancestor)
+      weights <- weights1 + weights2
+
+      if (all(weights == 0)) {
+        weights <- weights
+      } else {
+        weights <- weights / sum(weights)
+      }
     }
   }
   log_Lk <- log(sum(Lk_vec * weights))
