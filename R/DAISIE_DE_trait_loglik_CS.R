@@ -202,8 +202,8 @@ DAISIE_DE_trait_loglik_CS <- function( parameter,
     vec_loglikelihood[i - 1] <- loglikelihood$loglik
   }
 
-  #loglik <- sum(vec_loglikelihood) + loglik
-  #return(loglik)
-  return(c(vec_loglikelihood, loglik))
+  loglik <- sum(vec_loglikelihood) + loglik
+  return(loglik)
+  #return(c(vec_loglikelihood, loglik))
 }
 
