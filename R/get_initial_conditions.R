@@ -346,7 +346,7 @@ get_initial_conditions4 <- function(status,
     }
 
 
-  }else {
+  } else {
     if (status == 2 || status == 3 || status == 4) {
       if (all(is.na(trait_mainland_ancestor))) {
 
