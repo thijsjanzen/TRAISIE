@@ -42,7 +42,7 @@
 #'   status                  = 2,
 #'   sampling_fraction       = sampling_fraction,
 #'   parameter               = parameter,
-#'   trait_mainland_ancestor = NA,
+#'   trait_mainland_ancestor = c(0, 1),
 #'   num_observed_states     = 2,
 #'   num_hidden_states       = 2,
 #'   atol                    = 1e-15,
@@ -54,7 +54,6 @@
 
 
 DAISIE_DE_trait_logpEC <- function(
-    datalist,
     brts,
     parameter,
     phy,
@@ -107,52 +106,27 @@ DAISIE_DE_trait_logpEC <- function(
   }  else {
     if(all(is.numeric(trait_mainland_ancestor))) { # this is the case when only a probability distribution is specified for the observed states; this could be c(M0/M, M1/M)
 
-      ### the following calculates the terms before the + sign
       s <- numeric(num_observed_states * num_hidden_states)
-      weights1 <- c()
+
+      weights <- c()
       for(j in 1:length(trait_mainland_ancestor)) {
         s[((j - 1) * num_hidden_states + 1):(j * num_hidden_states)] <- rep(trait_mainland_ancestor[j], num_hidden_states)
 
-        weights1 <- s
-        weights1 <- s/sum(s)
+        weights <- s
 
       }
 
-      ### the following calculates the terms after the + sign
-      weights2 <- 1 - sum(trait_mainland_ancestor)
-      weights <- weights1 + weights2
-
-      if (all(weights == 0)) {
-        weights <- weights
-      } else {
-        weights <- weights / sum(weights)
-      }
 
     } else { # this is the case where nothing is provided, i.e. NA
-      M0 <- datalist[[1]]$M0
-      M1 <- datalist[[1]]$M1
-      M <- datalist[[1]]$not_present
-      trait_mainland_ancestor <- c(M0/M, M1/M)
-      s <- numeric(num_observed_states * num_hidden_states)
 
-      weights1 <- c()
-      for(j in 1:length(trait_mainland_ancestor)) {
-        s[((j - 1) * num_hidden_states + 1):(j * num_hidden_states)] <- rep(trait_mainland_ancestor[j], num_hidden_states)
+      weights <- rep(1, num_observed_states * num_hidden_states)
+    }
 
-        weights1 <- s
-        weights1 <- s/sum(s)
-      }
 
-      ### the following calculates the terms after the + sign
-
-      weights2 <- 1 - sum(trait_mainland_ancestor)
-      weights <- weights1 + weights2
-
-      if (all(weights == 0)) {
-        weights <- weights
-      } else {
-        weights <- weights / sum(weights)
-      }
+    if (all(weights == 0)) {
+      weights <- weights
+    } else {
+      weights <- weights / sum(weights)
     }
   }
   log_Lk <- log(sum(Lk_vec * weights))
