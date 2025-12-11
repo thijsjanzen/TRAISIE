@@ -12,7 +12,8 @@
 #' library(DAISIE)
 #' data("Galapagos_datalist")
 #' datalist <- Galapagos_datalist
-#'
+#' datalist[[1]]$M0 <- 500
+#' datalist[[1]]$M1 <- 400
 #' i <- 9
 #' brts <- datalist[[i]]$branching_times
 #' trait <- 0
@@ -28,7 +29,7 @@
 #'     0,    0,    0.00,0.00,
 #'     rep(0, 8)
 #'   ), nrow = 4),
-#'   1
+#'   0
 #' )
 #'
 #'
@@ -38,22 +39,23 @@
 #'   c(0.009326754, 0.003, 0.002, 0.2),
 #'   c(1.008583, 1, 2, 1.5),
 #'   matrix(c(
-#'     0,    .001,    0.005,  0,
-#'     .001,    0,    0.000,0.005,
+#'     0,    0.1,    0.05,  0,
+#'     0.33,    0,    0.000,0.0086,
 #'     0.005,    000,    0,  0.005,
-#'     0,   0.005,  0.005,0.00
+#'     0,   0.5,  0.35,0.00
 #'   ), nrow = 4),
 #'   1
 #' )
 #'
 #' status = 2
 #' DAISIE_DE_trait_logpES(
+#'   datalist              = datalist,
 #'   brts                    = brts,
 #'   trait                   = trait,
 #'   status                  = status,
 #'   sampling_fraction       = sampling_fraction,
 #'   parameter               = parameter,
-#'   trait_mainland_ancestor = c(1, 0),
+#'   trait_mainland_ancestor = c(1,0),
 #'   num_observed_states     = 2,
 #'   num_hidden_states       = 2,
 #'   atol                    = 1e-15,
@@ -64,6 +66,7 @@
 
 
 DAISIE_DE_trait_logpES <- function(
+    datalist,
     brts,
     parameter,
     trait,
@@ -105,31 +108,37 @@ DAISIE_DE_trait_logpES <- function(
   ## added !all(is.na(trait_mainland_ancestor)) because when trait_mainland_ancestor = NA,  length(trait_mainland_ancestor) = length(trait_mainland_ancestor_extended) = 1
   if(!all(is.na(trait_mainland_ancestor)) && length(trait_mainland_ancestor) == num_observed_states * num_hidden_states) { #this is the case where a full probability distribution is specified across all observed and hidden states
     weights <- trait_mainland_ancestor / sum(trait_mainland_ancestor)
-  }  else {
-    if(all(is.numeric(trait_mainland_ancestor))) { # this is the case when only a probability distribution is specified for the observed states; this could be c(M0/M, M1/M)
+  } else {
 
-      s <- numeric(num_observed_states * num_hidden_states)
-
-      weights <- c()
-      for(j in 1:length(trait_mainland_ancestor)) {
-        s[((j - 1) * num_hidden_states + 1):(j * num_hidden_states)] <- rep(trait_mainland_ancestor[j], num_hidden_states)
-
-        weights <- s
-
-      }
+    # Determine probabilities for observed states
+    if (all(is.numeric(trait_mainland_ancestor))) {
+      # User provided trait_mainland_ancestor, e.g. c(1, 0)
+      probs <- trait_mainland_ancestor
+      # Replicate each probability across the hidden states
+      s <- unlist(lapply(probs, function(p) rep(p, num_hidden_states)))
 
 
-    } else { # this is the case where nothing is provided, i.e. NA
 
-      weights <- rep(1, num_observed_states * num_hidden_states)
-    }
-
-
-    if (all(weights == 0)) {
-      weights <- weights
     } else {
-      weights <- weights / sum(weights)
+      # Nothing provided -> compute probabilities from mainland pool
+      # Extract all M_k present in the datalist
+      Q =  parameter[[5]]
+      diag(Q ) <- 0
+      diag(Q ) <- -rowSums(Q)
+
+      pi <- pracma::null(t(Q))
+      if (pi[which.max(abs(pi))] < 0) pi <- -pi
+
+      pi <-  pmax (rep (0, 4) , pi)
+      s <- pi
     }
+    # Normalize weights
+    if (sum(s) == 0) {
+      weights <- s
+    } else {
+      weights <- s / sum(s)
+    }
+
   }
   log_Lk <- log(sum(Lk_vec * weights))
   return( list (loglik = log_Lk, lik_states = Lk_vec, weights = weights))

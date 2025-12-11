@@ -1,14 +1,8 @@
-#' apply loglikelihood to a dataset
-#' @description umbrella function
-#' @inheritParams default_params_doc
-#' @export
-
-
 DAISIE_DE_trait_loglik_CS <- function( parameter,
                                        datalist,
                                        methode = "lsodes",
                                        rcpp_methode =
-                                       "odeint::runge_kutta_cash_karp54",
+                                         "odeint::runge_kutta_cash_karp54",
                                        atol = 1e-15,
                                        rtol = 1e-15,
                                        num_observed_states,
@@ -21,7 +15,6 @@ DAISIE_DE_trait_loglik_CS <- function( parameter,
 {
   logcond <- 0 # default value gives no effect
 
-
   if (length(parameter) >= 6) {
     logp0 <- DAISIE_DE_trait_logp0(datalist = datalist,
                                    parameter = parameter,
@@ -29,7 +22,7 @@ DAISIE_DE_trait_loglik_CS <- function( parameter,
                                    rtol = rtol,
                                    num_observed_states = num_observed_states,
                                    num_hidden_states = num_hidden_states,
-                                   trait_mainland_ancestor = NA,
+                                   trait_mainland_ancestor =  NA,
                                    methode = methode,
                                    use_Rcpp = use_Rcpp)
     if (is.null(datalist[[1]]$not_present)) {
@@ -194,8 +187,7 @@ DAISIE_DE_trait_loglik_CS <- function( parameter,
     vec_loglikelihood[i - 1] <- loglikelihood$loglik
   }
 
-  loglik <- sum(vec_loglikelihood) + loglik
-  return(loglik)
-  #return(c(vec_loglikelihood, loglik))
+  #loglik <- sum(vec_loglikelihood) + loglik
+  #return(loglik)
+  return(c(vec_loglikelihood, loglik))
 }
-

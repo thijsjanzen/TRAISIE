@@ -20,6 +20,8 @@
 #' num_hidden_states       =  2
 #' sampling_fraction       =  sample(c(1, 1), num_observed_states, replace = TRUE)
 #' trait_mainland_ancestor = c(1, 0)
+#' datalist[[1]]$M0 <- 500
+#' datalist[[1]]$M1 <- 400
 #'
 #' parameter <- list(
 #'   c(2.546591, 1.2, 1, 0.2),
@@ -36,13 +38,14 @@
 #' )
 #'   status                  = 2
 #' DAISIE_DE_trait_logpEC(
+#'   datalist              = datalist,
 #'   brts                    = brts,
 #'   phy                     = phy,
 #'   traits                  = traits,
 #'   status                  = 2,
 #'   sampling_fraction       = sampling_fraction,
 #'   parameter               = parameter,
-#'   trait_mainland_ancestor = c(0, 1),
+#'   trait_mainland_ancestor = NA,
 #'   num_observed_states     = 2,
 #'   num_hidden_states       = 2,
 #'   atol                    = 1e-15,
@@ -54,6 +57,7 @@
 
 
 DAISIE_DE_trait_logpEC <- function(
+    datalist,
     brts,
     parameter,
     phy,
@@ -103,31 +107,37 @@ DAISIE_DE_trait_logpEC <- function(
 
      weights <- trait_mainland_ancestor/sum(trait_mainland_ancestor)
 
-  }  else {
-    if(all(is.numeric(trait_mainland_ancestor))) { # this is the case when only a probability distribution is specified for the observed states; this could be c(M0/M, M1/M)
+  } else {
 
-      s <- numeric(num_observed_states * num_hidden_states)
-
-      weights <- c()
-      for(j in 1:length(trait_mainland_ancestor)) {
-        s[((j - 1) * num_hidden_states + 1):(j * num_hidden_states)] <- rep(trait_mainland_ancestor[j], num_hidden_states)
-
-        weights <- s
-
-      }
+    # Determine probabilities for observed states
+    if (all(is.numeric(trait_mainland_ancestor))) {
+      # User provided trait_mainland_ancestor, e.g. c(1, 0)
+      probs <- trait_mainland_ancestor
+      # Replicate each probability across the hidden states
+      s <- unlist(lapply(probs, function(p) rep(p, num_hidden_states)))
 
 
-    } else { # this is the case where nothing is provided, i.e. NA
 
-      weights <- rep(1, num_observed_states * num_hidden_states)
-    }
-
-
-    if (all(weights == 0)) {
-      weights <- weights
     } else {
-      weights <- weights / sum(weights)
+      # Nothing provided -> compute probabilities from mainland pool
+      # Extract all M_k present in the datalist
+      Q =  parameter[[5]]
+      diag(Q ) <- 0
+      diag(Q ) <- -rowSums(Q)
+
+      pi <- pracma::null(t(Q))
+      if (pi[which.max(abs(pi))] < 0) pi <- -pi
+
+      pi <-  pmax (rep (0, 4) , pi)
+      s <- pi
     }
+    # Normalize weights
+    if (sum(s) == 0) {
+      weights <- s
+    } else {
+      weights <- s / sum(s)
+    }
+
   }
   log_Lk <- log(sum(Lk_vec * weights))
   return( list (loglik = log_Lk, lik_states = Lk_vec, weights = weights))
