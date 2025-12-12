@@ -117,8 +117,8 @@ DAISIE_DE_trait_logpES_max_min_age_hidden <- function(
 
 
     } else {
-      # Nothing provided -> compute probabilities from mainland pool
-      # Extract all M_k present in the datalist
+      # Nothing provided -> compute probabilities from the transition matrix
+  
       Q =  parameter[[5]]
       diag(Q ) <- 0
       diag(Q ) <- -rowSums(Q)
