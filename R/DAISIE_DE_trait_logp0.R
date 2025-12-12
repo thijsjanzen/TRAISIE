@@ -99,7 +99,7 @@ DAISIE_DE_trait_logp0 <- function(
 
 
     } else {
-      # Nothing provided -> compute probabilities from mainland pool
+
       # Extract all M_k present in the datalist
       Q =  parameter[[5]]
       diag(Q ) <- 0
