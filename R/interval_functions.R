@@ -24,6 +24,31 @@ dist_gamma_tma <- function(gamma,
 }
 
 
+use_stationary_weights <- function(Q) {
+
+  diag(Q) <- 0
+  diag(Q) <- -rowSums(Q)
+  pi <- pracma::null(t(Q))
+  diff <- 1
+  for(i in 1:dim(pi)[[2]]) {
+    if (pi[which.max(abs(pi[,i])),i] < 0) {
+      pi[,i] <- -pi[,i]
+    }
+    if (any(pi[,i] < 0) && max(abs(pi[which(pi[,i] < 0),i])) > 1E-10) {
+      warning('Substantial negative weights detected')
+    }
+    pi[which(pi[,i] < 0),i] <- 0
+    pi[,i] <- pi[,i]/sum(pi[,i])
+    diff_new <- abs(max(pi[,i])) - abs(min(pi[,i]))
+    if (diff_new < diff) {
+      diff <- diff_new
+      i_choice <- i
+    }
+  }
+  weight_states <- pi[,i_choice]
+  return(weight_states)
+}
+
 
 #' @keywords internal
 interval2 <- function(t, state, parameter) {
