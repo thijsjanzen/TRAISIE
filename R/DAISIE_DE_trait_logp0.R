@@ -99,21 +99,9 @@ DAISIE_DE_trait_logp0 <- function(
       weights <- s / sum(s)
 
     } else {
-
-      # Determine probabilities for observed states
-      if (all(is.numeric(trait_mainland_ancestor))) {
-        # User provided trait_mainland_ancestor, e.g. c(1, 0)
-        probs <- trait_mainland_ancestor
-        # Replicate each probability across the hidden states
-        s <- unlist(lapply(probs, function(p) rep(p, num_hidden_states)))
-        weights <- s / sum(s)
-
-
-      } else {
         weights <- use_stationary_weights(parameter[[5]])
       }
 
-    }
 
 
   }
