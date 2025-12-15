@@ -28,14 +28,14 @@
 #' parameter <- list(
 #'   c(2.546591, 1.2, 1, 0.2),
 #'   c(2.678781, 2, 1.9, 3),
-#'   c(0.009326754, 0.003, 0.002, 0.2),
+#'   c(0.01354, 0.00003, 0.002, 0.2),
 #'   c(1.008583, 1, 2, 1.5),
 #'   matrix(c(
-#'     0,    .001,    0.005,  0,
-#'     .001,    0,    0.000,0.005,
+#'     0,    .001,    0.006,  0,
+#'     .004,    0,    0.000,0.005,
 #'     0.005,    000,    0,  0.005,
-#'     0,   0.005,  0.005,0.00
-#'   ), nrow = 4),
+#'     0,   0.875,  0.05,0.00
+#'   ), nrow = 4, byrow = TRUE),
 #'   1
 #' )
 #'
@@ -96,27 +96,25 @@ DAISIE_DE_trait_logp0 <- function(
       # Replicate each probability across the hidden states
       s <- unlist(lapply(probs, function(p) rep(p, num_hidden_states)))
 
-
-
-    } else {
-
-      # Nothing provided -> compute probabilities from the transition matrix
-      Q =  parameter[[5]]
-      diag(Q ) <- 0
-      diag(Q ) <- -rowSums(Q)
-
-      pi <- pracma::null(t(Q))
-      if (pi[which.max(abs(pi))] < 0) pi <- -pi
-
-      pi <-  pmax (rep (0, 4) , pi)
-      s <- pi
-    }
-    # Normalize weights
-    if (sum(s) == 0) {
-      weights <- s
-    } else {
       weights <- s / sum(s)
+
+    } else {
+
+      # Determine probabilities for observed states
+      if (all(is.numeric(trait_mainland_ancestor))) {
+        # User provided trait_mainland_ancestor, e.g. c(1, 0)
+        probs <- trait_mainland_ancestor
+        # Replicate each probability across the hidden states
+        s <- unlist(lapply(probs, function(p) rep(p, num_hidden_states)))
+        weights <- s / sum(s)
+
+
+      } else {
+        weights <- use_stationary_weights(parameter[[5]])
+      }
+
     }
+
 
   }
 
