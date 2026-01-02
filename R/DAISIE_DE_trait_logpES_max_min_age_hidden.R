@@ -60,12 +60,13 @@
 
 
 DAISIE_DE_trait_logpES_max_min_age_hidden <- function(
+    datalist,
     brts,
     parameter,
     trait,
     num_observed_states,
     num_hidden_states,
-    trait_mainland_ancestor, #this should contain either a full probability distribution across all states, only the observed states, or NA
+    trait_mainland_ancestor = NA, #this should contain either a full probability distribution across all states, only the observed states, or NA
     status,
     sampling_fraction,
     Mainland_pool_size_vec = NULL,
@@ -76,27 +77,28 @@ DAISIE_DE_trait_logpES_max_min_age_hidden <- function(
     use_Rcpp = 2
 ) {
 
-  Lk_vec <- numeric(num_observed_states * num_hidden_states)
-
-  for (i in seq_len(num_observed_states * num_hidden_states)) { #loop over all possible states, observed and hidden, one by one
+  lik_func <- function(i) {
     trait_mainland_ancestor_extended <- rep(0,num_observed_states * num_hidden_states)
     trait_mainland_ancestor_extended[i] <- 1 #set only the trait of interest to 1
 
     Lk_log <- DAISIE_DE_trait_logpES_max_min_age_hidden_core (brts,
-                                           parameter               = parameter,
-                                           trait                   = trait,
-                                           num_observed_states     = num_observed_states,
-                                           num_hidden_states       = num_hidden_states,
-                                           trait_mainland_ancestor = trait_mainland_ancestor_extended,
-                                           status                  = status,
-                                           sampling_fraction       = sampling_fraction,
-                                           atol                    = atol,
-                                           rtol                    = rtol,
-                                           methode                 = "ode45",
-                                           rcpp_methode            = rcpp_methode,
-                                           use_Rcpp                = use_Rcpp)
-    Lk_vec[i] <- Lk_log # ideally this should not be needed if the function above does not do logtransformation
+                                                              parameter               = parameter,
+                                                              trait                   = trait,
+                                                              num_observed_states     = num_observed_states,
+                                                              num_hidden_states       = num_hidden_states,
+                                                              trait_mainland_ancestor = trait_mainland_ancestor_extended,
+                                                              status                  = status,
+                                                              sampling_fraction       = sampling_fraction,
+                                                              atol                    = atol,
+                                                              rtol                    = rtol,
+                                                              methode                 = "ode45",
+                                                              rcpp_methode            = rcpp_methode,
+                                                              use_Rcpp                = use_Rcpp)
+    return(Lk_log)
   }
+
+  indices <-  seq_len(num_observed_states * num_hidden_states)
+  Lk_vec <- sapply(indices, lik_func)
 
   ## added !all(is.na(trait_mainland_ancestor)) because when trait_mainland_ancestor = NA,  length(trait_mainland_ancestor) = length(trait_mainland_ancestor_extended) = 1
   if(!all(is.na(trait_mainland_ancestor)) && length(trait_mainland_ancestor) == length(trait_mainland_ancestor_extended)) { #this is the case where a full probability distribution is specified across all observed and hidden states
