@@ -44,7 +44,7 @@
 #'
 #' DAISIE_DE_trait_logpES_max_min_age_hidden(
 #'   brts                  = data_list1[[2]]$branching_times,
-#'   trait                 = 0,
+#'   trait                 = 1,
 #'   status                = 9,
 #'   parameter             = parameter,
 #'   num_observed_states   = 2,
@@ -149,18 +149,18 @@ DAISIE_DE_trait_logpES_max_min_age_hidden <- function(
 
 
 DAISIE_DE_trait_logpES_max_min_age_hidden_core <- function(brts,
-                                                      trait,
-                                                      status,
-                                                      sampling_fraction = 1,
-                                                      parameter,
-                                                      trait_mainland_ancestor = NA,
-                                                      num_observed_states,
-                                                      num_hidden_states,
-                                                      atol = 1e-15,
-                                                      rtol = 1e-15,
-                                                      methode = "ode45",
-                                                      rcpp_methode = "odeint::runge_kutta_cash_karp54",
-                                                      use_Rcpp = 0) {
+                                                           trait,
+                                                           status,
+                                                           sampling_fraction = 1,
+                                                           parameter,
+                                                           trait_mainland_ancestor = NA,
+                                                           num_observed_states,
+                                                           num_hidden_states,
+                                                           atol = 1e-15,
+                                                           rtol = 1e-15,
+                                                           methode = "ode45",
+                                                           rcpp_methode = "odeint::runge_kutta_cash_karp54",
+                                                           use_Rcpp = 0) {
   t0   <- brts[1]
   tmax <- brts[2]
   tmin <- brts[3]
