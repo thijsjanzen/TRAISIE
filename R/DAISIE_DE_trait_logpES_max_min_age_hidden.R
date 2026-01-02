@@ -43,7 +43,7 @@
 #'
 #'
 #' DAISIE_DE_trait_logpES_max_min_age_hidden(
-#'   brts                  = c(4, 3.9999, 0.001),
+#'   brts                  = data_list1[[2]]$branching_times,
 #'   trait                 = 0,
 #'   status                = 9,
 #'   parameter             = parameter,
@@ -52,7 +52,7 @@
 #'   atol                  = 1e-15,
 #'   rtol                  = 1e-15,
 #'   methode               = "ode45",
-#'   trait_mainland_ancestor = NA,
+#'   trait_mainland_ancestor = c(0, 1),
 #'   sampling_fraction     = c(1,1),
 #'   use_Rcpp = 2
 #' )
