@@ -118,19 +118,19 @@ DAISIE_DE_trait_loglik_CS <- function( parameter,
                                                 use_Rcpp = use_Rcpp)
       } else {
         loglikelihood <- DAISIE_DE_trait_logpEC(brts = brts,
-                                                 parameter = parameter,
-                                                 phy = phy,
-                                                 traits = traits,
-                                                 num_observed_states = num_observed_states,
-                                                 num_hidden_states = num_hidden_states,
-                                                 trait_mainland_ancestor = trait_mainland_ancestor,
-                                                 status = stac,
-                                                 sampling_fraction = sampling_fraction,
-                                                 atol  = atol,
-                                                 rtol  = rtol,
-                                                 methode = methode,
-                                                 rcpp_methode = rcpp_methode,
-                                                 use_Rcpp = use_Rcpp)
+                                                parameter = parameter,
+                                                phy = phy,
+                                                traits = traits,
+                                                num_observed_states = num_observed_states,
+                                                num_hidden_states = num_hidden_states,
+                                                trait_mainland_ancestor = trait_mainland_ancestor,
+                                                status = stac,
+                                                sampling_fraction = sampling_fraction,
+                                                atol  = atol,
+                                                rtol  = rtol,
+                                                methode = methode,
+                                                rcpp_methode = rcpp_methode,
+                                                use_Rcpp = use_Rcpp)
       }
     }
     else if (stac == 6) {
