@@ -9,7 +9,8 @@
 #' data("Biwa_datalist")
 #' datalist <- Biwa_datalist
 #'
-#'
+#' datalist[[1]]$M0 <- 100
+#' datalist[[1]]$M1 <- 120
 #'
 #' parameter <- list(
 #'   c(2.546591, 2.546591, 2.546591, 2.546591),
@@ -20,7 +21,7 @@
 #'     0,    0,    0,  0,
 #'     0,    0,    0.00,0.00,
 #'     rep(0, 8)
-#'   ), nrow = 4),
+#'   ), nrow = 4, byrow = TRUE),
 #'   1
 #' )
 #'
@@ -35,7 +36,7 @@
 #'     0,    0,    0.002,0.005,
 #'     0,    .1000,    0,  0,
 #'     0,    0,    0.100,0.00
-#'   ), nrow = 4),
+#'   ), nrow = 4, byrow = TRUE),
 #'   1
 #' )
 #'
@@ -43,8 +44,9 @@
 #'
 #'
 #' DAISIE_DE_trait_logpES_max_min_age_hidden(
-#'   brts                  = data_list1[[2]]$branching_times,
-#'   trait                 = 1,
+#'   datalist              = datalist,
+#'   brts                  = c(4, 3.9999, 0.001),
+#'   trait                 = 0,
 #'   status                = 9,
 #'   parameter             = parameter,
 #'   num_observed_states   = 2,
@@ -52,7 +54,7 @@
 #'   atol                  = 1e-15,
 #'   rtol                  = 1e-15,
 #'   methode               = "ode45",
-#'   trait_mainland_ancestor = c(0, 1),
+#'   trait_mainland_ancestor = NA,
 #'   sampling_fraction     = c(1,1),
 #'   use_Rcpp = 2
 #' )
@@ -103,17 +105,19 @@ DAISIE_DE_trait_logpES_max_min_age_hidden <- function(
   ## added !all(is.na(trait_mainland_ancestor)) because when trait_mainland_ancestor = NA,  length(trait_mainland_ancestor) = length(trait_mainland_ancestor_extended) = 1
   if(!all(is.na(trait_mainland_ancestor)) && length(trait_mainland_ancestor) == length(trait_mainland_ancestor_extended)) { #this is the case where a full probability distribution is specified across all observed and hidden states
     weights <- trait_mainland_ancestor/sum(trait_mainland_ancestor)
-  } else {
+  }  else {
     if(all(is.numeric(trait_mainland_ancestor))) { # this is the case when only a probability distribution is specified for the observed states; this could be c(M0/M, M1/M)
 
+
+
       s <- numeric(num_observed_states * num_hidden_states)
+      # you could also do s <- c() and use line 92
 
       weights1 <- c()
       for(j in 1:length(trait_mainland_ancestor)) {
         s[((j - 1) * num_hidden_states + 1):(j * num_hidden_states)] <- rep(trait_mainland_ancestor[j], num_hidden_states)
-
+        # you could also write s <- c(s, rep(trait_mainland_ancestor[j],num_hidden_states))
         weights_j <- Lk_vec[((j - 1) * num_hidden_states + 1):(j * num_hidden_states)]
-
         if (sum(weights_j) == 0)
         {
           weights_j <- weights_j/1
@@ -135,8 +139,11 @@ DAISIE_DE_trait_logpES_max_min_age_hidden <- function(
         weights <- weights / sum(weights)
       }
 
+
+
     } else { # this is the case where nothing is provided, i.e. NA
       weights <- Lk_vec/sum(Lk_vec)
+
     }
   }
   log_Lk <- log(sum(Lk_vec * weights))
