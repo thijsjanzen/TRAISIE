@@ -16,25 +16,29 @@ DAISIE_DE_trait_loglik_CS <- function( parameter,
   logcond <- 0 # default value gives no effect
 
   if (length(parameter) >= 6) {
+
+    M0 <- datalist[[1]]$M0
+    M1 <- datalist[[1]]$M1
+    M  <- datalist[[1]]$M
     logp0 <- DAISIE_DE_trait_logp0(datalist = datalist,
                                    parameter = parameter,
                                    atol = atol,
                                    rtol = rtol,
                                    num_observed_states = num_observed_states,
                                    num_hidden_states = num_hidden_states,
-                                   trait_mainland_ancestor =  NA,
+                                   trait_mainland_ancestor =  c(M0/M, M1/M),
                                    methode = methode,
                                    use_Rcpp = use_Rcpp)
     if (is.null(datalist[[1]]$not_present)) {
       loglik <- (datalist[[1]]$not_present_type1 + datalist[[1]]$not_present_type2) * logp0$loglik
       numimm <- (datalist[[1]]$not_present_type1 + datalist[[1]]$not_present_type2) + length(datalist) - 1
     } else {
-      loglik <- datalist[[1]]$not_present * logp0$loglik
+      loglik <- datalist[[1]]$not_present * logp0
       numimm <- datalist[[1]]$not_present + length(datalist) - 1
     }
 
     ### condition on at least one successful colonization
-    logcond <- (cond == 1) * log(1 - exp(numimm * logp0$loglik))
+    logcond <- (cond == 1) * log(1 - exp(numimm * logp0))
     for (i in 2:length(datalist)) {
       datalist[[i]]$type1or2 <- 1
     }
