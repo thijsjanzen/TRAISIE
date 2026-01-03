@@ -5,6 +5,7 @@
 \title{Testing function for comparison with DAISIE}
 \usage{
 DAISIE_DE_trait_logpEC(
+  datalist,
   brts,
   parameter,
   phy,
@@ -14,15 +15,22 @@ DAISIE_DE_trait_logpEC(
   trait_mainland_ancestor = NA,
   status,
   sampling_fraction,
-  num_threads = 1,
+  num_threads = 5,
   atol = 1e-15,
   rtol = 1e-15,
   methode = "ode45",
   rcpp_methode = "odeint::runge_kutta_cash_karp54",
-  use_Rcpp = 0
+  use_Rcpp = 2
 )
 }
 \arguments{
+\item{datalist}{a list containing in the first entry: island age and the
+number of species not present, then from entry 2 until n it contains
+individual datasets for which to estimate the loglikelihood together, each
+dataset has the following fields: 1) colonist_name, 2) b ranching_times,
+3) stac, 4) missing_species, 5) type1or2, 6) traits, 7) sampling fraction,
+8) phylogeny}
+
 \item{brts}{branching times, being: island age, colonization time, branching
 times}
 
@@ -84,9 +92,13 @@ datalist <- Galapagos_datalist
 i <- 5
 phy <- DDD::brts2phylo(datalist[[i]]$branching_times[-c(1, 2)])
 brts <- datalist[[i]]$branching_times
-traits <- sample(c(NA, 0), length(brts), replace = TRUE)
-sampling_fraction <- sample(c(1, 1), length(brts), replace = TRUE)
-
+traits <- sample(c(1, 0), length(brts), replace = TRUE)
+num_observed_states     =  2
+num_hidden_states       =  2
+sampling_fraction       =  sample(c(1, 1), num_observed_states, replace = TRUE)
+trait_mainland_ancestor = c(1, 0)
+datalist[[1]]$M0 <- 500
+datalist[[1]]$M1 <- 400
 
 parameter <- list(
   c(2.546591, 1.2, 1, 0.2),
@@ -94,51 +106,28 @@ parameter <- list(
   c(0.009326754, 0.003, 0.002, 0.2),
   c(1.008583, 1, 2, 1.5),
   matrix(c(
-    0,    1,    0.5,  0,
-    0,    0,    0.002,0.005,
-    rep(0, 8)
-  ), nrow = 4),
+    0,    .001,    0.005,  0,
+    .001,    0,    0.000,0.005,
+    0.005,    000,    0,  0.005,
+    0,   0.005,  0.005,0.00
+  ), nrow = 4, byrow = TRUE),
   1
 )
-
- DAISIE_DE_trait_logpEC(
-  brts                    = data_list1[[670]],
-  phy                     = data_list1[[670]]$phylogeny,
-  traits                  = data_list1[[670]]$traits,
+  status                  = 2
+DAISIE_DE_trait_logpEC(
+  datalist              = datalist,
+  brts                    = brts,
+  phy                     = phy,
+  traits                  = traits,
   status                  = 2,
-  sampling_fraction       = data_list1[[670]]$sampling_fraction,
+  sampling_fraction       = sampling_fraction,
   parameter               = parameter,
-  trait_mainland_ancestor = data_list1[[670]]$root_state,
-  num_observed_states     = 1,
-  num_hidden_states       = 1,
+  trait_mainland_ancestor = NA,
+  num_observed_states     = 2,
+  num_hidden_states       = 2,
   atol                    = 1e-15,
   rtol                    = 1e-15,
-  methode                 = "ode45")
-
-# Or DAISIE style:
-parameter <- list(
-  c(2.546591),
-  c(2.678781),
-  c(0.009326754),
-  c(1.008583),
-  matrix(c(
-    rep(0, 1)
-  ), nrow = 1),
-  0
-)
-
-DAISIE_DE_trait_logpEC(
- brts                    = data_list1[[670]]$branching_times,
- phy                     = data_list1[[670]]$phylogeny,
- traits                  = data_list1[[670]]$traits,
- status                  = 2,
- sampling_fraction       = data_list1[[670]]$sampling_fraction[1],
- parameter               = parameter,
- trait_mainland_ancestor = data_list1[[670]]$root_state[1],
- num_observed_states     = 1,
- num_hidden_states       = 1,
- atol                    = 1e-15,
- rtol                    = 1e-15,
- methode                 = "ode45",
- use_Rcpp                = 2)
+  methode                 = "ode45",
+  num_threads             = 8,
+  use_Rcpp                = 2)
 }

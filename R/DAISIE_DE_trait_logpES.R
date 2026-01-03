@@ -12,7 +12,8 @@
 #' library(DAISIE)
 #' data("Galapagos_datalist")
 #' datalist <- Galapagos_datalist
-#'
+#' datalist[[1]]$M0 <- 500
+#' datalist[[1]]$M1 <- 400
 #' i <- 9
 #' brts <- datalist[[i]]$branching_times
 #' trait <- 0
@@ -27,8 +28,8 @@
 #'     0,    0,    0,  0,
 #'     0,    0,    0.00,0.00,
 #'     rep(0, 8)
-#'   ), nrow = 4),
-#'   1
+#'   ), nrow = 4, byrow = TRUE),
+#'   0
 #' )
 #'
 #'
@@ -38,22 +39,23 @@
 #'   c(0.009326754, 0.003, 0.002, 0.2),
 #'   c(1.008583, 1, 2, 1.5),
 #'   matrix(c(
-#'     0,    .001,    0.005,  0,
-#'     .001,    0,    0.000,0.005,
+#'     0,    0.1,    0.05,  0,
+#'     0.33,    0,    0.000,0.0086,
 #'     0.005,    000,    0,  0.005,
-#'     0,   0.005,  0.005,0.00
-#'   ), nrow = 4),
+#'     0,   0.5,  0.35,0.00
+#'   ), nrow = 4, byrow = TRUE),
 #'   1
 #' )
 #'
 #' status = 2
 #' DAISIE_DE_trait_logpES(
+#'   datalist              = datalist,
 #'   brts                    = brts,
 #'   trait                   = trait,
 #'   status                  = status,
 #'   sampling_fraction       = sampling_fraction,
 #'   parameter               = parameter,
-#'   trait_mainland_ancestor = NA,
+#'   trait_mainland_ancestor = c(1, 0),
 #'   num_observed_states     = 2,
 #'   num_hidden_states       = 2,
 #'   atol                    = 1e-15,
@@ -64,12 +66,13 @@
 
 
 DAISIE_DE_trait_logpES <- function(
+    datalist,
     brts,
     parameter,
     trait,
     num_observed_states,
     num_hidden_states,
-    trait_mainland_ancestor, #this should contain either a full probability distribution across all states, only the observed states, or NA
+    trait_mainland_ancestor = NA, #this should contain either a full probability distribution across all states, only the observed states, or NA
     status,
     sampling_fraction,
     atol = 1e-15,
@@ -79,9 +82,7 @@ DAISIE_DE_trait_logpES <- function(
     use_Rcpp = 2
 ) {
 
-  Lk_vec <- numeric(num_observed_states * num_hidden_states)
-
-  for (i in seq_len(num_observed_states * num_hidden_states)) { #loop over all possible states, observed and hidden, one by one
+  lik_func <- function(i) {
     trait_mainland_ancestor_extended <- rep(0,num_observed_states * num_hidden_states)
     trait_mainland_ancestor_extended[i] <- 1 #set only the trait of interest to 1
 
@@ -98,18 +99,23 @@ DAISIE_DE_trait_logpES <- function(
                                            methode                 = "ode45",
                                            rcpp_methode            = rcpp_methode,
                                            use_Rcpp                = use_Rcpp)
-    Lk_vec[i] <- Lk_log # ideally this should not be needed if the function above does not do logtransformation
+    return(Lk_log)
   }
+
+  indices <- seq_len(num_observed_states * num_hidden_states)
+  Lk_vec <- sapply(indices, lik_func)
 
   ## added !all(is.na(trait_mainland_ancestor)) because when trait_mainland_ancestor = NA,  length(trait_mainland_ancestor) = length(trait_mainland_ancestor_extended) = 1
   if(!all(is.na(trait_mainland_ancestor)) && length(trait_mainland_ancestor) == length(trait_mainland_ancestor_extended)) { #this is the case where a full probability distribution is specified across all observed and hidden states
     weights <- trait_mainland_ancestor/sum(trait_mainland_ancestor)
-  } else {
+  }  else {
     if(all(is.numeric(trait_mainland_ancestor))) { # this is the case when only a probability distribution is specified for the observed states; this could be c(M0/M, M1/M)
+
 
 
       s <- numeric(num_observed_states * num_hidden_states)
       # you could also do s <- c() and use line 92
+
       weights1 <- c()
       for(j in 1:length(trait_mainland_ancestor)) {
         s[((j - 1) * num_hidden_states + 1):(j * num_hidden_states)] <- rep(trait_mainland_ancestor[j], num_hidden_states)
@@ -125,6 +131,7 @@ DAISIE_DE_trait_logpES <- function(
       }
       weights1 <- weights1 * s/sum(weights1)
 
+
       weights2 <- Lk_vec * (1 - sum(trait_mainland_ancestor))/sum(Lk_vec)
 
       weights <- weights1 + weights2
@@ -135,8 +142,11 @@ DAISIE_DE_trait_logpES <- function(
         weights <- weights / sum(weights)
       }
 
+
+
     } else { # this is the case where nothing is provided, i.e. NA
       weights <- Lk_vec/sum(Lk_vec)
+
     }
   }
   log_Lk <- log(sum(Lk_vec * weights))

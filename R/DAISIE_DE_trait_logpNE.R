@@ -10,45 +10,34 @@
 #' library(DAISIE)
 #' data("Galapagos_datalist")
 #' datalist <- Galapagos_datalist
-#'
+#' datalist[[1]]$M0 <- 500
+#' datalist[[1]]$M1 <- 400
 #' i <- 3
 #' brts <- datalist[[i]]$branching_times
 #' trait <- 0
 #'
-#'
-#' parameter <- list(
-#'   c(2.546591, 2.546591, 2.546591, 2.546591),
-#'   c(2.678781, 2.678781, 2.678781, 2.678781),
-#'   c(0.009326754, 0.009326754, 0.009326754, 0.009326754),
-#'   c(1.008583, 1.008583, 1.008583, 1.008583),
-#'   matrix(c(
-#'     0,    0,    0,  0,
-#'     0,    0,    0.00,0.00,
-#'     rep(0, 8)
-#'   ), nrow = 4),
-#'   1
-#' )
-#'
 #' parameter <- list(
 #'   c(2.546591, 1.2, 1, 0.2),
 #'   c(2.678781, 2, 1.9, 3),
-#'   c(0.009326754, 0.009326754, 0.009326754, 0.009326754),
+#'   c(0.009326754, 0.003, 0.002, 0.2),
 #'   c(1.008583, 1, 2, 1.5),
 #'   matrix(c(
 #'     0,    .001,    0.005,  0,
 #'     .001,    0,    0.000,0.005,
 #'     0.005,    000,    0,  0.005,
 #'     0,   0.005,  0.005,0.00
-#'   ), nrow = 4),
-#'   0
+#'   ), nrow = 4, byrow = TRUE),
+#'   1
 #' )
+#' brts <- datalist[[i]]$branching_times
 #' DAISIE_DE_trait_logpNE(
+#'   datalist                = datalist,
 #'   brts                    = brts,
 #'   trait                   = trait,
 #'   status                  = 4,
-#'   sampling_fraction       = sampling_fraction,
 #'   parameter               = parameter,
-#'   trait_mainland_ancestor = c(1, 0),
+#'   sampling_fraction       = c(1,1),
+#'   trait_mainland_ancestor = NA,
 #'   num_observed_states     = 2,
 #'   num_hidden_states       = 2,
 #'   atol                    = 1e-15,
@@ -59,12 +48,13 @@
 #'
 
 DAISIE_DE_trait_logpNE <- function(
+    datalist,
     brts,
     parameter,
     trait,
     num_observed_states,
     num_hidden_states,
-    trait_mainland_ancestor, #this should contain either a full probability distribution across all states, only the observed states, or NA
+    trait_mainland_ancestor = NA, #this should contain either a full probability distribution across all states, only the observed states, or NA
     status,
     sampling_fraction,
     Mainland_pool_size_vec = NULL,
@@ -74,11 +64,7 @@ DAISIE_DE_trait_logpNE <- function(
     rcpp_methode = "odeint::runge_kutta_cash_karp54",
     use_Rcpp = 2
 ) {
-
-
-  Lk_vec <- numeric(num_observed_states * num_hidden_states)
-
-  for (i in seq_len(num_observed_states * num_hidden_states)) { #loop over all possible states, observed and hidden, one by one
+  lik_func <- function(i) {
     trait_mainland_ancestor_extended <- rep(0,num_observed_states * num_hidden_states)
     trait_mainland_ancestor_extended[i] <- 1 #set only the trait of interest to 1
 
@@ -95,8 +81,11 @@ DAISIE_DE_trait_logpNE <- function(
                                            methode                 = "ode45",
                                            rcpp_methode            = rcpp_methode,
                                            use_Rcpp                = use_Rcpp)
-    Lk_vec[i] <- Lk_log # ideally this should not be needed if the function above does not do logtransformation
+    return(Lk_log)
   }
+
+  Lk_vec <- sapply(1:(num_observed_states * num_hidden_states), lik_func)
+
 
   ## added !all(is.na(trait_mainland_ancestor)) because when trait_mainland_ancestor = NA,  length(trait_mainland_ancestor) = length(trait_mainland_ancestor_extended) = 1
   if(!all(is.na(trait_mainland_ancestor)) && length(trait_mainland_ancestor) == length(trait_mainland_ancestor_extended)) { #this is the case where a full probability distribution is specified across all observed and hidden states
@@ -150,18 +139,18 @@ DAISIE_DE_trait_logpNE <- function(
 
 
 DAISIE_DE_trait_logpNE_core <- function(brts,
-                                   status,
-                                   trait,
-                                   sampling_fraction,
-                                   num_observed_states,
-                                   num_hidden_states,
-                                   trait_mainland_ancestor = NA,
-                                   parameter,
-                                   atol  = 1e-15,
-                                   rtol  = 1e-15,
-                                   methode                 = "ode45",
-                                   rcpp_methode = "odeint::runge_kutta_cash_karp54",
-                                   use_Rcpp = 2) {
+                                        status,
+                                        trait,
+                                        sampling_fraction,
+                                        num_observed_states,
+                                        num_hidden_states,
+                                        trait_mainland_ancestor = NA,
+                                        parameter,
+                                        atol  = 1e-15,
+                                        rtol  = 1e-15,
+                                        methode                 = "ode45",
+                                        rcpp_methode = "odeint::bulirsch_stoer",
+                                        use_Rcpp = 0) {
 
   check_arguments(brts = brts,
                   parameter = parameter,
@@ -262,6 +251,5 @@ DAISIE_DE_trait_logpNE_core <- function(brts,
 
   # Extract log-likelihood from final solution
   Lk <- solution4[2, length(solution4[2, ])]
-
-  return( Lk)
+  return(Lk)
 }

@@ -5,26 +5,35 @@
 \title{Testing function for comparison with DAISIE}
 \usage{
 DAISIE_DE_trait_logpES(
+  datalist,
   brts,
-  status,
+  parameter,
   trait,
-  sampling_fraction,
   num_observed_states,
   num_hidden_states,
   trait_mainland_ancestor = NA,
-  parameter,
+  status,
+  sampling_fraction,
   atol = 1e-15,
   rtol = 1e-15,
   methode = "ode45",
   rcpp_methode = "odeint::runge_kutta_cash_karp54",
-  use_Rcpp = 0
+  use_Rcpp = 2
 )
 }
 \arguments{
+\item{datalist}{a list containing in the first entry: island age and the
+number of species not present, then from entry 2 until n it contains
+individual datasets for which to estimate the loglikelihood together, each
+dataset has the following fields: 1) colonist_name, 2) b ranching_times,
+3) stac, 4) missing_species, 5) type1or2, 6) traits, 7) sampling fraction,
+8) phylogeny}
+
 \item{brts}{branching times, being: island age, colonization time, branching
 times}
 
-\item{status}{indicator for type of inference required}
+\item{parameter}{list where first vector represents lambdas, the second
+mus and the third transition rates.}
 
 \item{trait}{vector with trait states for each tip in the phylogeny. The
 order of the states must be the same as the tree tips. For help, see
@@ -33,11 +42,6 @@ order of the states must be the same as the tree tips. For help, see
 each entry in the list corresponds to the matching phylogeny on that
 position.}
 
-\item{sampling_fraction}{vector that states the sampling proportion per
-trait state. It must have as many elements as there are trait states. When
-using a `multiPhylo` object, sampling fraction should be list where each
-entry in the list corresponds to the sampling proportion for each tree.}
-
 \item{num_observed_states}{number of observed states}
 
 \item{num_hidden_states}{number of hidden states}
@@ -45,8 +49,12 @@ entry in the list corresponds to the sampling proportion for each tree.}
 \item{trait_mainland_ancestor}{if mainland is TRUE, sets the trait of the
 mainland ancestor}
 
-\item{parameter}{list where first vector represents lambdas, the second
-mus and the third transition rates.}
+\item{status}{indicator for type of inference required}
+
+\item{sampling_fraction}{vector that states the sampling proportion per
+trait state. It must have as many elements as there are trait states. When
+using a `multiPhylo` object, sampling fraction should be list where each
+entry in the list corresponds to the sampling proportion for each tree.}
 
 \item{atol}{A numeric specifying the absolute tolerance of integration.}
 
@@ -73,35 +81,54 @@ given known colonization time. It is designed for comparison with DAISIE-based m
 library(DAISIE)
 data("Galapagos_datalist")
 datalist <- Galapagos_datalist
-
-i <- 7
+datalist[[1]]$M0 <- 500
+datalist[[1]]$M1 <- 400
+i <- 9
 brts <- datalist[[i]]$branching_times
 trait <- 0
 sampling_fraction <- c(1,1)
 
-
 parameter <- list(
-  c(2.546591, 2.546591),
-  c(2.678781, 2.678781),
-  c(0.009326754, 0.009326754),
-  c(1.008583, 1.008583),
+  c(2.546591, 2.546591, 2.546591, 2.546591),
+  c(2.678781, 2.678781, 2.678781, 2.678781),
+  c(0.009326754, 0.009326754, 0.009326754, 0.009326754),
+  c(1.008583, 1.008583, 1.008583, 1.008583),
   matrix(c(
-    rep(0, 4)
-  ), nrow = 2),
+    0,    0,    0,  0,
+    0,    0,    0.00,0.00,
+    rep(0, 8)
+  ), nrow = 4, byrow = TRUE),
   0
 )
 
+
+parameter <- list(
+  c(2.546591, 1.2, 1, 0.2),
+  c(2.678781, 2, 1.9, 3),
+  c(0.009326754, 0.003, 0.002, 0.2),
+  c(1.008583, 1, 2, 1.5),
+  matrix(c(
+    0,    0.1,    0.05,  0,
+    0.33,    0,    0.000,0.0086,
+    0.005,    000,    0,  0.005,
+    0,   0.5,  0.35,0.00
+  ), nrow = 4, byrow = TRUE),
+  1
+)
+
+status = 2
 DAISIE_DE_trait_logpES(
+  datalist              = datalist,
   brts                    = brts,
   trait                   = trait,
-  status                  = 2,
+  status                  = status,
   sampling_fraction       = sampling_fraction,
   parameter               = parameter,
-  trait_mainland_ancestor = c(1,0),
+  trait_mainland_ancestor = c(1, 0),
   num_observed_states     = 2,
-  num_hidden_states       = 1,
+  num_hidden_states       = 2,
   atol                    = 1e-15,
   rtol                    = 1e-15,
-  methode                 = "ode45"
-)
+  methode                 = "ode45",
+  use_Rcpp                = 2)
 }

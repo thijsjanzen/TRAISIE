@@ -5,24 +5,35 @@
 \title{testing fuction, for comparison with DAISIE}
 \usage{
 DAISIE_DE_trait_logpNE_max_min_age_hidden(
+  datalist,
   brts,
-  trait,
-  status,
-  sampling_fraction,
   parameter,
-  trait_mainland_ancestor = NA,
+  trait,
   num_observed_states,
   num_hidden_states,
+  trait_mainland_ancestor = NA,
+  status,
   atol = 1e-15,
   rtol = 1e-15,
+  sampling_fraction = c(1, 1),
   methode = "ode45",
   rcpp_methode = "odeint::runge_kutta_cash_karp54",
-  use_Rcpp = 0
+  use_Rcpp = 2
 )
 }
 \arguments{
+\item{datalist}{a list containing in the first entry: island age and the
+number of species not present, then from entry 2 until n it contains
+individual datasets for which to estimate the loglikelihood together, each
+dataset has the following fields: 1) colonist_name, 2) b ranching_times,
+3) stac, 4) missing_species, 5) type1or2, 6) traits, 7) sampling fraction,
+8) phylogeny}
+
 \item{brts}{branching times, being: island age, colonization time, branching
 times}
+
+\item{parameter}{list where first vector represents lambdas, the second
+mus and the third transition rates.}
 
 \item{trait}{vector with trait states for each tip in the phylogeny. The
 order of the states must be the same as the tree tips. For help, see
@@ -31,26 +42,23 @@ order of the states must be the same as the tree tips. For help, see
 each entry in the list corresponds to the matching phylogeny on that
 position.}
 
+\item{num_observed_states}{number of observed states}
+
+\item{num_hidden_states}{number of hidden states}
+
+\item{trait_mainland_ancestor}{if mainland is TRUE, sets the trait of the
+mainland ancestor}
+
 \item{status}{indicator for type of inference required}
+
+\item{atol}{A numeric specifying the absolute tolerance of integration.}
+
+\item{rtol}{A numeric specifying the relative tolerance of integration.}
 
 \item{sampling_fraction}{vector that states the sampling proportion per
 trait state. It must have as many elements as there are trait states. When
 using a `multiPhylo` object, sampling fraction should be list where each
 entry in the list corresponds to the sampling proportion for each tree.}
-
-\item{parameter}{list where first vector represents lambdas, the second
-mus and the third transition rates.}
-
-\item{trait_mainland_ancestor}{if mainland is TRUE, sets the trait of the
-mainland ancestor}
-
-\item{num_observed_states}{number of observed states}
-
-\item{num_hidden_states}{number of hidden states}
-
-\item{atol}{A numeric specifying the absolute tolerance of integration.}
-
-\item{rtol}{A numeric specifying the relative tolerance of integration.}
 
 \item{methode}{used integration method, default is ode45}
 
@@ -81,26 +89,30 @@ parameter <- list(
   c(0.009326754, 0.003, 0.002, 0.2),
   c(1.008583, 1, 2, 1.5),
   matrix(c(
-    0,    1,    0.5,  0,
-    0,    0,    0.002,0.005,
-    rep(0, 8)
-  ), nrow = 4),
-  0, c(0,1)
+    0,    .001,    0.005,  0,
+    .001,    0,    0.000,0.005,
+    0.005,    000,    0,  0.005,
+    0,   0.005,  0.005,0.00
+  ), nrow = 4, byrow = TRUE),
+  1
 )
 status <- 8
-parameter <- list(2.546591, 2.678781, 0.009326754, 1.008583,
-                  matrix(c(0), nrow = 1), 0 )
-
+datalist[[1]]$M0 <- 500
+datalist[[1]]$M1 <- 400
 
 DAISIE_DE_trait_logpNE_max_min_age_hidden(
+  datalist              = datalist,
   brts                  = c(4, 3.999, 0.0001),
   trait                 = 0,
   status                = 8,
   parameter             = parameter,
   num_observed_states   = 2,
   num_hidden_states     = 2,
+  trait_mainland_ancestor = NA,
+  sampling_fraction       = c(1,1),
   atol                  = 1e-15,
   rtol                  = 1e-15,
-  methode               = "ode45"
+  methode               = "ode45",
+  rcpp_methode = "odeint::runge_kutta_cash_karp54"
 )
 }

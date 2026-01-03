@@ -20,6 +20,8 @@
 #' num_hidden_states       =  2
 #' sampling_fraction       =  sample(c(1, 1), num_observed_states, replace = TRUE)
 #' trait_mainland_ancestor = c(1, 0)
+#' datalist[[1]]$M0 <- 500
+#' datalist[[1]]$M1 <- 400
 #'
 #' parameter <- list(
 #'   c(2.546591, 1.2, 1, 0.2),
@@ -31,11 +33,12 @@
 #'     .001,    0,    0.000,0.005,
 #'     0.005,    000,    0,  0.005,
 #'     0,   0.005,  0.005,0.00
-#'   ), nrow = 4),
+#'   ), nrow = 4, byrow = TRUE),
 #'   1
 #' )
 #'   status                  = 2
 #' DAISIE_DE_trait_logpEC(
+#'   datalist              = datalist,
 #'   brts                    = brts,
 #'   phy                     = phy,
 #'   traits                  = traits,
@@ -54,13 +57,14 @@
 
 
 DAISIE_DE_trait_logpEC <- function(
+    datalist,
     brts,
     parameter,
     phy,
     traits,
     num_observed_states,
     num_hidden_states,
-    trait_mainland_ancestor, #this should contain either a full probability distribution across all states, only the observed states, or NA
+    trait_mainland_ancestor = NA, #this should contain either a full probability distribution across all states, only the observed states, or NA
     status,
     sampling_fraction,
     num_threads = 5,
@@ -71,9 +75,7 @@ DAISIE_DE_trait_logpEC <- function(
     use_Rcpp = 2
 ) {
 
-  Lk_vec <- numeric(num_observed_states * num_hidden_states)
-
-  for (i in seq_len(num_observed_states * num_hidden_states)) { #loop over all possible states, observed and hidden, one by one
+  calc_Lk_log <- function(i) {
     trait_mainland_ancestor_extended <- rep(0,num_observed_states * num_hidden_states)
     trait_mainland_ancestor_extended[i] <- 1 #set only the trait of interest to 1
 
@@ -94,20 +96,23 @@ DAISIE_DE_trait_logpEC <- function(
       rcpp_methode            = rcpp_methode,
       use_Rcpp                = use_Rcpp
     )
-    Lk_vec[i] <- Lk_log # ideally this should not be needed if the function above does not do logtransformation
+    return(Lk_log)
   }
+
+  indices_vec <- seq_len(num_observed_states * num_hidden_states)
+  Lk_vec <- sapply(indices_vec, calc_Lk_log)
 
   ## added !all(is.na(trait_mainland_ancestor)) because when trait_mainland_ancestor = NA,  length(trait_mainland_ancestor) = length(trait_mainland_ancestor_extended) = 1
   if(!all(is.na(trait_mainland_ancestor)) && length(trait_mainland_ancestor) == length(trait_mainland_ancestor_extended)) { #this is the case where a full probability distribution is specified across all observed and hidden states
-
-     weights <- trait_mainland_ancestor/sum(trait_mainland_ancestor)
-
+    weights <- trait_mainland_ancestor/sum(trait_mainland_ancestor)
   }  else {
     if(all(is.numeric(trait_mainland_ancestor))) { # this is the case when only a probability distribution is specified for the observed states; this could be c(M0/M, M1/M)
 
 
+
       s <- numeric(num_observed_states * num_hidden_states)
       # you could also do s <- c() and use line 92
+
       weights1 <- c()
       for(j in 1:length(trait_mainland_ancestor)) {
         s[((j - 1) * num_hidden_states + 1):(j * num_hidden_states)] <- rep(trait_mainland_ancestor[j], num_hidden_states)
@@ -134,8 +139,11 @@ DAISIE_DE_trait_logpEC <- function(
         weights <- weights / sum(weights)
       }
 
+
+
     } else { # this is the case where nothing is provided, i.e. NA
       weights <- Lk_vec/sum(Lk_vec)
+
     }
   }
   log_Lk <- log(sum(Lk_vec * weights))
@@ -302,7 +310,7 @@ DAISIE_DE_trait_logpEC_core <- function(
                               use_Rcpp = use_Rcpp)
   }
 
-  # Extract log-likelihood from final solution
+  # Extract likelihood from final solution
   Lk <- solution4[2, length(solution4[2, ])]
 
   return(Lk)
