@@ -117,7 +117,7 @@ DAISIE_DE_trait_logpES_max_min_age_hidden <- function(
       weights <- s / sum(s)
 
       } else {
-        weights <- Lk_vec/sum(Lk_vec)
+        weights <- use_stationary_weights(parameter[[5]])
       }
 
 

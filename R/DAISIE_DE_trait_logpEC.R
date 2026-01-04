@@ -118,7 +118,7 @@ DAISIE_DE_trait_logpEC <- function(
       weights <- s / sum(s)
 
        } else { # this is the case where nothing is provided, i.e. NA
-         weights <- Lk_vec/sum(Lk_vec)
+         weights <- use_stationary_weights(parameter[[5]])
       }
 
 

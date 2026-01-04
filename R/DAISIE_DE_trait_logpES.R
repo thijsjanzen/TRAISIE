@@ -120,7 +120,7 @@ DAISIE_DE_trait_logpES <- function(
       weights <- s / sum(s)
 
       } else {
-        weights <- Lk_vec/sum(Lk_vec)
+        weights <- use_stationary_weights(parameter[[5]])
       }
 
 

@@ -102,7 +102,7 @@ DAISIE_DE_trait_logpNE <- function(
 
 
     } else {
-      weights <- Lk_vec/sum(Lk_vec)
+      weights <- use_stationary_weights(parameter[[5]])
     }
 
 
