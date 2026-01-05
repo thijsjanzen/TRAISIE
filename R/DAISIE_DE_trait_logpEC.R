@@ -20,8 +20,8 @@
 #' num_hidden_states       =  2
 #' sampling_fraction       =  sample(c(1, 1), num_observed_states, replace = TRUE)
 #' trait_mainland_ancestor = c(1, 0)
-#' datalist[[1]]$M0 <- 500
-#' datalist[[1]]$M1 <- 400
+#' datalist[[1]]$Mainland_pool_sizes <- c(950, 50)
+#' datalist[[1]]$M <- 1000
 #'
 #' parameter <- list(
 #'   c(2.546591, 1.2, 1, 0.2),
@@ -45,7 +45,7 @@
 #'   status                  = 2,
 #'   sampling_fraction       = sampling_fraction,
 #'   parameter               = parameter,
-#'   trait_mainland_ancestor = NA,
+#'   trait_mainland_ancestor = c(1, 0),
 #'   num_observed_states     = 2,
 #'   num_hidden_states       = 2,
 #'   atol                    = 1e-15,
@@ -117,10 +117,14 @@ DAISIE_DE_trait_logpEC <- function(
 
       weights <- s / sum(s)
 
-       } else { # this is the case where nothing is provided, i.e. NA
-         weights <- use_stationary_weights(parameter[[5]])
-      }
+    } else {
 
+      stat_weights <- use_stationary_weights(parameter[[5]])
+      Mp <- datalist[[1]]$Mainland_pool_sizes
+      M <-  datalist[[1]]$M
+      weights <- compute_mainland_weights(stat_weights, Mp, M, num_hidden_states)
+
+    }
 
   }
   log_Lk <- log(sum(Lk_vec * weights))

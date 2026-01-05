@@ -24,8 +24,8 @@
 #'   1
 #' )
 #' status <- 8
-#' datalist[[1]]$M0 <- 500
-#' datalist[[1]]$M1 <- 400
+#' datalist[[1]]$Mainland_pool_sizes <- c(500, 400)
+#' datalist[[1]]$M <- 1000
 #'
 #' DAISIE_DE_trait_logpNE_max_min_age_hidden(
 #'   datalist              = datalist,
@@ -98,9 +98,14 @@ DAISIE_DE_trait_logpNE_max_min_age_hidden <- function(
 
       weights <- s / sum(s)
 
-      } else {
-        weights <- use_stationary_weights(parameter[[5]])
-      }
+    } else {
+
+      stat_weights <- use_stationary_weights(parameter[[5]])
+      Mp <- datalist[[1]]$Mainland_pool_sizes
+      M <-  datalist[[1]]$M
+      weights <- compute_mainland_weights(stat_weights, Mp, M, num_hidden_states)
+
+    }
 
 
 

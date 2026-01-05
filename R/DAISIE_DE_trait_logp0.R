@@ -23,11 +23,14 @@
 #'   ), nrow = 4),
 #'   1
 #' )
+#' datalist[[1]]$Mainland_pool_sizes <- c(500, 400)
+#' datalist[[1]]$M <- 1000
+#'
 #'
 #' DAISIE_DE_trait_logp0(
 #'   datalist,
 #'   parameter               = parameter,
-#'   trait_mainland_ancestor = c(200/800,400/800),
+#'   trait_mainland_ancestor = NA,
 #'   num_observed_states     = 2,
 #'   num_hidden_states       = 2,
 #'   atol                    = 1e-15,
@@ -73,37 +76,20 @@ DAISIE_DE_trait_logp0 <- function(
   if(!any(is.na(trait_mainland_ancestor)) && length(trait_mainland_ancestor) == length(trait_mainland_ancestor_extended)) { #this is the case where a full probability distribution is specified across all observed and hidden states
     weights <- trait_mainland_ancestor/sum(trait_mainland_ancestor)
   } else {
-    if(all(is.numeric(trait_mainland_ancestor))) { # this is the case when only a probability distribution is specified for the observed states; this could be c(M0/M, M1/M)
+
       ###weights <- c(
-      #M0/M*lik_0A/L0 + (M-M0-M1)/M*lik_0A/L,
-      #M0/M*lik_0B/L0 + (M-M0-M1)/M*lik_0B/L,
-      #M1/M*lik_1A/L1 + (M-M0-M1)/M*lik_1A/L,
-      #M1/M*lik_1B/L1 + (M-M0-M1)/M*lik_1B/L
+      #M0/M*stat_weights_0A/(stat_weights_0A + stat_weights_0B) + (M-M0-M1)/M*stat_weights_0A/sum(stat_weights),
+      #M0/M*stat_weights_0B/(stat_weights_0A + stat_weights_0B) + (M-M0-M1)/M*stat_weights_0B/sum(stat_weights),
+      #M1/M*stat_weights_1A/(stat_weights_0A + stat_weights_0B) + (M-M0-M1)/M*stat_weights_1A/sum(stat_weights),
+      #M1/M*stat_weights_1B/(stat_weights_0A + stat_weights_0B) + (M-M0-M1)/M*stat_weights_1B/sum(stat_weights)
       #)
+    stat_weights <- use_stationary_weights(parameter[[5]])
 
-      ### the following calculates the terms before the + sign
-      s <- numeric(num_observed_states * num_hidden_states)
-      # you could also do s <- c() and use line 92
-      weights1 <- c()
-      for(j in 1:length(trait_mainland_ancestor)) {
-        s[((j - 1) * num_hidden_states + 1):(j * num_hidden_states)] <- rep(trait_mainland_ancestor[j], num_hidden_states)
-        # you could also write s <- c(s, rep(trait_mainland_ancestor[j],num_hidden_states))
-        weights_j <- Lk_vec[((j - 1) * num_hidden_states + 1):(j * num_hidden_states)]
-        weights_j <- weights_j/sum(weights_j)
-        weights1 <- c(weights1, weights_j)
-      }
-      weights1 <- weights1 * s/sum(weights1)
+    Mp <- datalist[[1]]$Mainland_pool_sizes
+    M <-  datalist[[1]]$M
+    weights <- compute_mainland_weights(stat_weights, Mp, M, num_hidden_states)
 
-      ### the following calculates the terms after the + sign
 
-      weights2 <- Lk_vec * (1 - sum(trait_mainland_ancestor))/sum(Lk_vec)
-
-      weights <- weights1 + weights2
-      weights <- weights/sum(weights)
-
-    } else { # this is the case where nothing is provided, i.e. NA
-      weights <- Lk_vec/sum(Lk_vec)
-    }
   }
   log_Lk <- log(sum(Lk_vec * weights))
   return(log_Lk)

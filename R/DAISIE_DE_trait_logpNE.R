@@ -10,8 +10,8 @@
 #' library(DAISIE)
 #' data("Galapagos_datalist")
 #' datalist <- Galapagos_datalist
-#' datalist[[1]]$M0 <- 500
-#' datalist[[1]]$M1 <- 400
+#' datalist[[1]]$Mainland_pool_sizes <- c(500, 400)
+#' datalist[[1]]$M <- 1000
 #' i <- 3
 #' brts <- datalist[[i]]$branching_times
 #' trait <- 0
@@ -102,8 +102,13 @@ DAISIE_DE_trait_logpNE <- function(
 
 
     } else {
-      weights <- use_stationary_weights(parameter[[5]])
-    }
+
+      stat_weights <- use_stationary_weights(parameter[[5]])
+      Mp <- datalist[[1]]$Mainland_pool_sizes
+      M <-  datalist[[1]]$M
+      weights <- compute_mainland_weights(stat_weights, Mp, M, num_hidden_states)
+
+      }
 
 
   }

@@ -17,18 +17,17 @@ DAISIE_DE_trait_loglik_CS <- function( parameter,
 
   if (length(parameter) >= 6) {
 
-    M0 <- datalist[[1]]$M0
-    M1 <- datalist[[1]]$M1
-    M  <- datalist[[1]]$M
+
     logp0 <- DAISIE_DE_trait_logp0(datalist = datalist,
                                    parameter = parameter,
                                    atol = atol,
                                    rtol = rtol,
                                    num_observed_states = num_observed_states,
                                    num_hidden_states = num_hidden_states,
-                                   trait_mainland_ancestor =  c(M0/M, M1/M),
+                                   trait_mainland_ancestor =  NA,
                                    methode = methode,
                                    use_Rcpp = use_Rcpp)
+
     if (is.null(datalist[[1]]$not_present)) {
       loglik <- (datalist[[1]]$not_present_type1 + datalist[[1]]$not_present_type2) * logp0$loglik
       numimm <- (datalist[[1]]$not_present_type1 + datalist[[1]]$not_present_type2) + length(datalist) - 1
