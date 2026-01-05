@@ -23,7 +23,7 @@ dist_gamma_tma <- function(gamma,
   return(dist_gamma)
 }
 
-
+###############
 use_stationary_weights <- function(Q) {
 
   diag(Q) <- 0
@@ -48,6 +48,36 @@ use_stationary_weights <- function(Q) {
   weight_states <- pi[,i_choice]
   return(weight_states)
 }
+################
+
+compute_mainland_weights <- function(stat_weights,
+                                     Mp,
+                                     M,
+                                     num_hidden_states) {
+
+  weights1 <- c()
+
+  for (j in seq_along(Mp)) {
+
+    idx <- ((j - 1) * num_hidden_states + 1):(j * num_hidden_states)
+
+    weights_j <- stat_weights[idx]
+    weights_j <- weights_j * (Mp[j] / M) / sum(weights_j)
+
+    weights1 <- c(weights1, weights_j)
+  }
+
+  weights1 <- weights1 / sum(weights1)
+
+  weights2 <- stat_weights * (1 - sum(Mp) / M) / sum(stat_weights)
+
+  weights <- weights1 + weights2
+  weights <- weights / sum(weights)
+
+  return(weights)
+}
+#############3
+
 
 
 #' @keywords internal
