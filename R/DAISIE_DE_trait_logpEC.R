@@ -20,7 +20,7 @@
 #' num_hidden_states       =  2
 #' sampling_fraction       =  sample(c(1, 1), num_observed_states, replace = TRUE)
 #' trait_mainland_ancestor = c(1, 0)
-#' datalist[[1]]$Mainland_pool_sizes <- c(950, 50)
+#' datalist[[1]]$Mainland_pool_sizes <- c(550, 250)
 #' datalist[[1]]$M <- 1000
 #'
 #' parameter <- list(
@@ -31,8 +31,8 @@
 #'   matrix(c(
 #'     0,    .001,    0.005,  0,
 #'     .001,    0,    0.000,0.005,
-#'     0.005,    000,    0,  0.005,
-#'     0,   0.005,  0.005,0.00
+#'     0.015,    000,    0,  0.005,
+#'     0,   0.0025,  0.005,0.00
 #'   ), nrow = 4, byrow = TRUE),
 #'   1
 #' )
@@ -45,7 +45,7 @@
 #'   status                  = 2,
 #'   sampling_fraction       = sampling_fraction,
 #'   parameter               = parameter,
-#'   trait_mainland_ancestor = c(1, 0),
+#'   trait_mainland_ancestor = NA,
 #'   num_observed_states     = 2,
 #'   num_hidden_states       = 2,
 #'   atol                    = 1e-15,
