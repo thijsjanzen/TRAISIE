@@ -59,7 +59,8 @@ DAISIE_DE_trait_loglik_CS <- function( parameter,
     trait_mainland_ancestor <- datalist[[i]]$root_state
 
     if (stac %in% c(1, 4)) {
-      loglikelihood <- DAISIE_DE_trait_logpNE(brts = brts,
+      loglikelihood <- DAISIE_DE_trait_logpNE(datalist = datalist,
+                                              brts = brts,
                                               status = stac,
                                               trait = trait,
                                               trait_mainland_ancestor = trait_mainland_ancestor,
@@ -74,7 +75,8 @@ DAISIE_DE_trait_loglik_CS <- function( parameter,
                                               use_Rcpp = use_Rcpp)
     } else if (stac %in% c(2, 5)) {
       if (length(brts) == 2) {
-        loglikelihood <- DAISIE_DE_trait_logpES(brts = brts,
+        loglikelihood <- DAISIE_DE_trait_logpES(datalist = datalist,
+                                                brts = brts,
                                                 status = stac,
                                                 trait = trait,
                                                 sampling_fraction = sampling_fraction,
@@ -88,7 +90,8 @@ DAISIE_DE_trait_loglik_CS <- function( parameter,
                                                 rcpp_methode = rcpp_methode,
                                                 use_Rcpp = use_Rcpp)
       } else {
-        loglikelihood <- DAISIE_DE_trait_logpEC(brts = brts,
+        loglikelihood <- DAISIE_DE_trait_logpEC(datalist = datalist,
+                                                brts = brts,
                                                 parameter = parameter,
                                                 phy = phy,
                                                 traits = traits,
@@ -106,7 +109,8 @@ DAISIE_DE_trait_loglik_CS <- function( parameter,
       }
     } else if (stac == 3) {
       if (length(brts) == 2) {
-        loglikelihood <- DAISIE_DE_trait_logpES(brts = brts,
+        loglikelihood <- DAISIE_DE_trait_logpES(datalist = datalist,
+                                                brts = brts,
                                                 status = stac,
                                                 trait = trait,
                                                 sampling_fraction = sampling_fraction,
@@ -120,7 +124,8 @@ DAISIE_DE_trait_loglik_CS <- function( parameter,
                                                 rcpp_methode = rcpp_methode,
                                                 use_Rcpp = use_Rcpp)
       } else {
-        loglikelihood <- DAISIE_DE_trait_logpEC(brts = brts,
+        loglikelihood <- DAISIE_DE_trait_logpEC(datalist = datalist,
+                                                brts = brts,
                                                 parameter = parameter,
                                                 phy = phy,
                                                 traits = traits,
@@ -137,7 +142,8 @@ DAISIE_DE_trait_loglik_CS <- function( parameter,
       }
     }
     else if (stac == 6) {
-      loglikelihood <- DAISIE_DE_trait_logpEC(brts = brts,
+      loglikelihood <- DAISIE_DE_trait_logpEC(datalist = datalist,
+                                              brts = brts,
                                               parameter = parameter,
                                               phy = phy,
                                               traits = traits,
@@ -155,7 +161,8 @@ DAISIE_DE_trait_loglik_CS <- function( parameter,
     }
     else if (stac == 8) {
       loglikelihood <-
-        DAISIE_DE_trait_logpNE_max_min_age_hidden(brts = brts,
+        DAISIE_DE_trait_logpNE_max_min_age_hidden(datalist = datalist,
+                                                  brts = brts,
                                                   trait = trait,
                                                   status = stac,
                                                   parameter = parameter,
@@ -170,7 +177,8 @@ DAISIE_DE_trait_loglik_CS <- function( parameter,
                                                   use_Rcpp = use_Rcpp)
     } else if (stac == 9) {
       loglikelihood <-
-        DAISIE_DE_trait_logpES_max_min_age_hidden(brts = brts,
+        DAISIE_DE_trait_logpES_max_min_age_hidden(datalist = datalist,
+                                                  brts = brts,
                                                   trait = trait,
                                                   sampling_fraction = sampling_fraction,
                                                   status = stac,
