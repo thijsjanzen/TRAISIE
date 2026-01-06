@@ -69,7 +69,7 @@ compute_mainland_weights <- function(stat_weights,
 
   weights1 <- weights1 / sum(weights1)
 
-  weights2 <- stat_weights * (1 - sum(Mp) / M) / sum(stat_weights)
+  weights2 <- stat_weights * (1 - (sum(Mp) / M)) / sum(stat_weights)
 
   weights <- weights1 + weights2
   weights <- weights / sum(weights)
