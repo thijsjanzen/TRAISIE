@@ -39,6 +39,7 @@
 #'   sampling_fraction       = c(1,1),
 #'   trait_mainland_ancestor = NA,
 #'   num_observed_states     = 2,
+#'   weight_method           = "stationary_weights",
 #'   num_hidden_states       = 2,
 #'   atol                    = 1e-15,
 #'   rtol                    = 1e-15,
@@ -58,6 +59,7 @@ DAISIE_DE_trait_logpNE <- function(
     status,
     sampling_fraction,
     Mainland_pool_size_vec = NULL,
+    weight_method,
     atol = 1e-15,
     rtol = 1e-15,
     methode = "ode45",
@@ -91,23 +93,24 @@ DAISIE_DE_trait_logpNE <- function(
   if(!all(is.na(trait_mainland_ancestor)) && length(trait_mainland_ancestor) == num_observed_states * num_hidden_states) { #this is the case where a full probability distribution is specified across all observed and hidden states
     weights <- trait_mainland_ancestor/sum(trait_mainland_ancestor)
   } else {
+            Mp <- datalist[[1]]$Mainland_pool_sizes
+            M <-  datalist[[1]]$M
+            num_hidden_states <- num_hidden_states
+      if (weight_method == "mainland_stationary_weights") {
 
-    # Determine probabilities for observed states
-    if (all(is.numeric(trait_mainland_ancestor))) {
-      # User provided trait_mainland_ancestor, e.g. c(1, 0)
-      probs <- trait_mainland_ancestor
-      # Replicate each probability across the hidden states
-      s <- unlist(lapply(probs, function(p) rep(p, num_hidden_states)))
-      weights <- s / sum(s)
+          stat_weights <- use_stationary_weights(parameter[[5]])
 
+          weights <- compute_mainland_stationary_weights(stat_weights, Mp, M, num_hidden_states)
 
-    } else {
+      } else if (weight_method == "stationary_weights") {
+        weights <- use_stationary_weights(parameter[[5]])
 
-      stat_weights <- use_stationary_weights(parameter[[5]])
-      Mp <- datalist[[1]]$Mainland_pool_sizes
-      M <-  datalist[[1]]$M
-      weights <- compute_mainland_weights(stat_weights, Mp, M, num_hidden_states)
+      } else if (weight_method == "mainland_weights") {
 
+        weights <- compute_mainland_weights(Mp, M, num_hidden_states)
+
+        } else {
+        stop("Unknown weight_method")
       }
 
 

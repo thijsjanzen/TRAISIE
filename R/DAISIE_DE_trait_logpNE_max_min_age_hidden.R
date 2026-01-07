@@ -36,6 +36,7 @@
 #'   num_observed_states   = 2,
 #'   num_hidden_states     = 2,
 #'   trait_mainland_ancestor = NA,
+#'   weight_method           = "mainland_stationary_weights",
 #'   sampling_fraction       = c(1,1),
 #'   atol                  = 1e-15,
 #'   rtol                  = 1e-15,
@@ -53,6 +54,7 @@ DAISIE_DE_trait_logpNE_max_min_age_hidden <- function(
     num_hidden_states,
     trait_mainland_ancestor = NA, #this should contain either a full probability distribution across all states, only the observed states, or NA
     status,
+    weight_method,
     atol = 1e-15,
     rtol = 1e-15,
     sampling_fraction = c(1,1),
@@ -87,26 +89,26 @@ DAISIE_DE_trait_logpNE_max_min_age_hidden <- function(
   ## added !all(is.na(trait_mainland_ancestor)) because when trait_mainland_ancestor = NA,  length(trait_mainland_ancestor) = length(trait_mainland_ancestor_extended) = 1
   if(!all(is.na(trait_mainland_ancestor)) && length(trait_mainland_ancestor) == num_observed_states * num_hidden_states) { #this is the case where a full probability distribution is specified across all observed and hidden states
     weights <- trait_mainland_ancestor/sum(trait_mainland_ancestor)
-  } else {
-
-    # Determine probabilities for observed states
-    if (all(is.numeric(trait_mainland_ancestor))) {
-      # User provided trait_mainland_ancestor, e.g. c(1, 0)
-      probs <- trait_mainland_ancestor
-      # Replicate each probability across the hidden states
-      s <- unlist(lapply(probs, function(p) rep(p, num_hidden_states)))
-
-      weights <- s / sum(s)
-
-    } else {
+  }  else {
+    Mp <- datalist[[1]]$Mainland_pool_sizes
+    M <-  datalist[[1]]$M
+    num_hidden_states <- num_hidden_states
+    if (weight_method == "mainland_stationary_weights") {
 
       stat_weights <- use_stationary_weights(parameter[[5]])
-      Mp <- datalist[[1]]$Mainland_pool_sizes
-      M <-  datalist[[1]]$M
-      weights <- compute_mainland_weights(stat_weights, Mp, M, num_hidden_states)
 
+      weights <- compute_mainland_stationary_weights(stat_weights, Mp, M, num_hidden_states)
+
+    } else if (weight_method == "stationary_weights") {
+      weights <- use_stationary_weights(parameter[[5]])
+
+    } else if (weight_method == "mainland_weights") {
+
+      weights <- compute_mainland_weights(Mp, M, num_hidden_states)
+
+    } else {
+      stop("Unknown weight_method")
     }
-
 
 
   }

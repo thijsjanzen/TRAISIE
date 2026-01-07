@@ -33,6 +33,7 @@
 #'   trait_mainland_ancestor = NA,
 #'   num_observed_states     = 2,
 #'   num_hidden_states       = 2,
+#'   weight_method           = "mainland_weights",
 #'   atol                    = 1e-15,
 #'   rtol                    = 1e-15,
 #'   methode                 = "ode45",
@@ -48,6 +49,7 @@ DAISIE_DE_trait_logp0 <- function(
     rtol = 1e-15,
     num_observed_states,
     num_hidden_states,
+    weight_method,
     trait_mainland_ancestor= trait_mainland_ancestor_extended,
     methode = "ode45",
     rcpp_methode ="odeint::runge_kutta_cash_karp54",
@@ -73,23 +75,34 @@ DAISIE_DE_trait_logp0 <- function(
   }
 
   ## added !all(is.na(trait_mainland_ancestor)) because when trait_mainland_ancestor = NA,  length(trait_mainland_ancestor) = length(trait_mainland_ancestor_extended) = 1
-  if(!any(is.na(trait_mainland_ancestor)) && length(trait_mainland_ancestor) == length(trait_mainland_ancestor_extended)) { #this is the case where a full probability distribution is specified across all observed and hidden states
-    weights <- trait_mainland_ancestor/sum(trait_mainland_ancestor)
+  if (!all(is.na(trait_mainland_ancestor)) &&
+      length(trait_mainland_ancestor) == length(trait_mainland_ancestor_extended)) {
+
+    weights <- trait_mainland_ancestor / sum(trait_mainland_ancestor)
+
   } else {
 
-      ###weights <- c(
-      #M0/M*stat_weights_0A/(stat_weights_0A + stat_weights_0B) + (M-M0-M1)/M*stat_weights_0A/sum(stat_weights),
-      #M0/M*stat_weights_0B/(stat_weights_0A + stat_weights_0B) + (M-M0-M1)/M*stat_weights_0B/sum(stat_weights),
-      #M1/M*stat_weights_1A/(stat_weights_0A + stat_weights_0B) + (M-M0-M1)/M*stat_weights_1A/sum(stat_weights),
-      #M1/M*stat_weights_1B/(stat_weights_0A + stat_weights_0B) + (M-M0-M1)/M*stat_weights_1B/sum(stat_weights)
-      #)
-    stat_weights <- use_stationary_weights(parameter[[5]])
-
     Mp <- datalist[[1]]$Mainland_pool_sizes
-    M <-  datalist[[1]]$M
-    weights <- compute_mainland_weights(stat_weights, Mp, M, num_hidden_states)
+    M  <- datalist[[1]]$M
 
+    if (weight_method == "mainland_stationary_weights") {
 
+      stat_weights <- use_stationary_weights(parameter[[5]])
+      weights <- compute_mainland_stationary_weights(
+        stat_weights, Mp, M, num_hidden_states
+      )
+
+    } else if (weight_method == "stationary_weights") {
+
+      weights <- use_stationary_weights(parameter[[5]])
+
+    } else if (weight_method == "mainland_weights") {
+
+      weights <- compute_mainland_weights(Mp, M, num_hidden_states)
+
+    } else {
+      stop("Unknown weight_method")
+    }
   }
   log_Lk <- log(sum(Lk_vec * weights))
   return(log_Lk)
