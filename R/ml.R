@@ -106,6 +106,7 @@
 #'                                 num_hidden_states = 1,
 #'                                 idparslist = idparslist,
 #'                                 idparsopt = idparsopt,
+#'                                 weight_method = "stationary_weights",
 #'                                 initparsopt = initvals2,
 #'                                 idparsfix = idparsfix,
 #'                                 parsfix = parsfix,
@@ -124,6 +125,7 @@
 
 
 calc_ml <- function(datalist,
+                    weight_method = "mainland_stationary_weights",
                     num_observed_states,
                     num_hidden_states,
                     idparslist,
@@ -160,6 +162,7 @@ calc_ml <- function(datalist,
   optimpars <- c(tol, maxiter, verbose)
 
   initloglik <- loglik_choosepar(trparsopt = trparsopt,
+                                 weight_method = weight_method,
                                  trparsfix = trparsfix,
                                  idparsopt = idparsopt,
                                  idparsfix = idparsfix,
@@ -184,6 +187,7 @@ calc_ml <- function(datalist,
              Try again with different initial values.")
   } else {
     out <- DDD::optimizer(optimmethod = optimmethod,
+                          weight_method = weight_method,
                           optimpars = optimpars,
                           fun = loglik_choosepar,
                           trparsopt = trparsopt,
@@ -239,6 +243,7 @@ loglik_choosepar <- function(trparsopt,
                              idparsfix,
                              idparslist,
                              datalist,
+                             weight_method,
                              num_observed_states,
                              num_hidden_states,
                              cond = cond,
@@ -263,6 +268,7 @@ loglik_choosepar <- function(trparsopt,
     loglik <- DAISIE_DE_trait_loglik_CS(parameter = pars1,
                                         datalist = datalist,
                                         methode = methode,
+                                        weight_method = weight_method,
                                         rcpp_methode = rcpp_methode,
                                         atol = atol,
                                         rtol = rtol,
@@ -282,3 +288,4 @@ loglik_choosepar <- function(trparsopt,
   }
   return(loglik)
 }
+

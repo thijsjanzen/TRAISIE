@@ -6,6 +6,7 @@
 \usage{
 DAISIE_DE_trait_logp0(
   datalist,
+  weight_method = "weight_method",
   parameter,
   atol = 1e-15,
   rtol = 1e-15,
@@ -93,6 +94,7 @@ parameter <- list(
 
 DAISIE_DE_trait_logp0(
   datalist,
+  weight_method = "mainland_stationary_weights",
   parameter               = parameter,
   num_observed_states     = 2,
   num_hidden_states       = 2,
