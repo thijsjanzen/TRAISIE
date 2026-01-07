@@ -50,7 +50,7 @@ use_stationary_weights <- function(Q) {
 }
 ################
 
-compute_mainland_weights <- function(stat_weights,
+compute_mainland_stationary_weights <- function(stat_weights,
                                      Mp,
                                      M,
                                      num_hidden_states) {
@@ -76,7 +76,28 @@ compute_mainland_weights <- function(stat_weights,
 
   return(weights)
 }
-#############3
+
+
+compute_mainland_weights <- function(Mp,
+                                     M,
+                                     num_hidden_states) {
+
+  weights1 <- c()
+
+  for (j in seq_along(Mp)) {
+
+    weights_j <- rep((Mp[j] / M), num_hidden_states)
+    weights1 <- c(weights1, weights_j)
+  }
+
+  weights2 <- (1 - (sum(Mp) / M))
+
+  weights <- weights1 + weights2
+  weights <- weights / sum(weights)
+
+  return(weights)
+}
+#############
 
 
 
