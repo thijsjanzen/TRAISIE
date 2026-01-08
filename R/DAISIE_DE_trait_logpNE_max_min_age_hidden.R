@@ -36,7 +36,7 @@
 #'   num_observed_states   = 2,
 #'   num_hidden_states     = 2,
 #'   trait_mainland_ancestor = NA,
-#'   weight_method           = "mainland_stationary_weights",
+#'   weight_method           = "mainland_weights",
 #'   sampling_fraction       = c(1,1),
 #'   atol                  = 1e-15,
 #'   rtol                  = 1e-15,
@@ -97,14 +97,14 @@ DAISIE_DE_trait_logpNE_max_min_age_hidden <- function(
 
       stat_weights <- use_stationary_weights(parameter[[5]])
 
-      weights <- compute_mainland_stationary_weights(stat_weights, Mp, M, num_hidden_states)
+      weights <- Lk_vec*compute_mainland_stationary_weights(stat_weights, Mp, M, num_hidden_states)
 
     } else if (weight_method == "stationary_weights") {
-      weights <- use_stationary_weights(parameter[[5]])
+      weights <- Lk_vec*use_stationary_weights(parameter[[5]])
 
     } else if (weight_method == "mainland_weights") {
 
-      weights <- compute_mainland_weights(Mp, M, num_hidden_states)
+      weights <- Lk_vec*compute_mainland_weights(Mp, M, num_hidden_states)
 
     } else {
       stop("Unknown weight_method")
@@ -112,6 +112,7 @@ DAISIE_DE_trait_logpNE_max_min_age_hidden <- function(
 
 
   }
+  weights <- weights/sum(weights)
   log_Lk <- log(sum(Lk_vec * weights))
   return( list (loglik = log_Lk, lik_states = Lk_vec, weights = weights))
 }
