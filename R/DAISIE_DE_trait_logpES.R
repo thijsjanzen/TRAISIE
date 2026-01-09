@@ -118,14 +118,14 @@ DAISIE_DE_trait_logpES <- function(
 
       stat_weights <- use_stationary_weights(parameter[[5]])
 
-      weights <- Lk_vec*compute_mainland_stationary_weights(stat_weights, Mp, M, num_hidden_states)
+      weights <- compute_mainland_stationary_weights(stat_weights, Mp, M, num_hidden_states)
 
     } else if (weight_method == "stationary_weights") {
-      weights <- Lk_vec*use_stationary_weights(parameter[[5]])
+      weights <- use_stationary_weights(parameter[[5]])
 
     } else if (weight_method == "mainland_weights") {
 
-      weights <- Lk_vec*compute_mainland_weights(Mp, M, num_hidden_states)
+      weights <- compute_mainland_weights(Mp, M, num_hidden_states)
 
     } else {
       stop("Unknown weight_method")
@@ -133,7 +133,7 @@ DAISIE_DE_trait_logpES <- function(
 
 
   }
-  weights <- weights/sum(weights)
+
   log_Lk <- log(sum(Lk_vec * weights))
   return( list (loglik = log_Lk, lik_states = Lk_vec, weights = weights))
 }

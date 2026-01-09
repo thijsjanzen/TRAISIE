@@ -131,6 +131,7 @@ DAISIE_DE_trait_logpEC <- function(
 
 
   }
+
   log_Lk <- log(sum(Lk_vec * weights))
   return( list (loglik = log_Lk, lik_states = Lk_vec, weights = weights))
 }
