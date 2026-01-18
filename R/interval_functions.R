@@ -62,8 +62,13 @@ compute_mainland_stationary_weights <- function(stat_weights,
     idx <- ((j - 1) * num_hidden_states + 1):(j * num_hidden_states)
 
     weights_j <- stat_weights[idx]
-    weights_j <- weights_j * (Mp[j] / M) / sum(weights_j)
+    if (sum(weights_j) == 0){
 
+      weights_j <- weights_j
+    } else{
+      weights_j <- weights_j * (Mp[j] / M) / sum(weights_j)
+
+    }
     weights1 <- c(weights1, weights_j)
   }
 
@@ -272,3 +277,4 @@ interval4 <- function(t, state, parameter) {
     return(list(c(dDM1, dE, dDA1)))
   })
 }
+
