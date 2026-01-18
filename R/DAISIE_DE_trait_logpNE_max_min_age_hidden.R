@@ -36,7 +36,7 @@
 #'   num_observed_states   = 2,
 #'   num_hidden_states     = 2,
 #'   trait_mainland_ancestor = NA,
-#'   weight_method           = "mainland_weights",
+#'   weight_method           = "likelihood_stationary_weights",
 #'   sampling_fraction       = c(1,1),
 #'   atol                  = 1e-15,
 #'   rtol                  = 1e-15,
@@ -105,6 +105,10 @@ DAISIE_DE_trait_logpNE_max_min_age_hidden <- function(
     } else if (weight_method == "mainland_weights") {
 
       weights <- compute_mainland_weights(Mp, M, num_hidden_states)
+
+    } else if (weight_method == "likelihood_stationary_weights") {
+
+      weights <- compute_likelihood_stationary_weights(Lk_vec, Mp, M, num_hidden_states)
 
     } else {
       stop("Unknown weight_method")

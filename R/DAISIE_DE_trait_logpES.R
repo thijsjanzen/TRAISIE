@@ -12,7 +12,7 @@
 #' library(DAISIE)
 #' data("Galapagos_datalist")
 #' datalist <- Galapagos_datalist
-#' datalist[[1]]$Mainland_pool_sizes <- c(500, 400)
+#' datalist[[1]]$Mainland_pool_sizes <- c(500, 500)
 #' datalist[[1]]$M <- 1000
 #' i <- 9
 #' brts <- datalist[[i]]$branching_times
@@ -55,7 +55,7 @@
 #'   status                  = status,
 #'   sampling_fraction       = sampling_fraction,
 #'   parameter               = parameter,
-#'   weight_method           = "stationary_weights",
+#'   weight_method           = "likelihood_stationary_weights",
 #'   trait_mainland_ancestor = NA,
 #'   num_observed_states     = 2,
 #'   num_hidden_states       = 2,
@@ -126,6 +126,10 @@ DAISIE_DE_trait_logpES <- function(
     } else if (weight_method == "mainland_weights") {
 
       weights <- compute_mainland_weights(Mp, M, num_hidden_states)
+
+    } else if (weight_method == "likelihood_stationary_weights") {
+
+      weights <- compute_likelihood_stationary_weights(Lk_vec, Mp, M, num_hidden_states)
 
     } else {
       stop("Unknown weight_method")

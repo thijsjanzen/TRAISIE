@@ -124,6 +124,10 @@ DAISIE_DE_trait_logpES_max_min_age_hidden <- function(
 
       weights <- compute_mainland_weights(Mp, M, num_hidden_states)
 
+    } else if (weight_method == "likelihood_stationary_weights") {
+
+      weights <- compute_likelihood_stationary_weights(Lk_vec, Mp, M, num_hidden_states)
+
     } else {
       stop("Unknown weight_method")
     }
