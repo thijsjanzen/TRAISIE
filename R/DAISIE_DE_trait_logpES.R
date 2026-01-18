@@ -129,7 +129,7 @@ DAISIE_DE_trait_logpES <- function(
 
     } else if (weight_method == "likelihood_stationary_weights") {
 
-      weights <- compute_likelihood_stationary_weights(Lk_vec, Mp, M, num_hidden_states)
+      weights <- Lk_vec/sum(Lk_vec)
 
     } else {
       stop("Unknown weight_method")
