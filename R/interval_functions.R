@@ -83,6 +83,38 @@ compute_mainland_stationary_weights <- function(stat_weights,
 }
 
 
+compute_likelihood_stationary_weights <- function(Lk_vec,
+                                                Mp,
+                                                M,
+                                                num_hidden_states) {
+
+  weights1 <- c()
+
+  for (j in seq_along(Mp)) {
+
+    idx <- ((j - 1) * num_hidden_states + 1):(j * num_hidden_states)
+
+    weights_j <- Lk_vec[idx]
+    if (sum(weights_j) == 0){
+
+      weights_j <- weights_j
+    } else{
+      weights_j <- weights_j * (Mp[j] / M) / sum(weights_j)
+
+    }
+    weights1 <- c(weights1, weights_j)
+  }
+
+  weights1 <- weights1 / sum(weights1)
+
+  weights2 <- Lk_vec * (1 - (sum(Mp) / M)) / sum(Lk_vec)
+
+  weights <- weights1 + weights2
+  weights <- weights / sum(weights)
+
+  return(weights)
+}
+
 compute_mainland_weights <- function(Mp,
                                      M,
                                      num_hidden_states) {
