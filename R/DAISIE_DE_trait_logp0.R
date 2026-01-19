@@ -28,7 +28,7 @@
 #'
 #'
 #' DAISIE_DE_trait_logp0(
-#'   data_list1,
+#'   datalist,
 #'   parameter               = parameter,
 #'   trait_mainland_ancestor = NA,
 #'   num_observed_states     = 2,
@@ -55,27 +55,29 @@ DAISIE_DE_trait_logp0 <- function(
     rcpp_methode ="odeint::runge_kutta_cash_karp54",
     use_Rcpp = 2) {
 
-  Lk_vec <- numeric(num_observed_states * num_hidden_states)
-
-  for (i in seq_len(num_observed_states * num_hidden_states)) { #loop over all possible states, observed and hidden, one by one
+  calc_Lk_log <- function(i) {
     trait_mainland_ancestor_extended <- rep(0,num_observed_states * num_hidden_states)
     trait_mainland_ancestor_extended[i] <- 1 #set only the trait of interest to 1
 
-    Lk <- DAISIE_DE_trait_logp0_core(datalist,
-                                     parameter,
-                                     atol = 1e-15,
-                                     rtol = 1e-15,
-                                     num_observed_states,
-                                     num_hidden_states,
-                                     trait_mainland_ancestor= trait_mainland_ancestor_extended,
-                                     methode = "ode45",
-                                     rcpp_methode = rcpp_methode,
-                                     use_Rcpp = use_Rcpp)
-    Lk_vec[i] <- Lk
+    Lk_log <- DAISIE_DE_trait_logp0_core(datalist,
+                                         parameter,
+                                         atol = 1e-15,
+                                         rtol = 1e-15,
+                                         num_observed_states,
+                                         num_hidden_states,
+                                         trait_mainland_ancestor= trait_mainland_ancestor_extended,
+                                         methode = "ode45",
+                                         rcpp_methode = rcpp_methode,
+                                         use_Rcpp = use_Rcpp)
+    return(Lk_log)
   }
 
+  indices_vec <- seq_len(num_observed_states * num_hidden_states)
+  Lk_vec <- sapply(indices_vec, calc_Lk_log)
+
   ## added !all(is.na(trait_mainland_ancestor)) because when trait_mainland_ancestor = NA,  length(trait_mainland_ancestor) = length(trait_mainland_ancestor_extended) = 1
-  if(!all(is.na(trait_mainland_ancestor)) && length(trait_mainland_ancestor) == length(trait_mainland_ancestor_extended)) { #this is the case where a full probability distribution is specified across all observed and hidden states
+  if(!all(is.na(trait_mainland_ancestor)) && length(trait_mainland_ancestor) == num_observed_states * num_hidden_states) { #this is the case where a full probability distribution is specified across all observed and hidden states
+
     weights <- trait_mainland_ancestor/sum(trait_mainland_ancestor)
   }  else {
 
@@ -104,6 +106,51 @@ DAISIE_DE_trait_logp0 <- function(
   log_Lk <- log(sum(Lk_vec * weights))
   return(log_Lk)
 }
+
+DAISIE_DE_trait_logp0_core <- function(datalist,
+                                       parameter,
+                                       atol = 1e-15,
+                                       rtol = 1e-15,
+                                       num_observed_states,
+                                       num_hidden_states,
+                                       trait_mainland_ancestor= NA,
+                                       methode = "ode45",
+                                       rcpp_methode =
+                                         "odeint::runge_kutta_cash_karp54",
+                                       use_Rcpp = 0) {
+
+  n <- num_observed_states * num_hidden_states
+  t0 <- datalist[[1]]$island_age
+  tp <- 0
+
+  #########interval4 [t_p, t_0]
+
+  initial_conditions40 <- c(rep(0, n),  ### DM1
+                            rep(0, n),  ### E
+                            1)          ### DA1
+
+  # Time sequence for interval [tp, t0]
+  time4 <- c(tp, t0)
+
+  # Solve the system for interval [tp, t1]
+  solution4 <- solve_branch(interval_func = interval4,
+                            initial_conditions = initial_conditions40,
+                            time = time4,
+                            parameter = parameter,
+                            trait_mainland_ancestor = trait_mainland_ancestor,
+                            methode = methode,
+                            rcpp_methode = rcpp_methode,
+                            atol = atol,
+                            rtol = rtol,
+                            use_Rcpp = use_Rcpp)
+
+  # Extract log-likelihood
+  Lk <- solution4[2, ][length(solution4[2, ])]
+
+  return(Lk)
+}
+
+
 
 DAISIE_DE_trait_logp0_core <- function(datalist,
                                        parameter,

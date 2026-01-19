@@ -67,23 +67,19 @@ DAISIE_DE_trait_logpNE_max_min_age_hidden <- function(
     trait_mainland_ancestor_extended <- rep(0,num_observed_states * num_hidden_states)
     trait_mainland_ancestor_extended[i] <- 1 #set only the trait of interest to 1
 
-    Lk_log <- DAISIE_DE_trait_logpEC_core(
-      brts                    = brts,
-      parameter               = parameter,
-      phy                     = phy,
-      traits                  = traits,
-      num_observed_states     = num_observed_states,
-      num_hidden_states       = num_hidden_states,
-      trait_mainland_ancestor = trait_mainland_ancestor_extended,
-      status                  = status,
-      sampling_fraction       = sampling_fraction,
-      num_threads             = num_threads,
-      atol                    = atol,
-      rtol                    = rtol,
-      methode                 = methode,
-      rcpp_methode            = rcpp_methode,
-      use_Rcpp                = use_Rcpp
-    )
+    Lk_log <- DAISIE_DE_trait_logpNE_max_min_age_hidden_core (brts,
+                                                              parameter               = parameter,
+                                                              trait                   = trait,
+                                                              num_observed_states     = num_observed_states,
+                                                              num_hidden_states       = num_hidden_states,
+                                                              trait_mainland_ancestor = trait_mainland_ancestor_extended,
+                                                              status                  = status,
+                                                              sampling_fraction       = c(1,1),
+                                                              atol                    = atol,
+                                                              rtol                    = rtol,
+                                                              methode                 = "ode45",
+                                                              rcpp_methode            = rcpp_methode,
+                                                              use_Rcpp                = use_Rcpp)
     return(Lk_log)
   }
 
