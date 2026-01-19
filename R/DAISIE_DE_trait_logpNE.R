@@ -10,8 +10,8 @@
 #' library(DAISIE)
 #' data("Galapagos_datalist")
 #' datalist <- Galapagos_datalist
-#' datalist[[1]]$Mainland_pool_sizes <- c(500, 500)
-#' datalist[[1]]$M <- 1000
+#' datalist[[1]]$M0 <- 500
+#' datalist[[1]]$M1 <- 400
 #' i <- 3
 #' brts <- datalist[[i]]$branching_times
 #' trait <- 0
@@ -37,9 +37,8 @@
 #'   status                  = 4,
 #'   parameter               = parameter,
 #'   sampling_fraction       = c(1,1),
-#'   trait_mainland_ancestor = NA,
+#'   trait_mainland_ancestor = c(1,0),
 #'   num_observed_states     = 2,
-#'   weight_method           = "likelihood_stationary_weights",
 #'   num_hidden_states       = 2,
 #'   atol                    = 1e-15,
 #'   rtol                    = 1e-15,
@@ -59,7 +58,6 @@ DAISIE_DE_trait_logpNE <- function(
     status,
     sampling_fraction,
     Mainland_pool_size_vec = NULL,
-    weight_method,
     atol = 1e-15,
     rtol = 1e-15,
     methode = "ode45",
@@ -90,36 +88,28 @@ DAISIE_DE_trait_logpNE <- function(
 
 
   ## added !all(is.na(trait_mainland_ancestor)) because when trait_mainland_ancestor = NA,  length(trait_mainland_ancestor) = length(trait_mainland_ancestor_extended) = 1
-  if(!all(is.na(trait_mainland_ancestor)) && length(trait_mainland_ancestor) == num_observed_states * num_hidden_states) { #this is the case where a full probability distribution is specified across all observed and hidden states
+  if(!all(is.na(trait_mainland_ancestor)) && length(trait_mainland_ancestor) == length(trait_mainland_ancestor_extended)) { #this is the case where a full probability distribution is specified across all observed and hidden states
     weights <- trait_mainland_ancestor/sum(trait_mainland_ancestor)
-  } else {
-            Mp <- datalist[[1]]$Mainland_pool_sizes
-            M <-  datalist[[1]]$M
-            num_hidden_states <- num_hidden_states
-      if (weight_method == "mainland_stationary_weights") {
+  }  else {
 
-          stat_weights <- use_stationary_weights(parameter[[5]])
+    if(all(is.numeric(trait_mainland_ancestor))) { # this is the case when only a probability distribution is specified for the observed states; this could be c(M0/M, M1/M)
 
-          weights <-  compute_mainland_stationary_weights(stat_weights, Mp, M, num_hidden_states)
+      s <- numeric(num_observed_states * num_hidden_states)
+      # you could also do s <- c() and use line 92
 
-      } else if (weight_method == "stationary_weights") {
-        weights <- use_stationary_weights(parameter[[5]])
+      weights <- c()
+      for(j in 1:length(trait_mainland_ancestor)) {
+        s[((j - 1) * num_hidden_states + 1):(j * num_hidden_states)] <- rep(trait_mainland_ancestor[j], num_hidden_states)
 
-      } else if (weight_method == "mainland_weights") {
+      weights <- s/sum(s)
 
-        weights <- compute_mainland_weights(Mp, M, num_hidden_states)
-
-        } else if (weight_method == "likelihood_stationary_weights") {
-
-          weights <- Lk_vec/sum(Lk_vec)
-
-        } else {
-        stop("Unknown weight_method")
       }
 
+    }else { # this is the case where nothing is provided, i.e. NA
+      weights <- compute_mainland_weights(Mp, M, num_hidden_states)
 
+    }
   }
-
   log_Lk <- log(sum(Lk_vec * weights))
   return( list (loglik = log_Lk, lik_states = Lk_vec, weights = weights))
 }
@@ -128,18 +118,18 @@ DAISIE_DE_trait_logpNE <- function(
 
 
 DAISIE_DE_trait_logpNE_core <- function(brts,
-                                   status,
-                                   trait,
-                                   sampling_fraction,
-                                   num_observed_states,
-                                   num_hidden_states,
-                                   trait_mainland_ancestor = NA,
-                                   parameter,
-                                   atol  = 1e-15,
-                                   rtol  = 1e-15,
-                                   methode                 = "ode45",
-                                   rcpp_methode = "odeint::bulirsch_stoer",
-                                   use_Rcpp = 0) {
+                                        status,
+                                        trait,
+                                        sampling_fraction,
+                                        num_observed_states,
+                                        num_hidden_states,
+                                        trait_mainland_ancestor = NA,
+                                        parameter,
+                                        atol  = 1e-15,
+                                        rtol  = 1e-15,
+                                        methode                 = "ode45",
+                                        rcpp_methode = "odeint::bulirsch_stoer",
+                                        use_Rcpp = 0) {
 
   check_arguments(brts = brts,
                   parameter = parameter,

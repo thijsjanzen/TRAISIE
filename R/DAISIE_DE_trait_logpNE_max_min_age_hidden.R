@@ -35,7 +35,7 @@
 #'   parameter             = parameter,
 #'   num_observed_states   = 2,
 #'   num_hidden_states     = 2,
-#'   trait_mainland_ancestor = NA,
+#'   trait_mainland_ancestor = c(1,0),
 #'   weight_method           = "likelihood_stationary_weights",
 #'   sampling_fraction       = c(1,1),
 #'   atol                  = 1e-15,
@@ -87,40 +87,31 @@ DAISIE_DE_trait_logpNE_max_min_age_hidden <- function(
   Lk_vec <- sapply(indices, lik_func)
 
   ## added !all(is.na(trait_mainland_ancestor)) because when trait_mainland_ancestor = NA,  length(trait_mainland_ancestor) = length(trait_mainland_ancestor_extended) = 1
-  if(!all(is.na(trait_mainland_ancestor)) && length(trait_mainland_ancestor) == num_observed_states * num_hidden_states) { #this is the case where a full probability distribution is specified across all observed and hidden states
+  if(!all(is.na(trait_mainland_ancestor)) && length(trait_mainland_ancestor) == length(trait_mainland_ancestor_extended)) { #this is the case where a full probability distribution is specified across all observed and hidden states
     weights <- trait_mainland_ancestor/sum(trait_mainland_ancestor)
   }  else {
-    Mp <- datalist[[1]]$Mainland_pool_sizes
-    M <-  datalist[[1]]$M
-    num_hidden_states <- num_hidden_states
-    if (weight_method == "mainland_stationary_weights") {
 
-      stat_weights <- use_stationary_weights(parameter[[5]])
+    if(all(is.numeric(trait_mainland_ancestor))) { # this is the case when only a probability distribution is specified for the observed states; this could be c(M0/M, M1/M)
 
-      weights <- compute_mainland_stationary_weights(stat_weights, Mp, M, num_hidden_states)
+      s <- numeric(num_observed_states * num_hidden_states)
+      # you could also do s <- c() and use line 92
 
-    } else if (weight_method == "stationary_weights") {
-      weights <- use_stationary_weights(parameter[[5]])
+      weights <- c()
+      for(j in 1:length(trait_mainland_ancestor)) {
+        s[((j - 1) * num_hidden_states + 1):(j * num_hidden_states)] <- rep(trait_mainland_ancestor[j], num_hidden_states)
 
-    } else if (weight_method == "mainland_weights") {
+        weights <- s/sum(s)
 
+      }
+
+    }else { # this is the case where nothing is provided, i.e. NA
       weights <- compute_mainland_weights(Mp, M, num_hidden_states)
 
-    } else if (weight_method == "likelihood_stationary_weights") {
-
-      weights <- Lk_vec/sum(Lk_vec)
-
-    } else {
-      stop("Unknown weight_method")
     }
-
-
   }
-
   log_Lk <- log(sum(Lk_vec * weights))
   return( list (loglik = log_Lk, lik_states = Lk_vec, weights = weights))
 }
-
 
 
 

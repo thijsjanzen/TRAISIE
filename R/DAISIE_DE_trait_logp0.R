@@ -75,42 +75,30 @@ DAISIE_DE_trait_logp0 <- function(
   }
 
   ## added !all(is.na(trait_mainland_ancestor)) because when trait_mainland_ancestor = NA,  length(trait_mainland_ancestor) = length(trait_mainland_ancestor_extended) = 1
-  if (!all(is.na(trait_mainland_ancestor)) &&
-      length(trait_mainland_ancestor) == length(trait_mainland_ancestor_extended)) {
+  if(!all(is.na(trait_mainland_ancestor)) && length(trait_mainland_ancestor) == length(trait_mainland_ancestor_extended)) { #this is the case where a full probability distribution is specified across all observed and hidden states
+    weights <- trait_mainland_ancestor/sum(trait_mainland_ancestor)
+  }  else {
 
-    weights <- trait_mainland_ancestor / sum(trait_mainland_ancestor)
+    if(all(is.numeric(trait_mainland_ancestor))) { # this is the case when only a probability distribution is specified for the observed states; this could be c(M0/M, M1/M)
 
-  } else {
+      s <- numeric(num_observed_states * num_hidden_states)
+      # you could also do s <- c() and use line 92
 
-    Mp <- datalist[[1]]$Mainland_pool_sizes
-    M  <- datalist[[1]]$M
+      weights <- c()
+      for(j in 1:length(trait_mainland_ancestor)) {
+        s[((j - 1) * num_hidden_states + 1):(j * num_hidden_states)] <- rep(trait_mainland_ancestor[j], num_hidden_states)
 
-    if (weight_method == "mainland_stationary_weights") {
+        weights <- s/sum(s)
 
-      stat_weights <- use_stationary_weights(parameter[[5]])
-      weights <- compute_mainland_stationary_weights(
-        stat_weights, Mp, M, num_hidden_states
-      )
+      }
 
-    } else if (weight_method == "stationary_weights") {
-
-      weights <- use_stationary_weights(parameter[[5]])
-
-    } else if (weight_method == "mainland_weights") {
-
+    }else { # this is the case where nothing is provided, i.e. NA
       weights <- compute_mainland_weights(Mp, M, num_hidden_states)
 
-    } else if (weight_method == "likelihood_stationary_weights") {
-
-      weights <- compute_likelihood_stationary_weights(Lk_vec, Mp, M, num_hidden_states)
-
-    } else {
-      stop("Unknown weight_method")
     }
   }
-
   log_Lk <- log(sum(Lk_vec * weights))
-  return(log_Lk)
+  return( list (loglik = log_Lk, lik_states = Lk_vec, weights = weights))
 }
 
 DAISIE_DE_trait_logp0_core <- function(datalist,
