@@ -28,7 +28,7 @@
 #'
 #'
 #' DAISIE_DE_trait_logp0(
-#'   datalist,
+#'   data_list1,
 #'   parameter               = parameter,
 #'   trait_mainland_ancestor = NA,
 #'   num_observed_states     = 2,
@@ -93,6 +93,10 @@ DAISIE_DE_trait_logp0 <- function(
       }
 
     }else { # this is the case where nothing is provided, i.e. NA
+      Mp <- datalist[[1]]$Mainland_pool_sizes
+      M <-  datalist[[1]]$M
+      num_hidden_states <- num_hidden_states
+      weights <- compute_mainland_weights(Mp, M, num_hidden_states)
       weights <- compute_mainland_weights(Mp, M, num_hidden_states)
 
     }
