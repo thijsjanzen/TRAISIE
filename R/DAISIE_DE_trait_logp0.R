@@ -102,7 +102,7 @@ DAISIE_DE_trait_logp0 <- function(
     }
   }
   log_Lk <- log(sum(Lk_vec * weights))
-  return( list (loglik = log_Lk, lik_states = Lk_vec, weights = weights))
+  return(log_Lk)
 }
 
 DAISIE_DE_trait_logp0_core <- function(datalist,
