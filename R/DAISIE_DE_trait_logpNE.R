@@ -41,6 +41,7 @@
 #'   num_observed_states     = 2,
 #'   num_hidden_states       = 2,
 #'   atol                    = 1e-15,
+#'   weight_method           = "likelihood_stationary_weights",
 #'   rtol                    = 1e-15,
 #'   methode                 = "ode45",
 #'   use_Rcpp                = 2)
@@ -60,6 +61,7 @@ DAISIE_DE_trait_logpNE <- function(
     Mainland_pool_size_vec = NULL,
     atol = 1e-15,
     rtol = 1e-15,
+    weight_method           = "mainland_weights",
     methode = "ode45",
     rcpp_methode = "odeint::runge_kutta_cash_karp54",
     use_Rcpp = 2
