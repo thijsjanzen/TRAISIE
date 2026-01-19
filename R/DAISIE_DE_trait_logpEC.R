@@ -105,7 +105,8 @@ DAISIE_DE_trait_logpEC <- function(
   Lk_vec <- sapply(indices_vec, calc_Lk_log)
 
   ## added !all(is.na(trait_mainland_ancestor)) because when trait_mainland_ancestor = NA,  length(trait_mainland_ancestor) = length(trait_mainland_ancestor_extended) = 1
-  if(!all(is.na(trait_mainland_ancestor)) && length(trait_mainland_ancestor) == length(trait_mainland_ancestor_extended)) { #this is the case where a full probability distribution is specified across all observed and hidden states
+  if(!all(is.na(trait_mainland_ancestor)) && length(trait_mainland_ancestor) == num_observed_states * num_hidden_states) { #this is the case where a full probability distribution is specified across all observed and hidden states
+
     weights <- trait_mainland_ancestor/sum(trait_mainland_ancestor)
   }  else {
 
