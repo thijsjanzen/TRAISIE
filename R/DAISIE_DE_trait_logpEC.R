@@ -45,7 +45,6 @@
 #'   status                  = 2,
 #'   sampling_fraction       = sampling_fraction,
 #'   parameter               = parameter,
-#'   weight_method           = "mainland_weights",
 #'   trait_mainland_ancestor = c(1,0),
 #'   num_observed_states     = 2,
 #'   num_hidden_states       = 2,
@@ -67,7 +66,6 @@ DAISIE_DE_trait_logpEC <- function(
     num_hidden_states,
     trait_mainland_ancestor = NA, #this should contain either a full probability distribution across all states, only the observed states, or NA
     status,
-    weight_method,
     sampling_fraction,
     num_threads = 5,
     atol = 1e-15,
@@ -119,9 +117,8 @@ DAISIE_DE_trait_logpEC <- function(
       for(j in 1:length(trait_mainland_ancestor)) {
         s[((j - 1) * num_hidden_states + 1):(j * num_hidden_states)] <- rep(trait_mainland_ancestor[j], num_hidden_states)
 
-        weights <- s/sum(s)
-
       }
+      weights <- s/sum(s)
 
     }else { # this is the case where nothing is provided, i.e. NA
       Mp <- datalist[[1]]$Mainland_pool_sizes

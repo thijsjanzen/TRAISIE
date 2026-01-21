@@ -13,7 +13,6 @@ parameter <- list(2.546591, 2.678781, 0.009326754, 1.008583, matrix(c(0), nrow =
 
 res1 <-  DAISIE_DE_trait_logp0(
   datalist            = datalist,
-  weight_method = "mainland_stationary_weights",
   parameter           = parameter,
   num_observed_states     = 1,
   num_hidden_states       = 1,
@@ -32,7 +31,6 @@ parameter[[6]] <- 0
 
 
 res2 <- DAISIE_DE_trait_loglik_CS(parameter = parameter,
-                                  weight_method = "mainland_stationary_weights",
                                   datalist = datalist,
                                   num_observed_states = 2,
                                   num_hidden_states = 1,
@@ -97,7 +95,6 @@ trparsfix <- parsfix / (1 + parsfix)
 trparsfix[which(parsfix == Inf)] <- 1
 
 initloglik <- treeLL::loglik_choosepar(trparsopt = trparsopt,
-                                       weight_method = "mainland_stationary_weights",
                                trparsfix = trparsfix,
                                idparsopt = idparsopt,
                                idparsfix = c(0),
@@ -117,7 +114,6 @@ initloglik
 
 t0 <- Sys.time()
 ml_res <- treeLL::calc_ml(  datalist,
-                            weight_method = "mainland_stationary_weights",
                             num_observed_states = 2,
                             num_hidden_states = 2,
                             idparslist = idparslist,
@@ -131,7 +127,6 @@ ml_res <- treeLL::calc_ml(  datalist,
                             use_Rcpp = TRUE)
 t1 <- Sys.time()
 ml_res2 <- treeLL::calc_ml( datalist,
-                            weight_method = "mainland_stationary_weights",
                             num_observed_states = 2,
                             num_hidden_states = 2,
                             idparslist = idparslist,

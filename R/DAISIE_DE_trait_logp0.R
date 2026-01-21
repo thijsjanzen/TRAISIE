@@ -33,7 +33,6 @@
 #'   trait_mainland_ancestor = NA,
 #'   num_observed_states     = 2,
 #'   num_hidden_states       = 2,
-#'   weight_method           = "mainland_weights",
 #'   atol                    = 1e-15,
 #'   rtol                    = 1e-15,
 #'   methode                 = "ode45",
@@ -49,7 +48,6 @@ DAISIE_DE_trait_logp0 <- function(
     rtol = 1e-15,
     num_observed_states,
     num_hidden_states,
-    weight_method,
     trait_mainland_ancestor= trait_mainland_ancestor_extended,
     methode = "ode45",
     rcpp_methode ="odeint::runge_kutta_cash_karp54",
@@ -90,9 +88,10 @@ DAISIE_DE_trait_logp0 <- function(
       for(j in 1:length(trait_mainland_ancestor)) {
         s[((j - 1) * num_hidden_states + 1):(j * num_hidden_states)] <- rep(trait_mainland_ancestor[j], num_hidden_states)
 
-        weights <- s/sum(s)
+
 
       }
+      weights <- s/sum(s)
 
     }else { # this is the case where nothing is provided, i.e. NA
       Mp <- datalist[[1]]$Mainland_pool_sizes

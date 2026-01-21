@@ -36,7 +36,6 @@
 #'   num_observed_states   = 2,
 #'   num_hidden_states     = 2,
 #'   trait_mainland_ancestor = c(1,0),
-#'   weight_method           = "likelihood_stationary_weights",
 #'   sampling_fraction       = c(1,1),
 #'   atol                  = 1e-15,
 #'   rtol                  = 1e-15,
@@ -54,7 +53,6 @@ DAISIE_DE_trait_logpNE_max_min_age_hidden <- function(
     num_hidden_states,
     trait_mainland_ancestor = NA, #this should contain either a full probability distribution across all states, only the observed states, or NA
     status,
-    weight_method,
     atol = 1e-15,
     rtol = 1e-15,
     sampling_fraction = c(1,1),
@@ -101,9 +99,8 @@ DAISIE_DE_trait_logpNE_max_min_age_hidden <- function(
       for(j in 1:length(trait_mainland_ancestor)) {
         s[((j - 1) * num_hidden_states + 1):(j * num_hidden_states)] <- rep(trait_mainland_ancestor[j], num_hidden_states)
 
-        weights <- s/sum(s)
-
-      }
+        }
+      weights <- s/sum(s)
 
     }else { # this is the case where nothing is provided, i.e. NA
       Mp <- datalist[[1]]$Mainland_pool_sizes
