@@ -65,7 +65,7 @@ DAISIE_sim_mult_trait_update_state_cr <- function(timeval,
       island_spec_state = which(island_spec[, 8] == as.character(trait_state))
 
 
-      extinct = DDD::sample2(1:length(island_spec_state), 1)
+      extinct = DDD::sample2(island_spec_state, 1)
 
       typeofspecies = island_spec[extinct, 4]
 
@@ -115,7 +115,7 @@ DAISIE_sim_mult_trait_update_state_cr <- function(timeval,
     if (possible_event == (4*i + 3)) {
       immi_specs = intersect(which(island_spec[, 4] == "I"), which(island_spec[, 8] == as.character(trait_state)))
 
-
+      if (length(immi_specs) == 0) next
       if (length(immi_specs) == 1) {
         anagenesis = immi_specs
       }
@@ -167,7 +167,7 @@ DAISIE_sim_mult_trait_update_state_cr <- function(timeval,
 
       island_spec_state = which(island_spec[, 8] == as.character(trait_state))
 
-      tosplit = DDD::sample2(1:length(island_spec_state), 1)
+      tosplit = DDD::sample2(island_spec_state, 1)
 
 
       if (island_spec[tosplit, 4] == "C") {
@@ -176,7 +176,7 @@ DAISIE_sim_mult_trait_update_state_cr <- function(timeval,
         oldstatus = island_spec[tosplit, 5]
         island_spec[tosplit, 5] = paste(oldstatus, "A", sep = "")
         island_spec[tosplit, 7] = NA
-        island_spec[tosplit, 8] = trait_state
+        island_spec[tosplit, 8] = as.character(trait_state)
         oldsplit = island_spec[tosplit, 9]
         split_time <- total_time - as.numeric(timeval)
         island_spec[tosplit, 9] = paste(as.character(oldsplit), as.character(split_time), sep = " ")
@@ -216,7 +216,7 @@ DAISIE_sim_mult_trait_update_state_cr <- function(timeval,
   for (i in 0:(n-1)) {
 
 
-    for (j in 1:n) {
+    for (j in 1:n) if (j != i+1) {
       # now each (i,j) pair maps to 4*n + (i * n + j)
       event_idx <- 4*n + i*n + j
 
