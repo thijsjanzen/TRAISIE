@@ -10,6 +10,7 @@ loglik_choosepar(
   idparsopt,
   idparsfix,
   idparslist,
+  structure_func,
   datalist,
   num_observed_states,
   num_hidden_states,

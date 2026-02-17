@@ -5,6 +5,7 @@
 \title{This function calculates the likelihood of observing a non-endemic lineage with specified species trait states,}
 \usage{
 DAISIE_DE_trait_logpNE(
+  datalist,
   brts,
   parameter,
   trait,
@@ -22,6 +23,13 @@ DAISIE_DE_trait_logpNE(
 )
 }
 \arguments{
+\item{datalist}{a list containing in the first entry: island age and the
+number of species not present, then from entry 2 until n it contains
+individual datasets for which to estimate the loglikelihood together, each
+dataset has the following fields: 1) colonist_name, 2) b ranching_times,
+3) stac, 4) missing_species, 5) type1or2, 6) traits, 7) sampling fraction,
+8) phylogeny}
+
 \item{brts}{branching times, being: island age, colonization time, branching
 times}
 
@@ -73,23 +81,28 @@ This function calculates the likelihood of observing a non-endemic lineage with 
 library(DAISIE)
 data("Galapagos_datalist")
 datalist <- Galapagos_datalist
-
+datalist[[1]]$M0 <- 500
+datalist[[1]]$M1 <- 400
 i <- 3
 brts <- datalist[[i]]$branching_times
 trait <- 0
 
 parameter <- list(
-  c(2.546591, 2.546591),
-  c(2.678781, 2.678781),
-  c(0.009326754, 0.009326754),
-  c(1.008583, 1.008583),
+  c(2.546591, 1.2, 1, 0.2),
+  c(2.678781, 2, 1.9, 3),
+  c(0.009326754, 0.003, 0.002, 0.2),
+  c(1.008583, 1, 2, 1.5),
   matrix(c(
-    rep(0, 4)
-  ), nrow = 2),
-  0
+    0,    .001,    0.005,  0,
+    .001,    0,    0.000,0.005,
+    0.005,    000,    0,  0.005,
+    0,   0.005,  0.005,0.00
+  ), nrow = 4, byrow = TRUE),
+  1
 )
 brts <- datalist[[i]]$branching_times
 DAISIE_DE_trait_logpNE(
+  datalist                = datalist,
   brts                    = brts,
   trait                   = trait,
   status                  = 4,
@@ -97,7 +110,7 @@ DAISIE_DE_trait_logpNE(
   sampling_fraction       = c(1,1),
   trait_mainland_ancestor = c(1,0),
   num_observed_states     = 2,
-  num_hidden_states       = 1,
+  num_hidden_states       = 2,
   atol                    = 1e-15,
   rtol                    = 1e-15,
   methode                 = "ode45",

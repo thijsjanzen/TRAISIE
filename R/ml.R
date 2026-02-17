@@ -131,6 +131,10 @@ calc_ml <- function(datalist,
                     initparsopt,
                     idparsfix,
                     parsfix,
+                    idfactorsopt = NULL,
+                    initfactors = NULL,
+                    idparsfuncdefpar = NULL,
+                    functions_defining_params = NULL,
                     cond = "proper_cond",
                     tol = c(1e-04, 1e-05, 1e-07),
                     maxiter = 2000 * round((1.25) ^ length(idparsopt)),
@@ -144,10 +148,21 @@ calc_ml <- function(datalist,
                     rtol = 1e-15,
                     use_Rcpp = 0
 ) {
-  if (identical(as.numeric(sort(c(idparsopt, idparsfix))),
-                as.numeric(sort(unique(unlist(idparslist))))) == FALSE) {
-    stop("All elements in idparslist must be included in either
+  structure_func <- NULL
+  if (!is.null(functions_defining_params)) {
+    structure_func <- set_and_check_structure_func(idparsfuncdefpar,
+                                                   functions_defining_params,
+                                                   idparslist,
+                                                   idparsopt,
+                                                   idfactorsopt,
+                                                   idparsfix,
+                                                   initfactors)
+  } else {
+    if (identical(as.numeric(sort(c(idparsopt, idparsfix))),
+                  as.numeric(sort(unique(unlist(idparslist))))) == FALSE) {
+      stop("All elements in idparslist must be included in either
              idparsopt or idparsfix ")
+    }
   }
 
   see_ancestral_states <- FALSE
@@ -164,6 +179,7 @@ calc_ml <- function(datalist,
                                  idparsopt = idparsopt,
                                  idparsfix = idparsfix,
                                  idparslist = idparslist,
+                                 structure_func = structure_func,
                                  datalist = datalist,
                                  num_observed_states = num_observed_states,
                                  num_hidden_states = num_hidden_states,
@@ -238,6 +254,7 @@ loglik_choosepar <- function(trparsopt,
                              idparsopt,
                              idparsfix,
                              idparslist,
+                             structure_func,
                              datalist,
                              num_observed_states,
                              num_hidden_states,
@@ -258,7 +275,7 @@ loglik_choosepar <- function(trparsopt,
   } else {
     pars1 <- transform_parameters(trparsopt, trparsfix,
                                   idparsopt, idparsfix,
-                                  idparslist)
+                                  idparslist, structure_func)
 
     loglik <- DAISIE_DE_trait_loglik_CS(parameter = pars1,
                                         datalist = datalist,

@@ -172,11 +172,11 @@ transform_params_normal <- function(idparslist,
 
 #' @keywords internal
 transform_parameters <- function(trparsopt,
-                                        trparsfix,
-                                        idparsopt,
-                                        idparsfix,
-                                        idparslist,
-                                        structure_func = NULL) {
+                                 trparsfix,
+                                 idparsopt,
+                                 idparsfix,
+                                 idparslist,
+                                 structure_func = NULL) {
   if (!is.null(structure_func)) {
     idparsfuncdefpar <- structure_func[[1]]
     functions_defining_params <- structure_func[[2]]
@@ -337,3 +337,61 @@ check_arguments <- function(brts = NULL,
     stop("traits not provided (required when total states > 1)")
   }
 }
+
+set_and_check_structure_func <- function(idparsfuncdefpar,
+                                         functions_defining_params,
+                                         idparslist,
+                                         idparsopt,
+                                         idfactorsopt,
+                                         idparsfix,
+                                         initfactors) {
+  structure_func <- list()
+  structure_func[[1]] <- idparsfuncdefpar
+  structure_func[[2]] <- functions_defining_params
+
+  # checks specific to when the user has specified factors:
+
+  if (is.null(idfactorsopt) == FALSE) {
+    if (length(initfactors) != length(idfactorsopt)) {
+      stop("idfactorsopt should have the same length as initfactors.")
+    }
+  }
+
+  if (is.list(functions_defining_params) == FALSE) {
+    stop(
+      "The argument functions_defining_params should be a list of
+            functions. See example and vignette"
+    )
+  }
+
+  if (length(functions_defining_params) != length(idparsfuncdefpar)) {
+    stop(
+      "The argument functions_defining_params should have the same
+            length than idparsfuncdefpar"
+    )
+  }
+
+  if (anyDuplicated(c(idparsopt, idparsfix, idparsfuncdefpar)) != 0) {
+    stop("At least one element was asked to be fixed,
+             estimated or a function at the same time")
+  }
+
+  if (identical(as.numeric(sort(
+    c(idparsopt, idparsfix, idparsfuncdefpar)
+  )), as.numeric(sort(unique(
+    unlist(idparslist)
+  )))) == FALSE) {
+    stop(
+      "All elements in idparslist must be included in either
+            idparsopt or idparsfix or idparsfuncdefpar "
+    )
+  }
+  if (is.null(idfactorsopt)) {
+    structure_func[[3]] <- "noFactor"
+  } else {
+    structure_func[[3]] <- idfactorsopt
+  }
+
+  return(structure_func)
+}
+

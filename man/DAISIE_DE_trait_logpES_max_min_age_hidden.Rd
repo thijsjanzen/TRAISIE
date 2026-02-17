@@ -5,6 +5,7 @@
 \title{testing function, for comparison with DAISIE}
 \usage{
 DAISIE_DE_trait_logpES_max_min_age_hidden(
+  datalist,
   brts,
   parameter,
   trait,
@@ -22,6 +23,13 @@ DAISIE_DE_trait_logpES_max_min_age_hidden(
 )
 }
 \arguments{
+\item{datalist}{a list containing in the first entry: island age and the
+number of species not present, then from entry 2 until n it contains
+individual datasets for which to estimate the loglikelihood together, each
+dataset has the following fields: 1) colonist_name, 2) b ranching_times,
+3) stac, 4) missing_species, 5) type1or2, 6) traits, 7) sampling fraction,
+8) phylogeny}
+
 \item{brts}{branching times, being: island age, colonization time, branching
 times}
 
@@ -75,7 +83,8 @@ library(DAISIE)
 data("Biwa_datalist")
 datalist <- Biwa_datalist
 
-
+datalist[[1]]$Mainland_pool_sizes <- c(500, 400)
+datalist[[1]]$M <- 1000
 
 parameter <- list(
   c(2.546591, 2.546591, 2.546591, 2.546591),
@@ -86,7 +95,7 @@ parameter <- list(
     0,    0,    0,  0,
     0,    0,    0.00,0.00,
     rep(0, 8)
-  ), nrow = 4),
+  ), nrow = 4, byrow = TRUE),
   1
 )
 
@@ -101,7 +110,7 @@ parameter <- list(
     0,    0,    0.002,0.005,
     0,    .1000,    0,  0,
     0,    0,    0.100,0.00
-  ), nrow = 4),
+  ), nrow = 4, byrow = TRUE),
   1
 )
 
@@ -109,6 +118,7 @@ parameter <- list(
 
 
 DAISIE_DE_trait_logpES_max_min_age_hidden(
+  datalist              = datalist,
   brts                  = c(4, 3.9999, 0.001),
   trait                 = 0,
   status                = 9,
@@ -118,7 +128,7 @@ DAISIE_DE_trait_logpES_max_min_age_hidden(
   atol                  = 1e-15,
   rtol                  = 1e-15,
   methode               = "ode45",
-  trait_mainland_ancestor = NA,
+  trait_mainland_ancestor = c(1, 0),
   sampling_fraction     = c(1,1),
   use_Rcpp = 2
 )
