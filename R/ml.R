@@ -212,6 +212,7 @@ calc_ml <- function(datalist,
                           trparsfix = trparsfix,
                           idparsfix = idparsfix,
                           idparslist = idparslist,
+                          structure_func = structure_func,
                           datalist = datalist,
                           num_observed_states = num_observed_states,
                           num_hidden_states = num_hidden_states,
@@ -231,7 +232,8 @@ calc_ml <- function(datalist,
                                        trparsfix,
                                        idparsopt,
                                        idparsfix,
-                                       idparslist)
+                                       idparslist,
+                                       structure_func)
       names(ml_pars1) <- c(
         "ML_lambda_c",
         "ML_mu",
