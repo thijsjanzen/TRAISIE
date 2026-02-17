@@ -167,6 +167,10 @@ calc_ml <- function(datalist,
 
   see_ancestral_states <- FALSE
 
+  if (!is.null(structure_func)) {
+    initparsopt <- c(initparsopt, initfactors)
+  }
+
   trparsopt <- initparsopt / (1 + initparsopt)
   trparsopt[which(initparsopt == Inf)] <- 1
   trparsfix <- parsfix / (1 + parsfix)
