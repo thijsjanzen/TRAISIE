@@ -139,15 +139,14 @@ get_initial_conditions2 <- function(status,
       E[(num_hidden_states * trait + 1):
           (num_hidden_states + trait * num_hidden_states)] <- 1 - sampling_fraction[1 + trait]
 
-      rest_idx <- setdiff(seq_along(E), (num_hidden_states * trait + 1):(num_hidden_states + num_hidden_states * trait))
-      for (i in rest_idx) {
-        trait_i <- (i - 1) %/% num_hidden_states
-        sf_i <- sampling_fraction[1 + trait_i]
-        E[i] <- if (sf_i == 1) 0 else 1 - sf_i
-      }
+
       DM3[(num_hidden_states * trait_mainland_ancestor + 1):
             (num_hidden_states + trait_mainland_ancestor * num_hidden_states)] <- 1
-      DA3 <- 0
+              rest_idx <- setdiff(seq_along(E), (num_hidden_states * trait + 1):(num_hidden_states + num_hidden_states * trait))
+        for (i in rest_idx) {
+          trait_i <- (i - 1) %/% num_hidden_states
+          sf_i <- sampling_fraction[1 + trait_i]
+          E[i] <- if (sf_i == 1) 0 else 1 - sf_i}
 
     } else if (status == 4) {
 
@@ -415,3 +414,4 @@ get_initial_conditions4 <- function(status,
   }
   return(matrix(initial_conditions4, nrow = 1))
 }
+
