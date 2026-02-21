@@ -160,9 +160,7 @@ calc_init_state_hidden <- function(trait,
      E[(steps + 1):(num_hidden_states + steps)] <- 1 - sampling_fraction[1 + trait]
     rest_idx <- setdiff(seq_along(E), (steps + 1):(num_hidden_states + steps))
     for (i in rest_idx) {
-      trait_i <- (i - 1) %/% num_hidden_states
-      sf_i <- sampling_fraction[1 + trait_i]
-      E[i] <- if (sf_i == 1) 1 else 1 - sf_i
+      E[i] <- 1
     }
   }
 
