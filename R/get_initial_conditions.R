@@ -109,13 +109,19 @@ get_initial_conditions2 <- function(status,
         stop("status == 2 assumes trait to be single value, found vector")
       }
       if (is.na(trait)) {
+
         s <- c()
         for (i in seq_along(sampling_fraction)) {
           s <- c(s, rep(sampling_fraction[i], num_hidden_states))
         }
+
         DE[1:n] <- s
         E[1:n]  <- 1 - s
 
+        # Only apply the change if NOT all s are 1
+        if (!all(s == 1)) {
+          DE[1:n][s == 1] <- 0
+        }
       } else {
 
 
@@ -155,7 +161,14 @@ get_initial_conditions2 <- function(status,
       }
 
       if (is.na(trait)) {
+        s <- c()
+        for (i in seq_along(sampling_fraction)) {
+          s <- c(s, rep(sampling_fraction[i], num_hidden_states))
+        }
         DM2[1:n] <- 1
+        if (!all(s == 1)) {
+          DM2[1:n][s == 1] <- 0
+        }
       } else {
         DM2[(num_hidden_states * trait + 1):
               (num_hidden_states + trait * num_hidden_states)] <- 1
@@ -171,7 +184,10 @@ get_initial_conditions2 <- function(status,
         for (i in seq_along(sampling_fraction)) {
           s <- c(s, rep(sampling_fraction[i], num_hidden_states))
         }
-        DM2[1:n] <- s
+        DM2[1:n] <- 1
+        if (!all(s == 1)) {
+          DM2[1:n][s == 1] <- 0
+        }
       } else {
         DM2[(num_hidden_states * trait + 1):
               (num_hidden_states + trait * num_hidden_states)] <- 1
@@ -182,13 +198,20 @@ get_initial_conditions2 <- function(status,
       }
 
       if (is.na(trait)) {
+
         s <- c()
         for (i in seq_along(sampling_fraction)) {
           s <- c(s, rep(sampling_fraction[i], num_hidden_states))
         }
+
         DE[1:n] <- s
         E[1:n]  <- 1 - s
-      } else  {
+
+        # Only apply the change if NOT all s are 1
+        if (!all(s == 1)) {
+          DE[1:n][s == 1] <- 0
+        }
+      }else  {
 
         DE[(num_hidden_states * trait + 1):
              (num_hidden_states + trait * num_hidden_states)] <- sampling_fraction[1 + trait]
@@ -286,6 +309,10 @@ get_initial_conditions3 <- function(status,
           s <- c(s, rep(sampling_fraction[i], num_hidden_states))
         }
         DM2[1:n] <- s
+        # if sampling_fraction for that trait is 1, DE must be 0 (for all its hidden states)
+        if (!all(s == 1)) {
+          DM2[1:n][s == 1] <- 0
+        }
       } else if (trait == trait) {
         DM2[(num_hidden_states * trait + 1):
               (num_hidden_states + trait * num_hidden_states)] <- sampling_fraction[1 + trait]
@@ -306,13 +333,20 @@ get_initial_conditions3 <- function(status,
       }
 
       if (is.na(trait)) {
+
         s <- c()
         for (i in seq_along(sampling_fraction)) {
           s <- c(s, rep(sampling_fraction[i], num_hidden_states))
         }
+
         DE[1:n] <- s
         E[1:n]  <- 1 - s
-      } else  {
+
+        # Only apply the change if NOT all s are 1
+        if (!all(s == 1)) {
+          DE[1:n][s == 1] <- 0
+        }
+      }else  {
         DE[(num_hidden_states * trait + 1):
              (num_hidden_states + trait * num_hidden_states)] <- sampling_fraction[1 + trait]
         E[(num_hidden_states * trait + 1):

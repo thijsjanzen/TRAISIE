@@ -120,7 +120,7 @@ calcThruNodes_hidden <- function(
               nodeM = nodeM,
               nodeN = nodeN))
 }
-  # sf = sampling fraction
+
 #' @keywords internal
 calc_init_state_hidden <- function(trait,
                                    sampling_fraction,
@@ -149,10 +149,21 @@ calc_init_state_hidden <- function(trait,
 
 
   } else {
-  if (is.na(trait)) {
-    DE[1:num_unique_states] <- sampling_fraction
-     E[1:num_unique_states] <- 1 - sampling_fraction
-  } else if (trait == trait) {
+    if (is.na(trait)) {
+
+      s <- c()
+      for (i in seq_along(sampling_fraction)) {
+        s <- c(s, rep(sampling_fraction[i], num_hidden_states))
+      }
+
+      DE[1:num_unique_states] <- s
+      E[1:num_unique_states]  <- 1 - s
+
+      # Only apply the change if NOT all s are 1
+      if (!all(s == 1)) {
+        DE[1:num_unique_states][s == 1] <- 0
+      }
+    } else if (trait == trait) {
 
     steps <- num_hidden_states * trait
 
