@@ -126,7 +126,9 @@ get_initial_conditions2 <- function(status,
 
         rest_idx <- setdiff(seq_along(E), (num_hidden_states * trait + 1):(num_hidden_states + num_hidden_states * trait))
         for (i in rest_idx) {
-          E[i] <- 1
+          trait_i <- (i - 1) %/% num_hidden_states
+          sf_i <- sampling_fraction[1 + trait_i]
+          E[i] <- if (sf_i == 1) 0 else 1 - sf_i
         }
       }
 
@@ -139,7 +141,9 @@ get_initial_conditions2 <- function(status,
 
       rest_idx <- setdiff(seq_along(E), (num_hidden_states * trait + 1):(num_hidden_states + num_hidden_states * trait))
       for (i in rest_idx) {
-        E[i] <- 1
+        trait_i <- (i - 1) %/% num_hidden_states
+        sf_i <- sampling_fraction[1 + trait_i]
+        E[i] <- if (sf_i == 1) 1 else 1 - sf_i
       }
       DM3[(num_hidden_states * trait_mainland_ancestor + 1):
             (num_hidden_states + trait_mainland_ancestor * num_hidden_states)] <- 1
@@ -194,7 +198,9 @@ get_initial_conditions2 <- function(status,
 
         rest_idx <- setdiff(seq_along(E), (num_hidden_states * trait + 1):(num_hidden_states + num_hidden_states * trait))
         for (i in rest_idx) {
-          E[i] <- 1
+          trait_i <- (i - 1) %/% num_hidden_states
+          sf_i <- sampling_fraction[1 + trait_i]
+          E[i] <- if (sf_i == 1) 0 else 1 - sf_i
         }
       }
     }
@@ -315,7 +321,9 @@ get_initial_conditions3 <- function(status,
 
         rest_idx <- setdiff(seq_along(E), (num_hidden_states * trait + 1):(num_hidden_states + num_hidden_states * trait))
         for (i in rest_idx) {
-          E[i] <- 1
+          trait_i <- (i - 1) %/% num_hidden_states
+          sf_i <- sampling_fraction[1 + trait_i]
+          E[i] <- if (sf_i == 1) 0 else 1 - sf_i
         }
       }
 
@@ -407,4 +415,3 @@ get_initial_conditions4 <- function(status,
   }
   return(matrix(initial_conditions4, nrow = 1))
 }
-
