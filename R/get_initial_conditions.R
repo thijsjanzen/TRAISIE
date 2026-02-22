@@ -148,7 +148,7 @@ get_initial_conditions2 <- function(status,
 
       DM3[(num_hidden_states * trait_mainland_ancestor + 1):
             (num_hidden_states + trait_mainland_ancestor * num_hidden_states)] <- 1
-              rest_idx <- setdiff(seq_along(E), (num_hidden_states * trait + 1):(num_hidden_states + num_hidden_states * trait))
+        rest_idx <- setdiff(seq_along(E), (num_hidden_states * trait + 1):(num_hidden_states + num_hidden_states * trait))
         for (i in rest_idx) {
           trait_i <- (i - 1) %/% num_hidden_states
           sf_i <- sampling_fraction[1 + trait_i]
@@ -161,14 +161,9 @@ get_initial_conditions2 <- function(status,
       }
 
       if (is.na(trait)) {
-        s <- c()
-        for (i in seq_along(sampling_fraction)) {
-          s <- c(s, rep(sampling_fraction[i], num_hidden_states))
-        }
+
         DM2[1:n] <- 1
-        if (!all(s == 1)) {
-          DM2[1:n][s == 1] <- 0
-        }
+
       } else {
         DM2[(num_hidden_states * trait + 1):
               (num_hidden_states + trait * num_hidden_states)] <- 1
@@ -180,14 +175,9 @@ get_initial_conditions2 <- function(status,
       }
 
       if (is.na(trait)) {
-        s <- c()
-        for (i in seq_along(sampling_fraction)) {
-          s <- c(s, rep(sampling_fraction[i], num_hidden_states))
-        }
+
         DM2[1:n] <- 1
-        if (!all(s == 1)) {
-          DM2[1:n][s == 1] <- 0
-        }
+
       } else {
         DM2[(num_hidden_states * trait + 1):
               (num_hidden_states + trait * num_hidden_states)] <- 1
@@ -304,15 +294,9 @@ get_initial_conditions3 <- function(status,
 
 
       if (is.na(trait)) {
-        s <- c()
-        for (i in seq_along(sampling_fraction)) {
-          s <- c(s, rep(sampling_fraction[i], num_hidden_states))
-        }
-        DM2[1:n] <- s
-        # if sampling_fraction for that trait is 1, DE must be 0 (for all its hidden states)
-        if (!all(s == 1)) {
-          DM2[1:n][s == 1] <- 0
-        }
+
+        DM2[1:n] <- 1
+
       } else if (trait == trait) {
         DM2[(num_hidden_states * trait + 1):
               (num_hidden_states + trait * num_hidden_states)] <- sampling_fraction[1 + trait]
