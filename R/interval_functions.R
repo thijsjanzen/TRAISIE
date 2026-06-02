@@ -37,7 +37,7 @@ use_stationary_weights <- function(Q) {
       warning("Substantial negative weights detected")
     }
     pi[which(pi[, i] < 0), i] <- 0
-    pi[,i] <- pi[, i] / sum(pi[, i])
+    pi[, i] <- pi[, i] / sum(pi[, i])
     diff_new <- abs(max(pi[, i])) - abs(min(pi[, i]))
     if (diff_new < diff) {
       diff <- diff_new

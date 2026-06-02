@@ -57,7 +57,7 @@ DAISIE_sim_mult_trait_update_state_cr <- function(timeval,
     }
 
     # EXTINCTION (4*i + 2)
-    if (possible_event == (4*i + 2)) {
+    if (possible_event == (4 * i + 2)) {
       island_spec_state = which(island_spec[, 8] == as.character(trait_state))
 
 
@@ -108,7 +108,7 @@ DAISIE_sim_mult_trait_update_state_cr <- function(timeval,
     }
 
     # ANAGENESIS (4*i + 3)
-    if (possible_event == (4*i + 3)) {
+    if (possible_event == (4 * i + 3)) {
       immi_specs = intersect(which(island_spec[, 4] == "I"), which(island_spec[, 8] == as.character(trait_state)))
 
       if (length(immi_specs) == 0) next
@@ -137,10 +137,7 @@ DAISIE_sim_mult_trait_update_state_cr <- function(timeval,
         if (!is.null(trait_pars)) {
           island_spec[anagenesis, 8] = as.character(trait_state)
         }
-
-      }
-      else {
-
+      } else {
         maxspecID = maxspecID + 1
         island_spec[anagenesis, 4] = "A"
         island_spec[anagenesis, 1] = maxspecID
@@ -159,7 +156,7 @@ DAISIE_sim_mult_trait_update_state_cr <- function(timeval,
     }
 
     # CLADOGENESIS (4*i + 4)
-    if (possible_event == (4*i + 4)) {
+    if (possible_event == (4 * i + 4)) {
 
       island_spec_state = which(island_spec[, 8] == as.character(trait_state))
 
@@ -178,7 +175,7 @@ DAISIE_sim_mult_trait_update_state_cr <- function(timeval,
         island_spec[tosplit, 9] = paste(as.character(oldsplit), as.character(split_time), sep = " ")
 
         island_spec = rbind(island_spec, c(maxspecID + 2, island_spec[tosplit, 2], island_spec[tosplit, 3],
-                                           "C", paste(oldstatus, "B", sep = ""), timeval , NA, trait_state, paste(as.character(oldsplit), as.character(split_time), sep = " ") ))
+                                           "C", paste(oldstatus, "B", sep = ""), timeval, NA, trait_state, paste(as.character(oldsplit), as.character(split_time), sep = " ")))
         maxspecID = maxspecID + 2
       } else {
         island_spec[tosplit, 4] = "C"
@@ -209,26 +206,23 @@ DAISIE_sim_mult_trait_update_state_cr <- function(timeval,
   # assume events 1:4n are the birth/death/speciation ones…
 
   # TRAIT CHANGE
-  for (i in 0:(n-1)) {
-
-
-    for (j in 1:n) if (j != i+1) {
+  for (i in 0:(n - 1)) {
+    for (j in 1:n) if (j != i + 1) {
       # now each (i,j) pair maps to 4*n + (i * n + j)
-      event_idx <- 4*n + i*n + j
+      event_idx <- 4 * n + i * n + j
 
       if (possible_event == event_idx) {
-        #message("fired trait event: i=",i," j=",j," idx=",event_idx)
         # pick one species in trait state (i+1)
-        island_spec_state1 <- which(island_spec[,8] == as.character(i+1))
+        island_spec_state1 <- which(island_spec[, 8] == as.character(i + 1))
         if (length(island_spec_state1) > 0) {
           totrans <- DDD::sample2(island_spec_state1, 1)
           # optional: convert immigrant → endemic if p==1, etc.
-          if (p == 1 && island_spec[totrans,4] == "I") {
-            island_spec[totrans,4] <- "A"
+          if (p == 1 && island_spec[totrans, 4] == "I") {
+            island_spec[totrans, 4] <- "A"
           }
           # finally update the trait
 
-          island_spec[totrans,8] <- as.character(j)
+          island_spec[totrans, 8] <- as.character(j)
         }
       }
     }

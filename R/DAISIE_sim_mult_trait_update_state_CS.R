@@ -51,7 +51,7 @@ DAISIE_sim_mult_trait_update_state_CS <- function(timeval,
     }
 
     # EXTINCTION (4*i + 2)
-    if (possible_event == (4*i + 2)) {
+    if (possible_event == (4 * i + 2)) {
       island_spec_state = which(island_spec[, 8] == as.character(trait_state))
 
 
@@ -137,8 +137,7 @@ DAISIE_sim_mult_trait_update_state_CS <- function(timeval,
         if (!is.null(trait_pars)) {
           island_spec[anagenesis, 8] = as.character(trait_state)
         }
-      }
-      else {
+      } else {
         maxspecID = maxspecID + 1
         island_spec[anagenesis, 4] = "A"
         island_spec[anagenesis, 1] = maxspecID
@@ -153,7 +152,7 @@ DAISIE_sim_mult_trait_update_state_CS <- function(timeval,
       }
     }
 
-    # CLADOGENESIS (4*i + 4)
+    # CLADOGENESIS (4 * i + 4)
     if (possible_event == (4 * i + 4)) {
       island_spec_state = which(island_spec[, 8] == as.character(trait_state))
 
@@ -181,7 +180,7 @@ DAISIE_sim_mult_trait_update_state_CS <- function(timeval,
                               NA,
                               trait_state,
                               paste(as.character(oldsplit),
-                                    as.character(split_time), sep = " ") ))
+                                    as.character(split_time), sep = " ")))
         maxspecID = maxspecID + 2
       } else {
         island_spec[tosplit, 4] = "C"

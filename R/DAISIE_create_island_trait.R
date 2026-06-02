@@ -86,7 +86,7 @@ DAISIE_create_island_trait <- function(stt_table,
           colnames(subset_island) <- cnames
         }
 
-        island_clades_info[[i]] <- DAISIE:::DAISIE_ONEcolonist (
+        island_clades_info[[i]] <- DAISIE:::DAISIE_ONEcolonist(
           total_time,
           island_spec = subset_island,
           stt_table = stt_table)
@@ -96,15 +96,14 @@ DAISIE_create_island_trait <- function(stt_table,
 
 
       # Extracting taxon_list and handling matching colonization times
-      for (i in 1:length(island_clades_info)) {
+      for (i in seq_along(island_clades_info)) {
         # Extract colonization times from island_spec (it is a vector)
-        #i = 35
         colonization_times <- as.numeric(island_spec[which(island_spec[, "Mainland Ancestor"] == colonists_present[i]), "Colonisation time (BP)"])
 
         # Loop through taxon_list to find matching colonization times
         matching_taxa_list <- list()
 
-        for (j in 1:length(island_clades_info)) {
+        for (j in seq_along(island_clades_info)) {
           # Check if any of the colonization times match the branching times
           if (any(colonization_times == island_clades_info[[j]]$branching_times[2])) {
             matching_taxa_list <- append(matching_taxa_list, j)
@@ -115,7 +114,6 @@ DAISIE_create_island_trait <- function(stt_table,
         if (length(matching_taxa_list) > 0) {
           for (match in matching_taxa_list) {
             # Prepare the subset of island_spec for the current match
-            # match = 22
             island_clades_info[[match]]$island_spec <- list(island_spec[which(island_spec[, "Colonisation time (BP)"] == island_clades_info[[match]]$branching_times[2]), ])[1]
             isla <- list(island_spec[which(island_spec[, "Colonisation time (BP)"] == island_clades_info[[match]]$branching_times[2]), ])[1]
 
@@ -135,43 +133,6 @@ DAISIE_create_island_trait <- function(stt_table,
             # Ensure the "Mainland Ancestor" value is numeric
             mainland_ancestor_value <- as.numeric(isla[[1]][, "Mainland Ancestor"][1])
 
-            #Check the length of mainland and adapt the logic
-            #  root_state <- c()
-            #  if (length(mainland) == 1) {
-            #     #Only M1 in mainland
-            #
-            #    root_state <- 1
-            #
-            #  } else if (length(mainland) == 2) {
-            #   # Only M1 and M2 are available in mainland
-            #    if (mainland_ancestor_value %in% 1:mainland$M1) {
-            #      root_state <- c(1, 0)
-            #   } else if (mainland_ancestor_value %in% (1 + mainland$M1):(mainland$M1 + mainland$M2)) {
-            #      root_state <- c(0, 1)
-            #    }
-            #  } else if (length(mainland) == 3) {
-            #    # M1, M2, and M3 are available in mainland
-            #    if (mainland_ancestor_value %in% 1:mainland$M1) {
-            #      root_state <- c(1, 0, 0)
-            #    } else if (mainland_ancestor_value %in% (1 + mainland$M1):(mainland$M1 + mainland$M2)) {
-            #      root_state <- c(0, 1, 0)
-            #    } else if (mainland_ancestor_value %in% (1 + mainland$M1 + mainland$M2):(mainland$M1 + mainland$M2 + mainland$M3)) {
-            #      root_state <- c(0, 0, 1)
-            #    }
-            #  } else if (length(mainland) == 4) {
-            #    # M1, M2, and M3 are available in mainland
-            #    if (mainland_ancestor_value %in% 1:mainland$M1) {
-            #      root_state <- c(1, 0, 0, 0)
-            #    } else if (mainland_ancestor_value %in% (1 + mainland$M1):(mainland$M1 + mainland$M2)) {
-            #      root_state <- c(0, 1, 0, 0)
-            #    } else if (mainland_ancestor_value %in% (1 + mainland$M1 + mainland$M2):(mainland$M1 + mainland$M2 + mainland$M3)) {
-            #      root_state <- c(0, 0, 1, 0)
-            #    } else if (mainland_ancestor_value %in% (1 + mainland$M1 + mainland$M2 + mainland$M3):(mainland$M1 + mainland$M2 + mainland$M3 + mainland$M4)) {
-            #      root_state <- c(0, 0, 0, 1)
-            #    }
-            # }
-
-
             # Initialize root_state vector with zeros
             root_state <- rep(0, length(mainland))
 
@@ -187,23 +148,14 @@ DAISIE_create_island_trait <- function(stt_table,
             # Set the corresponding position to 1 (one-hot encoding)
             root_state[group_index] <- 1
 
-
-
-
-
-
             island_clades_info[[match]]$root_state <- root_state
 
             if (ncol(isla[[1]]) >= 9) {
-
-
               island_clades_info[[match]]$traits <- as.numeric(isla[[1]][, 8])
-
             } else {
               island_clades_info[[match]]$traits <- NA
               warning("Eight column not found in isla[[1]], assigned NA")
             }
-
 
             isla <- isla[[1]]
             # Always assign sampling_fraction
@@ -250,4 +202,3 @@ DAISIE_create_island_trait <- function(stt_table,
 
   return(island)
 }
-

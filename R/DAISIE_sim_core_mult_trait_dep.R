@@ -47,7 +47,7 @@ DAISIE_sim_core_mult_trait_dep <- function(
   testit::assert(mainland_total > 0)
   if (mainland[[1]] != 0) {
     mainland_spec <- seq(1, mainland[[1]], 1)
-  } else{
+  } else {
     mainland_spec <- c()
   }
   maxspecID <- mainland_total
@@ -107,7 +107,6 @@ DAISIE_sim_core_mult_trait_dep <- function(
                                                       num_hidden_states =
                                                         num_hidden_states)
 
-      #print(possible_event)
       updated_state <- DAISIE_sim_mult_trait_update_state_cr(
         timeval = timeval,
         total_time = total_time,

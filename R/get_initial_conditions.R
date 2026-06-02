@@ -16,11 +16,11 @@ initial_cond2_one_state <- function(status,
   E   <- rep(0, 1)
   DA3 <- 1
   if (status == 2 && length(brts) > 2 || status == 3 && length(brts) > 2) {
-    initial_conditions2 <- c( res[1],                      ## DE
-                              (res[1]) * res[length(res)], ## DM2
-                              res[2],          ## DM3
-                              res[3],  ## E
-                              res[length(res)])              ## DA3
+    initial_conditions2 <- c(res[1],                      ## DE
+                            (res[1]) * res[length(res)], ## DM2
+                             res[2],          ## DM3
+                             res[3],  ## E
+                             res[length(res)])              ## DA3
     # pre-emptive return because this one is constructed differently.
     return(matrix(initial_conditions2, nrow = 1))
   } else if (status == 2 && length(brts) == 2) {
@@ -63,7 +63,6 @@ get_initial_conditions2 <- function(status,
                                     brts,
                                     sampling_fraction,
                                     trait_mainland_ancestor) {
-
   n <- num_observed_states * num_hidden_states
   num_unique_states <- n
 
@@ -79,7 +78,7 @@ get_initial_conditions2 <- function(status,
   # counting at 0.
 
 
-  if(num_unique_states == 1) {
+  if (num_unique_states == 1) {
     return(initial_cond2_one_state(status,
                                    res,
                                    trait,
@@ -89,17 +88,12 @@ get_initial_conditions2 <- function(status,
                                    sampling_fraction,
                                    trait_mainland_ancestor))
   }  else {
-
-
- #   if (length(trait) == 1)
- #      if (!is.na(trait)) sampling_fraction <- sampling_fraction[1 + trait]
-
     if (status == 2 && length(brts) > 2 || status == 3 && length(brts) > 2) {
-      initial_conditions2 <- c( res[1:n],                      ## DE
-                                (res[1:n]) * res[length(res)], ## DM2
-                                res[(n + 1):(n + n)],          ## DM3
-                                res[(n + n + 1):(n + n + n)],  ## E
-                                res[length(res)])              ## DA3
+      initial_conditions2 <- c(res[1:n],                      ## DE
+                              (res[1:n]) * res[length(res)], ## DM2
+                               res[(n + 1):(n + n)],          ## DM3
+                               res[(n + n + 1):(n + n + n)],  ## E
+                               res[length(res)])              ## DA3
       # pre-emptive return because this one is constructed differently.
       return(matrix(initial_conditions2, nrow = 1))
     } else if (status == 2 && length(brts) == 2) {
@@ -152,8 +146,8 @@ get_initial_conditions2 <- function(status,
         for (i in rest_idx) {
           trait_i <- (i - 1) %/% num_hidden_states
           sf_i <- sampling_fraction[1 + trait_i]
-          E[i] <- if (sf_i == 1) 0 else 1 - sf_i}
-
+          E[i] <- ifelse(sf_i == 1, 0, 1 - sf_i)
+        }
     } else if (status == 4) {
 
       if (length(trait) > 1) {
@@ -247,9 +241,6 @@ get_initial_conditions3 <- function(status,
 
   # only use the sampling fraction of the focal trait, assuming traits start
   # counting at 0.
-
-  #sampling_fraction <- sampling_fraction[1 + trait]
-
 
   if (num_unique_states == 1) {
 

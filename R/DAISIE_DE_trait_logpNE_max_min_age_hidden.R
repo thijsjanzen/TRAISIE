@@ -54,29 +54,29 @@ DAISIE_DE_trait_logpNE_max_min_age_hidden <- function(
     status,
     atol = 1e-15,
     rtol = 1e-15,
-    sampling_fraction = c(1,1),
+    sampling_fraction = c(1, 1),
     methode = "ode45",
     rcpp_methode = "odeint::runge_kutta_cash_karp54",
     use_Rcpp = 2
 ) {
 
   calc_Lk_log <- function(i) {
-    trait_mainland_ancestor_extended <- rep(0,num_observed_states * num_hidden_states)
+    trait_mainland_ancestor_extended <- rep(0, num_observed_states * num_hidden_states)
     trait_mainland_ancestor_extended[i] <- 1 #set only the trait of interest to 1
 
-    Lk_log <- DAISIE_DE_trait_logpNE_max_min_age_hidden_core (brts,
-                                                              parameter               = parameter,
-                                                              trait                   = trait,
-                                                              num_observed_states     = num_observed_states,
-                                                              num_hidden_states       = num_hidden_states,
-                                                              trait_mainland_ancestor = trait_mainland_ancestor_extended,
-                                                              status                  = status,
-                                                              sampling_fraction       = c(1,1),
-                                                              atol                    = atol,
-                                                              rtol                    = rtol,
-                                                              methode                 = "ode45",
-                                                              rcpp_methode            = rcpp_methode,
-                                                              use_Rcpp                = use_Rcpp)
+    Lk_log <- DAISIE_DE_trait_logpNE_max_min_age_hidden_core(brts,
+                                                             parameter               = parameter,
+                                                             trait                   = trait,
+                                                             num_observed_states     = num_observed_states,
+                                                             num_hidden_states       = num_hidden_states,
+                                                             trait_mainland_ancestor = trait_mainland_ancestor_extended,
+                                                             status                  = status,
+                                                             sampling_fraction       = c(1, 1),
+                                                             atol                    = atol,
+                                                             rtol                    = rtol,
+                                                             methode                 = "ode45",
+                                                             rcpp_methode            = rcpp_methode,
+                                                             use_Rcpp                = use_Rcpp)
     return(Lk_log)
   }
 
@@ -84,22 +84,22 @@ DAISIE_DE_trait_logpNE_max_min_age_hidden <- function(
   Lk_vec <- sapply(indices_vec, calc_Lk_log)
 
   ## added !all(is.na(trait_mainland_ancestor)) because when trait_mainland_ancestor = NA,  length(trait_mainland_ancestor) = length(trait_mainland_ancestor_extended) = 1
-  if(!all(is.na(trait_mainland_ancestor)) && length(trait_mainland_ancestor) == num_observed_states * num_hidden_states) { #this is the case where a full probability distribution is specified across all observed and hidden states
+  if (!all(is.na(trait_mainland_ancestor)) && length(trait_mainland_ancestor) == num_observed_states * num_hidden_states) { #this is the case where a full probability distribution is specified across all observed and hidden states
 
-    weights <- trait_mainland_ancestor/sum(trait_mainland_ancestor)
+    weights <- trait_mainland_ancestor / sum(trait_mainland_ancestor)
   }  else {
 
-    if(all(is.numeric(trait_mainland_ancestor))) { # this is the case when only a probability distribution is specified for the observed states; this could be c(M0/M, M1/M)
+    if (all(is.numeric(trait_mainland_ancestor))) { # this is the case when only a probability distribution is specified for the observed states; this could be c(M0/M, M1/M)
 
       s <- numeric(num_observed_states * num_hidden_states)
       # you could also do s <- c() and use line 92
 
       weights <- c()
-      for(j in 1:length(trait_mainland_ancestor)) {
+      for (j in 1:length(trait_mainland_ancestor)) {
         s[((j - 1) * num_hidden_states + 1):(j * num_hidden_states)] <- rep(trait_mainland_ancestor[j], num_hidden_states)
 
         }
-      weights <- s/sum(s)
+      weights <- s / sum(s)
 
     }else { # this is the case where nothing is provided, i.e. NA
       Mp <- datalist[[1]]$Mainland_pool_sizes
@@ -110,7 +110,7 @@ DAISIE_DE_trait_logpNE_max_min_age_hidden <- function(
     }
   }
   log_Lk <- log(sum(Lk_vec * weights))
-  return( list (loglik = log_Lk, lik_states = Lk_vec, weights = weights))
+  return(list(loglik = log_Lk, lik_states = Lk_vec, weights = weights))
 }
 
 
@@ -123,7 +123,7 @@ DAISIE_DE_trait_logpNE_max_min_age_hidden_core <-
            trait,
            status,
            parameter,
-           sampling_fraction = c(1,1),
+           sampling_fraction = c(1, 1),
            trait_mainland_ancestor = NA,
            num_observed_states,
            num_hidden_states,
@@ -140,7 +140,7 @@ DAISIE_DE_trait_logpNE_max_min_age_hidden_core <-
     # number of unique state
     n <- num_observed_states * num_hidden_states
 
-    ######### interval2 [t_p, tmin]
+    #########  interval2 [t_p, tmin]
 
     initial_conditions2 <- get_initial_conditions2(status = status,
                                                    num_observed_states =
@@ -169,7 +169,7 @@ DAISIE_DE_trait_logpNE_max_min_age_hidden_core <-
                               rtol = rtol,
                               use_Rcpp = use_Rcpp)
 
-    #########interval3 [tmin, tmax]
+    #########  interval3 [tmin, tmax]
 
     # Initial conditions
 
@@ -199,7 +199,7 @@ DAISIE_DE_trait_logpNE_max_min_age_hidden_core <-
                               rtol = rtol,
                               use_Rcpp = use_Rcpp)
 
-    #########interval4 [tmax, t0]
+    #########   interval4 [tmax, t0]
 
     # Initial conditions
 

@@ -5,21 +5,19 @@
 #' @export
 #' @inheritParams default_params_doc
 #'
-DAISIE_DE_trait_loglik_CS <- function( parameter,
-                                       datalist,
-                                       methode = "lsodes",
-                                       rcpp_methode =
+DAISIE_DE_trait_loglik_CS <- function(parameter,
+                                      datalist,
+                                      methode = "lsodes",
+                                      rcpp_methode =
                                          "odeint::runge_kutta_cash_karp54",
-                                       atol = 1e-15,
-                                       rtol = 1e-15,
-                                       num_observed_states,
-                                       num_hidden_states,
-                                       cond = 1,
-                                       num_threads = 1,
-                                       verbose = FALSE,
-                                       use_Rcpp = use_Rcpp)
-
-{
+                                      atol = 1e-15,
+                                      rtol = 1e-15,
+                                      num_observed_states,
+                                      num_hidden_states,
+                                      cond = 1,
+                                      num_threads = 1,
+                                      verbose = FALSE,
+                                      use_Rcpp = use_Rcpp) {
   logcond <- 0 # default value gives no effect
 
   if (length(parameter) >= 6) {
@@ -147,8 +145,7 @@ DAISIE_DE_trait_loglik_CS <- function( parameter,
                                                 rcpp_methode = rcpp_methode,
                                                 use_Rcpp = use_Rcpp)
       }
-    }
-    else if (stac == 6) {
+    } else if (stac == 6) {
       loglikelihood <- DAISIE_DE_trait_logpEC(datalist = datalist,
                                               brts = brts,
                                               parameter = parameter,
@@ -165,8 +162,7 @@ DAISIE_DE_trait_loglik_CS <- function( parameter,
                                               use_Rcpp = use_Rcpp,
                                               rcpp_methode = rcpp_methode,
                                               num_threads = num_threads)
-    }
-    else if (stac == 8) {
+    } else if (stac == 8) {
       loglikelihood <-
         DAISIE_DE_trait_logpNE_max_min_age_hidden(datalist = datalist,
                                                   brts = brts,

@@ -52,15 +52,15 @@ DAISIE_sim_core_mult_trait_dep_CS <- function(
   maxspecID <- mainland_total
 
   island_spec <- c()
-
-  stt_table <- matrix(ncol = 3 * (num_observed_states*num_hidden_states) + 1)  # 3 for each state (nI, nA, nC) and 1 for Time
+  n <- num_observed_states * num_hidden_states
+  stt_table <- matrix(ncol = 3 * (n) + 1)  # 3 for each state (nI, nA, nC) and 1 for Time
   colnames(stt_table) <- c("Time",
-                           paste0("nI", 1:(num_observed_states*num_hidden_states)),
-                           paste0("nA", 1:(num_observed_states*num_hidden_states)),
-                           paste0("nC", 1:(num_observed_states*num_hidden_states)))
+                           paste0("nI", 1:n),
+                           paste0("nA", 1:n),
+                           paste0("nC", 1:n))
 
   # Initialize the first row
-  stt_table[1,] <- c(total_time, rep(0, 3 * (num_observed_states*num_hidden_states)))
+  stt_table[1, ] <- c(total_time, rep(0, 3 * n))
 
 
   num_spec <- length(island_spec[, 1])
@@ -128,25 +128,6 @@ DAISIE_sim_core_mult_trait_dep_CS <- function(
 
     }
   }
-
-  # ### change the true traits to the observed traits because the hidden states are unknown
-  # for (i in 1:length(island_spec[,1])) {
-  #
-  #   state <- as.numeric(island_spec[i,][8])
-  #
-  #   if (state >= 1 && state <= num_hidden_states) {
-  #     island_spec[i,][8] = "0"
-  #
-  #   } else if (state >= (num_hidden_states + 1) && state <= (2 * num_hidden_states)) {
-  #     island_spec[i,][8] = "1"
-  #     # Colonist species in state
-  #   } else if (state >= (2 * num_hidden_states + 1) && state <= 3 * num_hidden_states) {
-  #     island_spec[i,][8] = "2"
-  #   } else if (state >= (3 * num_hidden_states + 1) && state <= 4 * num_hidden_states) {
-  #     island_spec[i,][8] = "3"
-  #   }
-  # }
-
 
   # Loop through all rows of island_spec
   if (length(island_spec) > 0) {
