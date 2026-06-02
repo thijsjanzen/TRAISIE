@@ -12,7 +12,7 @@ Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 
 // calc_ll_cpp
 Rcpp::List calc_ll_cpp(const Rcpp::IntegerVector& ances, const Rcpp::NumericMatrix& states, const Rcpp::NumericMatrix& forTime, const Rcpp::NumericVector& lambda_cs, const Rcpp::NumericVector& lambda_as, const Rcpp::NumericVector& mus, const Rcpp::NumericVector& gammas, const Rcpp::NumericMatrix& qs, const double& p, const Rcpp::NumericVector& trait_mainland_ancestor, const std::string& method, double atol, double rtol, bool see_states, bool use_normalization);
-RcppExport SEXP _treeLL_calc_ll_cpp(SEXP ancesSEXP, SEXP statesSEXP, SEXP forTimeSEXP, SEXP lambda_csSEXP, SEXP lambda_asSEXP, SEXP musSEXP, SEXP gammasSEXP, SEXP qsSEXP, SEXP pSEXP, SEXP trait_mainland_ancestorSEXP, SEXP methodSEXP, SEXP atolSEXP, SEXP rtolSEXP, SEXP see_statesSEXP, SEXP use_normalizationSEXP) {
+RcppExport SEXP _TRAISIE_calc_ll_cpp(SEXP ancesSEXP, SEXP statesSEXP, SEXP forTimeSEXP, SEXP lambda_csSEXP, SEXP lambda_asSEXP, SEXP musSEXP, SEXP gammasSEXP, SEXP qsSEXP, SEXP pSEXP, SEXP trait_mainland_ancestorSEXP, SEXP methodSEXP, SEXP atolSEXP, SEXP rtolSEXP, SEXP see_statesSEXP, SEXP use_normalizationSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -37,7 +37,7 @@ END_RCPP
 }
 // cpp_solve
 Rcpp::List cpp_solve(const Rcpp::NumericVector& lambda_cs, const Rcpp::NumericVector& lambda_as, const Rcpp::NumericVector& mus, const Rcpp::NumericVector& gammas, const Rcpp::NumericMatrix& qs, const double& p, const Rcpp::NumericVector& tma, const std::string& chosen_interval, const std::string& inte_method, const Rcpp::NumericVector& init_states, const Rcpp::NumericVector& time, double atol, double rtol);
-RcppExport SEXP _treeLL_cpp_solve(SEXP lambda_csSEXP, SEXP lambda_asSEXP, SEXP musSEXP, SEXP gammasSEXP, SEXP qsSEXP, SEXP pSEXP, SEXP tmaSEXP, SEXP chosen_intervalSEXP, SEXP inte_methodSEXP, SEXP init_statesSEXP, SEXP timeSEXP, SEXP atolSEXP, SEXP rtolSEXP) {
+RcppExport SEXP _TRAISIE_cpp_solve(SEXP lambda_csSEXP, SEXP lambda_asSEXP, SEXP musSEXP, SEXP gammasSEXP, SEXP qsSEXP, SEXP pSEXP, SEXP tmaSEXP, SEXP chosen_intervalSEXP, SEXP inte_methodSEXP, SEXP init_statesSEXP, SEXP timeSEXP, SEXP atolSEXP, SEXP rtolSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -60,12 +60,12 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_treeLL_calc_ll_cpp", (DL_FUNC) &_treeLL_calc_ll_cpp, 15},
-    {"_treeLL_cpp_solve", (DL_FUNC) &_treeLL_cpp_solve, 13},
+    {"_TRAISIE_calc_ll_cpp", (DL_FUNC) &_TRAISIE_calc_ll_cpp, 15},
+    {"_TRAISIE_cpp_solve", (DL_FUNC) &_TRAISIE_cpp_solve, 13},
     {NULL, NULL, 0}
 };
 
-RcppExport void R_init_treeLL(DllInfo *dll) {
+RcppExport void R_init_TRAISIE(DllInfo *dll) {
     R_registerRoutines(dll, NULL, CallEntries, NULL, NULL);
     R_useDynamicSymbols(dll, FALSE);
 }

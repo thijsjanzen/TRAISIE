@@ -2,10 +2,10 @@
 # Generator token: 10BE3573-1514-4C36-9D1C-5A225CD40393
 
 calc_ll_cpp <- function(ances, states, forTime, lambda_cs, lambda_as, mus, gammas, qs, p, trait_mainland_ancestor, method, atol, rtol, see_states, use_normalization) {
-    .Call(`_treeLL_calc_ll_cpp`, ances, states, forTime, lambda_cs, lambda_as, mus, gammas, qs, p, trait_mainland_ancestor, method, atol, rtol, see_states, use_normalization)
+    .Call(`_TRAISIE_calc_ll_cpp`, ances, states, forTime, lambda_cs, lambda_as, mus, gammas, qs, p, trait_mainland_ancestor, method, atol, rtol, see_states, use_normalization)
 }
 
 cpp_solve <- function(lambda_cs, lambda_as, mus, gammas, qs, p, tma, chosen_interval, inte_method, init_states, time, atol, rtol) {
-    .Call(`_treeLL_cpp_solve`, lambda_cs, lambda_as, mus, gammas, qs, p, tma, chosen_interval, inte_method, init_states, time, atol, rtol)
+    .Call(`_TRAISIE_cpp_solve`, lambda_cs, lambda_as, mus, gammas, qs, p, tma, chosen_interval, inte_method, init_states, time, atol, rtol)
 }
 

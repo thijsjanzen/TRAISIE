@@ -1,4 +1,4 @@
-#' @rawNamespace useDynLib(treeLL, .registration = TRUE)
+#' @rawNamespace useDynLib(TRAISIE, .registration = TRUE)
 #' @rawNamespace import(Rcpp)
 #' @rawNamespace importFrom(RcppParallel, RcppParallelLibs)
 #' @keywords internal
