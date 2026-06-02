@@ -14,6 +14,7 @@ test_that("logpES", {
 
 
     res1 <-  TRAISIE::DAISIE_DE_trait_logpNE(
+      datalist                = datalist,
       brts                    = brts,
       trait                   = trait,
       status                  = 1,
@@ -38,6 +39,7 @@ test_that("logpES", {
     testthat::expect_equal(res1$loglik, res2)
 
     res3 <-  TRAISIE::DAISIE_DE_trait_logpNE(
+      datalist                = datalist,
       brts                    = brts,
       trait                   = trait,
       status                  = 1,
@@ -53,6 +55,7 @@ test_that("logpES", {
     testthat::expect_equal(res1, res3)
 
     res4 <-  TRAISIE::DAISIE_DE_trait_logpNE(
+      datalist                = datalist,
       brts                    = brts,
       trait                   = trait,
       status                  = 1,

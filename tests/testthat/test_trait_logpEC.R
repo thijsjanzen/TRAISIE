@@ -15,6 +15,7 @@ test_that("logpEC", {
                       matrix(c(0), nrow = 1), 0, 1)
 
     res1 <-  DAISIE_DE_trait_logpEC(
+      datalist                = datalist,
       brts                    = brts,
       phy                     = phy,
       traits                  = traits,
@@ -38,6 +39,7 @@ test_that("logpEC", {
     testthat::expect_equal(res1$loglik, res2)
 
     res3 <-  DAISIE_DE_trait_logpEC(
+      datalist                = datalist,
       brts                    = brts,
       phy                     = phy,
       traits                  = traits,
@@ -55,6 +57,7 @@ test_that("logpEC", {
     testthat::expect_equal(res1, res3)
 
     res3 <-  DAISIE_DE_trait_logpEC(
+      datalist                = datalist,
       brts                    = brts,
       phy                     = phy,
       traits                  = traits,

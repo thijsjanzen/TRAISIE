@@ -52,7 +52,7 @@ DAISIE_DE_trait_logp0 <- function(
     use_Rcpp = 2) {
 
   calc_Lk_log <- function(i) {
-    trait_mainland_ancestor_extended <- rep(0,num_observed_states * num_hidden_states)
+    trait_mainland_ancestor_extended <- rep(0, num_observed_states * num_hidden_states)
     trait_mainland_ancestor_extended[i] <- 1 #set only the trait of interest to 1
 
     Lk_log <- DAISIE_DE_trait_logp0_core(datalist,
@@ -61,7 +61,7 @@ DAISIE_DE_trait_logp0 <- function(
                                          rtol = 1e-15,
                                          num_observed_states,
                                          num_hidden_states,
-                                         trait_mainland_ancestor= trait_mainland_ancestor_extended,
+                                         trait_mainland_ancestor = trait_mainland_ancestor_extended,
                                          methode = "ode45",
                                          rcpp_methode = rcpp_methode,
                                          use_Rcpp = use_Rcpp)

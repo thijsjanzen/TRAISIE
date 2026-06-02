@@ -14,6 +14,7 @@ test_that("NA values", {
 
 
     res1 <-  TRAISIE::DAISIE_DE_trait_logpES(
+      datalist                = datalist,
       brts                    = brts,
       trait                   = trait,
       status                  = 2,
