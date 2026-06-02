@@ -19,3 +19,4 @@ src/RcppExports.o
 .DS_Store
 *.so
 *.o
+*.o
