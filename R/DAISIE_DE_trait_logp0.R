@@ -10,21 +10,6 @@
 #' data("Galapagos_datalist")
 #' datalist <- Galapagos_datalist
 #'
-#'
-#'
-#' parameter <- list(
-#'   c(2.546591, 2.546591, 2.546591, 2.546591),
-#'   c(2.678781, 2.678781, 2.678781, 2.678781),
-#'   c(0.009326754, 0.009326754, 0.009326754, 0.009326754),
-#'   c(1.008583, 1.008583, 1.008583, 1.008583),
-#'   matrix(c(
-#'     0,    0,    0,  0,
-#'     0,    0,    0.00,0.00,
-#'     rep(0, 8)
-#'   ), nrow = 4),
-#'   1
-#' )
-#'
 #' parameter <- list(
 #'   c(2.546591, 1.2, 1, 0.2),
 #'   c(2.678781, 2, 1.9, 3),
@@ -38,14 +23,17 @@
 #'   ), nrow = 4),
 #'   1
 #' )
+#' datalist[[1]]$Mainland_pool_sizes <- c(500, 400)
+#' datalist[[1]]$M <- 1000
+#'
 #'
 #' DAISIE_DE_trait_logp0(
 #'   datalist,
 #'   parameter               = parameter,
+#'   trait_mainland_ancestor = NA,
 #'   num_observed_states     = 2,
 #'   num_hidden_states       = 2,
 #'   atol                    = 1e-15,
-#' trait_mainland_ancestor   =  c(1/4, 3/4),
 #'   rtol                    = 1e-15,
 #'   methode                 = "ode45",
 #'   rcpp_methode ="odeint::runge_kutta_cash_karp54",
@@ -60,77 +48,62 @@ DAISIE_DE_trait_logp0 <- function(
     rtol = 1e-15,
     num_observed_states,
     num_hidden_states,
-    trait_mainland_ancestor = NA,
+    trait_mainland_ancestor= trait_mainland_ancestor_extended,
     methode = "ode45",
     rcpp_methode ="odeint::runge_kutta_cash_karp54",
     use_Rcpp = 2) {
 
-  loglik_func <- function(i) {
+  calc_Lk_log <- function(i) {
     trait_mainland_ancestor_extended <- rep(0,num_observed_states * num_hidden_states)
     trait_mainland_ancestor_extended[i] <- 1 #set only the trait of interest to 1
 
-    Lk <- DAISIE_DE_trait_logp0_core(datalist,
-                                     parameter,
-                                     atol = 1e-15,
-                                     rtol = 1e-15,
-                                     num_observed_states,
-                                     num_hidden_states,
-                                     trait_mainland_ancestor = trait_mainland_ancestor_extended,
-                                     methode = "ode45",
-                                     rcpp_methode = rcpp_methode,
-                                     use_Rcpp = use_Rcpp)
-    return(Lk)
+    Lk_log <- DAISIE_DE_trait_logp0_core(datalist,
+                                         parameter,
+                                         atol = 1e-15,
+                                         rtol = 1e-15,
+                                         num_observed_states,
+                                         num_hidden_states,
+                                         trait_mainland_ancestor= trait_mainland_ancestor_extended,
+                                         methode = "ode45",
+                                         rcpp_methode = rcpp_methode,
+                                         use_Rcpp = use_Rcpp)
+    return(Lk_log)
   }
-  indices <-  seq_len(num_observed_states * num_hidden_states)
-  Lk_vec <- sapply(indices, loglik_func)
+
+  indices_vec <- seq_len(num_observed_states * num_hidden_states)
+  Lk_vec <- sapply(indices_vec, calc_Lk_log)
 
   ## added !all(is.na(trait_mainland_ancestor)) because when trait_mainland_ancestor = NA,  length(trait_mainland_ancestor) = length(trait_mainland_ancestor_extended) = 1
-  if(!any(is.na(trait_mainland_ancestor)) && length(trait_mainland_ancestor) == num_observed_states * num_hidden_states) { #this is the case where a full probability distribution is specified across all observed and hidden states
-    weights <- trait_mainland_ancestor/sum(trait_mainland_ancestor)
-  } else {
-    if(all(is.numeric(trait_mainland_ancestor))) { # this is the case when only a probability distribution is specified for the observed states; this could be c(M0/M, M1/M)
-      ###weights <- c(
-      #M0/M*lik_0A/L0 + (M-M0-M1)/M*lik_0A/L,
-      #M0/M*lik_0B/L0 + (M-M0-M1)/M*lik_0B/L,
-      #M1/M*lik_1A/L1 + (M-M0-M1)/M*lik_1A/L,
-      #M1/M*lik_1B/L1 + (M-M0-M1)/M*lik_1B/L
-      #)
+  if(!all(is.na(trait_mainland_ancestor)) && length(trait_mainland_ancestor) == num_observed_states * num_hidden_states) { #this is the case where a full probability distribution is specified across all observed and hidden states
 
-      ### the following calculates the terms before the + sign
+    weights <- trait_mainland_ancestor/sum(trait_mainland_ancestor)
+  }  else {
+
+    if(all(is.numeric(trait_mainland_ancestor))) { # this is the case when only a probability distribution is specified for the observed states; this could be c(M0/M, M1/M)
+
       s <- numeric(num_observed_states * num_hidden_states)
       # you could also do s <- c() and use line 92
-      weights1 <- c()
+
+      weights <- c()
       for(j in 1:length(trait_mainland_ancestor)) {
         s[((j - 1) * num_hidden_states + 1):(j * num_hidden_states)] <- rep(trait_mainland_ancestor[j], num_hidden_states)
-        # you could also write s <- c(s, rep(trait_mainland_ancestor[j],num_hidden_states))
-        weights_j <- Lk_vec[((j - 1) * num_hidden_states + 1):(j * num_hidden_states)]
-        if (sum(weights_j) == 0)
-        {
-          weights_j <- weights_j/1
-        }else{
-          weights_j <- weights_j/sum(weights_j)
-        }
-        weights1 <- c(weights1, weights_j)
+
+
+
       }
-      weights1 <- weights1 * s/sum(weights1)
+      weights <- s/sum(s)
 
-      ### the following calculates the terms after the + sign
+    }else { # this is the case where nothing is provided, i.e. NA
+      Mp <- datalist[[1]]$Mainland_pool_sizes
+      M <-  datalist[[1]]$M
+      num_hidden_states <- num_hidden_states
+      weights <- compute_mainland_weights(Mp, M, num_hidden_states)
+      weights <- compute_mainland_weights(Mp, M, num_hidden_states)
 
-      weights2 <- Lk_vec * (1 - sum(trait_mainland_ancestor))/sum(Lk_vec)
-
-      weights <- weights1 + weights2
-      if (all(weights == 0)) {
-        weights <- weights
-      } else {
-        weights <- weights / sum(weights)
-      }
-
-    } else { # this is the case where nothing is provided, i.e. NA
-      weights <- Lk_vec/sum(Lk_vec)
     }
   }
   log_Lk <- log(sum(Lk_vec * weights))
-  return( list (loglik = log_Lk, lik_states = Lk_vec, weights = weights))
+  return(log_Lk)
 }
 
 DAISIE_DE_trait_logp0_core <- function(datalist,
@@ -176,3 +149,47 @@ DAISIE_DE_trait_logp0_core <- function(datalist,
   return(Lk)
 }
 
+
+
+DAISIE_DE_trait_logp0_core <- function(datalist,
+                                       parameter,
+                                       atol = 1e-15,
+                                       rtol = 1e-15,
+                                       num_observed_states,
+                                       num_hidden_states,
+                                       trait_mainland_ancestor= NA,
+                                       methode = "ode45",
+                                       rcpp_methode =
+                                         "odeint::runge_kutta_cash_karp54",
+                                       use_Rcpp = 0) {
+
+  n <- num_observed_states * num_hidden_states
+  t0 <- datalist[[1]]$island_age
+  tp <- 0
+
+  #########interval4 [t_p, t_0]
+
+  initial_conditions40 <- c(rep(0, n),  ### DM1
+                            rep(0, n),  ### E
+                            1)          ### DA1
+
+  # Time sequence for interval [tp, t0]
+  time4 <- c(tp, t0)
+
+  # Solve the system for interval [tp, t1]
+  solution4 <- solve_branch(interval_func = interval4,
+                            initial_conditions = initial_conditions40,
+                            time = time4,
+                            parameter = parameter,
+                            trait_mainland_ancestor = trait_mainland_ancestor,
+                            methode = methode,
+                            rcpp_methode = rcpp_methode,
+                            atol = atol,
+                            rtol = rtol,
+                            use_Rcpp = use_Rcpp)
+
+  # Extract log-likelihood
+  Lk <- solution4[2, ][length(solution4[2, ])]
+
+  return(Lk)
+}

@@ -23,6 +23,119 @@ dist_gamma_tma <- function(gamma,
   return(dist_gamma)
 }
 
+###############
+use_stationary_weights <- function(Q) {
+
+  diag(Q) <- 0
+  diag(Q) <- -rowSums(Q)
+  pi <- pracma::null(t(Q))
+  diff <- 1
+  for(i in 1:dim(pi)[[2]]) {
+    if (pi[which.max(abs(pi[,i])),i] < 0) {
+      pi[,i] <- -pi[,i]
+    }
+    if (any(pi[,i] < 0) && max(abs(pi[which(pi[,i] < 0),i])) > 1E-10) {
+      warning('Substantial negative weights detected')
+    }
+    pi[which(pi[,i] < 0),i] <- 0
+    pi[,i] <- pi[,i]/sum(pi[,i])
+    diff_new <- abs(max(pi[,i])) - abs(min(pi[,i]))
+    if (diff_new < diff) {
+      diff <- diff_new
+      i_choice <- i
+    }
+  }
+  weight_states <- pi[,i_choice]
+  return(weight_states)
+}
+################
+
+compute_mainland_stationary_weights <- function(stat_weights,
+                                     Mp,
+                                     M,
+                                     num_hidden_states) {
+
+  weights1 <- c()
+
+  for (j in seq_along(Mp)) {
+
+    idx <- ((j - 1) * num_hidden_states + 1):(j * num_hidden_states)
+
+    weights_j <- stat_weights[idx]
+    if (sum(weights_j) == 0){
+
+      weights_j <- weights_j
+    } else{
+      weights_j <- weights_j * (Mp[j] / M) / sum(weights_j)
+
+    }
+    weights1 <- c(weights1, weights_j)
+  }
+
+  weights1 <- weights1 / sum(weights1)
+
+  weights2 <- stat_weights * (1 - (sum(Mp) / M)) / sum(stat_weights)
+
+  weights <- weights1 + weights2
+  weights <- weights / sum(weights)
+
+  return(weights)
+}
+
+
+compute_likelihood_stationary_weights <- function(Lk_vec,
+                                                Mp,
+                                                M,
+                                                num_hidden_states) {
+
+  weights1 <- c()
+
+  for (j in seq_along(Mp)) {
+
+    idx <- ((j - 1) * num_hidden_states + 1):(j * num_hidden_states)
+
+    weights_j <- Lk_vec[idx]
+    if (sum(weights_j) == 0){
+
+      weights_j <- weights_j
+    } else{
+      weights_j <- weights_j * (Mp[j] / M) / sum(weights_j)
+
+    }
+    weights1 <- c(weights1, weights_j)
+  }
+
+  weights1 <- weights1 / sum(weights1)
+
+  weights2 <- Lk_vec * (1 - (sum(Mp) / M)) / sum(Lk_vec)
+
+  weights <- weights1 + weights2
+  weights <- weights / sum(weights)
+
+  return(weights)
+}
+
+compute_mainland_weights <- function(Mp,
+                                     M,
+                                     num_hidden_states) {
+
+  weights1 <- c()
+
+  for (j in seq_along(Mp)) {
+
+    weights_j <- rep((Mp[j] / M), num_hidden_states)
+    weights1 <- c(weights1, weights_j)
+  }
+
+  weights2 <- (1 - (sum(Mp) / M))
+
+  weights <- weights1 + weights2
+  weights <- weights / sum(weights)
+
+  return(weights)
+}
+#############
+
 
 
 #' @keywords internal
@@ -72,9 +185,9 @@ interval2 <- function(t, state, parameter) {
       (lambdaa * DE + 2 * lambdac * DE * E + p * q_mult_DE) * DA3 +
       (1 - p) * q_mult_DM2
 
-    dDM3 <- -(lambdac + mu + sum(dist_gamma) + lambdaa + t_vec) * DM3 +
+    dDM3 <- -(lambdac + mu + lambdaa + t_vec) * DM3 +
       (mu + lambdaa * E + lambdac * E * E + p * q_mult_E) * DA3 +
-      (1 - p) * q_mult_DM3 + sum(dist_gamma * DM3)
+      (1 - p) * q_mult_DM3
 
     dE <- mu - (mu + lambdac + t_vec) * E +
       lambdac * E * E +
@@ -133,14 +246,14 @@ interval3 <- function(t, state, parameter) {
       (mu + lambdaa * E + lambdac * E * E + p * q_mult_E) * DA2 +
       (1 - p) * q_mult_DM1 + sum(dist_gamma * DM2)
 
-    dDM2 <- -(lambdac + mu + sum(dist_gamma) + lambdaa + t_vec) * DM2 +
+    dDM2 <- -(lambdac + mu + lambdaa + t_vec) * DM2 +
       (mu + lambdaa * E + lambdac * E * E + p * q_mult_E) * DA2 +
-      (lambdaa * DE + 2 * lambdac * DE + p * q_mult_DE) * DA3 +
-      (1 - p) * q_mult_DM2 + sum(dist_gamma * DM2)
+      (lambdaa * DE + 2 * lambdac * DE * E + p * q_mult_DE) * DA3 +
+      (1 - p) * q_mult_DM2
 
-    dDM3 <- -(lambdac + mu + sum(dist_gamma) + lambdaa + t_vec) * DM3 +
+    dDM3 <- -(lambdac + mu + lambdaa + t_vec) * DM3 +
       (mu + lambdaa * E + lambdac * E * E + p * q_mult_E) * DA3 +
-      (1 - p) * q_mult_DM3 + sum(dist_gamma * DM3)
+      (1 - p) * q_mult_DM3
 
     dE <- mu - (mu + lambdac + t_vec) * E +
       lambdac * E * E +
@@ -183,9 +296,9 @@ interval4 <- function(t, state, parameter) {
                                  trait_mainland_ancestor,
                                  n)
 
-    dDM1 <- -(lambdac + mu + sum(dist_gamma) + lambdaa + t_vec) * DM1 +
+    dDM1 <- -(lambdac + mu + lambdaa + t_vec) * DM1 +
       (mu + lambdaa * E + lambdac * E * E + p * q_mult_E) * DA1 +
-      (1 - p) * q_mult_DM1  + sum(dist_gamma * DM1)
+      (1 - p) * q_mult_DM1
 
     dE <- mu - (mu + lambdac + t_vec) * E +
       lambdac * E * E +
@@ -196,3 +309,4 @@ interval4 <- function(t, state, parameter) {
     return(list(c(dDM1, dE, dDA1)))
   })
 }
+

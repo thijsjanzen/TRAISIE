@@ -203,6 +203,14 @@ calc_ml <- function(datalist,
                                        idparsopt,
                                        idparsfix,
                                        idparslist)
+      names(ml_pars1) <- c(
+        "ML_lambda_c",
+        "ML_mu",
+        "ML_gamma",
+        "ML_lambda_a",
+        "ML_q",
+        "p"
+      )
       out2 <- list(MLpars = ml_pars1,
                    ML = as.numeric(unlist(out$fvalues)),
                    conv = out$conv)
@@ -265,3 +273,4 @@ loglik_choosepar <- function(trparsopt,
   }
   return(loglik)
 }
+

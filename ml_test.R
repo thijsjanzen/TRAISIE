@@ -126,7 +126,7 @@ ml_res <- treeLL::calc_ml(  datalist,
                             rtol = 1e-15,
                             use_Rcpp = TRUE)
 t1 <- Sys.time()
-ml_res2 <- treeLL::calc_ml(  datalist,
+ml_res2 <- treeLL::calc_ml( datalist,
                             num_observed_states = 2,
                             num_hidden_states = 2,
                             idparslist = idparslist,

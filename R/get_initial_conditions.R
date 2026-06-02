@@ -92,7 +92,7 @@ get_initial_conditions2 <- function(status,
 
 
  #   if (length(trait) == 1)
-#      if (!is.na(trait)) sampling_fraction <- sampling_fraction[1 + trait]
+ #      if (!is.na(trait)) sampling_fraction <- sampling_fraction[1 + trait]
 
     if (status == 2 && length(brts) > 2 || status == 3 && length(brts) > 2) {
       initial_conditions2 <- c( res[1:n],                      ## DE
@@ -109,27 +109,51 @@ get_initial_conditions2 <- function(status,
         stop("status == 2 assumes trait to be single value, found vector")
       }
       if (is.na(trait)) {
+
         s <- c()
         for (i in seq_along(sampling_fraction)) {
           s <- c(s, rep(sampling_fraction[i], num_hidden_states))
         }
+
         DE[1:n] <- s
         E[1:n]  <- 1 - s
+
+        # Only apply the change if NOT all s are 1
+        if (!all(s == 1)) {
+          DE[1:n][s == 1] <- 0
+        }
       } else {
+
+
         DE[(num_hidden_states * trait + 1):
              (num_hidden_states + trait * num_hidden_states)] <- sampling_fraction[1 + trait]
         E[(num_hidden_states * trait + 1):
-            (num_hidden_states + trait * num_hidden_states)] <-
-          1 - sampling_fraction[1 + trait]
+             (num_hidden_states + trait * num_hidden_states)] <- 1 - sampling_fraction[1 + trait]
+
+        rest_idx <- setdiff(seq_along(E), (num_hidden_states * trait + 1):(num_hidden_states + num_hidden_states * trait))
+        for (i in rest_idx) {
+          trait_i <- (i - 1) %/% num_hidden_states
+          sf_i <- sampling_fraction[1 + trait_i]
+          E[i] <- if (sf_i == 1) 0 else 1 - sf_i
+        }
       }
 
     } else if (status == 3 && length(brts) == 2) {
-      DE[(num_hidden_states * trait + 1):
+
+     DE[(num_hidden_states * trait + 1):
            (num_hidden_states + trait * num_hidden_states)] <- sampling_fraction[1 + trait]
       E[(num_hidden_states * trait + 1):
           (num_hidden_states + trait * num_hidden_states)] <- 1 - sampling_fraction[1 + trait]
+
+
       DM3[(num_hidden_states * trait_mainland_ancestor + 1):
             (num_hidden_states + trait_mainland_ancestor * num_hidden_states)] <- 1
+        rest_idx <- setdiff(seq_along(E), (num_hidden_states * trait + 1):(num_hidden_states + num_hidden_states * trait))
+        for (i in rest_idx) {
+          trait_i <- (i - 1) %/% num_hidden_states
+          sf_i <- sampling_fraction[1 + trait_i]
+          E[i] <- if (sf_i == 1) 0 else 1 - sf_i}
+
     } else if (status == 4) {
 
       if (length(trait) > 1) {
@@ -137,7 +161,9 @@ get_initial_conditions2 <- function(status,
       }
 
       if (is.na(trait)) {
+
         DM2[1:n] <- 1
+
       } else {
         DM2[(num_hidden_states * trait + 1):
               (num_hidden_states + trait * num_hidden_states)] <- 1
@@ -149,11 +175,9 @@ get_initial_conditions2 <- function(status,
       }
 
       if (is.na(trait)) {
-        s <- c()
-        for (i in seq_along(sampling_fraction)) {
-          s <- c(s, rep(sampling_fraction[i], num_hidden_states))
-        }
-        DM2[1:n] <- s
+
+        DM2[1:n] <- 1
+
       } else {
         DM2[(num_hidden_states * trait + 1):
               (num_hidden_states + trait * num_hidden_states)] <- 1
@@ -164,18 +188,32 @@ get_initial_conditions2 <- function(status,
       }
 
       if (is.na(trait)) {
+
         s <- c()
         for (i in seq_along(sampling_fraction)) {
           s <- c(s, rep(sampling_fraction[i], num_hidden_states))
         }
+
         DE[1:n] <- s
         E[1:n]  <- 1 - s
-      } else  {
+
+        # Only apply the change if NOT all s are 1
+        if (!all(s == 1)) {
+          DE[1:n][s == 1] <- 0
+        }
+      }else  {
+
         DE[(num_hidden_states * trait + 1):
              (num_hidden_states + trait * num_hidden_states)] <- sampling_fraction[1 + trait]
         E[(num_hidden_states * trait + 1):
-            (num_hidden_states + trait * num_hidden_states)]  <-
-          1 - sampling_fraction[1 + trait]
+            (num_hidden_states + trait * num_hidden_states)] <- 1 - sampling_fraction[1 + trait]
+
+        rest_idx <- setdiff(seq_along(E), (num_hidden_states * trait + 1):(num_hidden_states + num_hidden_states * trait))
+        for (i in rest_idx) {
+          trait_i <- (i - 1) %/% num_hidden_states
+          sf_i <- sampling_fraction[1 + trait_i]
+          E[i] <- if (sf_i == 1) 0 else 1 - sf_i
+        }
       }
     }
   }
@@ -256,11 +294,9 @@ get_initial_conditions3 <- function(status,
 
 
       if (is.na(trait)) {
-        s <- c()
-        for (i in seq_along(sampling_fraction)) {
-          s <- c(s, rep(sampling_fraction[i], num_hidden_states))
-        }
-        DM2[1:n] <- s
+
+        DM2[1:n] <- 1
+
       } else if (trait == trait) {
         DM2[(num_hidden_states * trait + 1):
               (num_hidden_states + trait * num_hidden_states)] <- sampling_fraction[1 + trait]
@@ -281,17 +317,31 @@ get_initial_conditions3 <- function(status,
       }
 
       if (is.na(trait)) {
+
         s <- c()
         for (i in seq_along(sampling_fraction)) {
           s <- c(s, rep(sampling_fraction[i], num_hidden_states))
         }
+
         DE[1:n] <- s
         E[1:n]  <- 1 - s
-      } else  {
+
+        # Only apply the change if NOT all s are 1
+        if (!all(s == 1)) {
+          DE[1:n][s == 1] <- 0
+        }
+      }else  {
         DE[(num_hidden_states * trait + 1):
              (num_hidden_states + trait * num_hidden_states)] <- sampling_fraction[1 + trait]
         E[(num_hidden_states * trait + 1):
-            (num_hidden_states + trait * num_hidden_states)]  <- 1 - sampling_fraction[1 + trait]
+            (num_hidden_states + trait * num_hidden_states)] <- 1 - sampling_fraction[1 + trait]
+
+        rest_idx <- setdiff(seq_along(E), (num_hidden_states * trait + 1):(num_hidden_states + num_hidden_states * trait))
+        for (i in rest_idx) {
+          trait_i <- (i - 1) %/% num_hidden_states
+          sf_i <- sampling_fraction[1 + trait_i]
+          E[i] <- if (sf_i == 1) 0 else 1 - sf_i
+        }
       }
 
       initial_conditions3 <- c(DE, DM1, DM2, DM3, E, DA2, DA3)
@@ -346,7 +396,7 @@ get_initial_conditions4 <- function(status,
     }
 
 
-  }else {
+  } else {
     if (status == 2 || status == 3 || status == 4) {
       if (all(is.na(trait_mainland_ancestor))) {
 
@@ -382,3 +432,4 @@ get_initial_conditions4 <- function(status,
   }
   return(matrix(initial_conditions4, nrow = 1))
 }
+

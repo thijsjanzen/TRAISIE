@@ -88,6 +88,8 @@ DAISIE_sim_trait_dep_CS <- function (total_time,
                                                    verbose = verbose)
   }
 
+
+
   if (files_to_write > 0) {
     rm(island_replicates)
     for (filenum in 1:files_to_write) {
@@ -102,6 +104,8 @@ DAISIE_sim_trait_dep_CS <- function (total_time,
                                                         start, "-", end, ".Rdata"))
     }
   }
+
+
   return(island_replicates)
 }
 

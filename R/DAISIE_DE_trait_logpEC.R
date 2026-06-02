@@ -20,6 +20,8 @@
 #' num_hidden_states       =  2
 #' sampling_fraction       =  sample(c(1, 1), num_observed_states, replace = TRUE)
 #' trait_mainland_ancestor = c(1, 0)
+#' datalist[[1]]$Mainland_pool_sizes <- c(550, 250)
+#' datalist[[1]]$M <- 1000
 #'
 #' parameter <- list(
 #'   c(2.546591, 1.2, 1, 0.2),
@@ -29,20 +31,21 @@
 #'   matrix(c(
 #'     0,    .001,    0.005,  0,
 #'     .001,    0,    0.000,0.005,
-#'     0.005,    000,    0,  0.005,
-#'     0,   0.005,  0.005,0.00
-#'   ), nrow = 4),
+#'     0.015,    000,    0,  0.005,
+#'     0,   0.0025,  0.005,0.00
+#'   ), nrow = 4, byrow = TRUE),
 #'   1
 #' )
 #'   status                  = 2
 #' DAISIE_DE_trait_logpEC(
+#'   datalist              = datalist,
 #'   brts                    = brts,
 #'   phy                     = phy,
 #'   traits                  = traits,
 #'   status                  = 2,
 #'   sampling_fraction       = sampling_fraction,
 #'   parameter               = parameter,
-#'   trait_mainland_ancestor = NA,
+#'   trait_mainland_ancestor = c(1,0),
 #'   num_observed_states     = 2,
 #'   num_hidden_states       = 2,
 #'   atol                    = 1e-15,
@@ -54,6 +57,7 @@
 
 
 DAISIE_DE_trait_logpEC <- function(
+    datalist,
     brts,
     parameter,
     phy,
@@ -101,42 +105,27 @@ DAISIE_DE_trait_logpEC <- function(
   ## added !all(is.na(trait_mainland_ancestor)) because when trait_mainland_ancestor = NA,  length(trait_mainland_ancestor) = length(trait_mainland_ancestor_extended) = 1
   if(!all(is.na(trait_mainland_ancestor)) && length(trait_mainland_ancestor) == num_observed_states * num_hidden_states) { #this is the case where a full probability distribution is specified across all observed and hidden states
 
-     weights <- trait_mainland_ancestor/sum(trait_mainland_ancestor)
-
+    weights <- trait_mainland_ancestor/sum(trait_mainland_ancestor)
   }  else {
-    if(all(is.numeric(trait_mainland_ancestor))) { # this is the case when only a probability distribution is specified for the observed states; this could be c(M0/M, M1/M)
 
+    if(all(is.numeric(trait_mainland_ancestor))) { # this is the case when only a probability distribution is specified for the observed states; this could be c(M0/M, M1/M)
 
       s <- numeric(num_observed_states * num_hidden_states)
       # you could also do s <- c() and use line 92
-      weights1 <- c()
+
+      weights <- c()
       for(j in 1:length(trait_mainland_ancestor)) {
         s[((j - 1) * num_hidden_states + 1):(j * num_hidden_states)] <- rep(trait_mainland_ancestor[j], num_hidden_states)
-        # you could also write s <- c(s, rep(trait_mainland_ancestor[j],num_hidden_states))
-        weights_j <- Lk_vec[((j - 1) * num_hidden_states + 1):(j * num_hidden_states)]
-        if (sum(weights_j) == 0)
-        {
-          weights_j <- weights_j/1
-        }else{
-          weights_j <- weights_j/sum(weights_j)
-        }
-        weights1 <- c(weights1, weights_j)
+
       }
-      weights1 <- weights1 * s/sum(weights1)
+      weights <- s/sum(s)
 
+    }else { # this is the case where nothing is provided, i.e. NA
+      Mp <- datalist[[1]]$Mainland_pool_sizes
+      M <-  datalist[[1]]$M
+      num_hidden_states <- num_hidden_states
+      weights <- compute_mainland_weights(Mp, M, num_hidden_states)
 
-      weights2 <- Lk_vec * (1 - sum(trait_mainland_ancestor)) / sum(Lk_vec)
-
-      weights <- weights1 + weights2
-
-      if (all(weights == 0)) {
-        weights <- weights
-      } else {
-        weights <- weights / sum(weights)
-      }
-
-    } else { # this is the case where nothing is provided, i.e. NA
-      weights <- Lk_vec/sum(Lk_vec)
     }
   }
   log_Lk <- log(sum(Lk_vec * weights))
