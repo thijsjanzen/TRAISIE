@@ -20,3 +20,7 @@ src/RcppExports.o
 *.so
 *.o
 *.o
+essaie_ML.R
+ml_test.R
+ml_test2.R
+test_solve_branch.R
