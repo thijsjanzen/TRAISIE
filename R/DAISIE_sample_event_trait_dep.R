@@ -81,7 +81,7 @@ DAISIE_sample_event_trait_dep <- function(rates,
   }
 
   # Sample a possible event based on the probabilities
-  possible_event <- sample(x = 1:length(prob),
+  possible_event <- sample(x = seq_along(prob),
                            size = 1,
                            replace = FALSE,
                            prob = prob)

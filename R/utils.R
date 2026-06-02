@@ -331,8 +331,10 @@ check_arguments <- function(brts = NULL,
     stop("sampling_fraction not provided")
   }
   # Only require traits if there is more than one state in total
-  total_states <- as.numeric(num_observed_states) * as.numeric(num_hidden_states)
-  if (is.na(total_states)) stop("num_observed_states and num_hidden_states must be numeric")
+  total_states <- as.numeric(num_observed_states) *
+                  as.numeric(num_hidden_states)
+  if (is.na(total_states))
+    stop("num_observed_states and num_hidden_states must be numeric")
   if (total_states > 1 && is.null(traits)) {
     stop("traits not provided (required when total states > 1)")
   }

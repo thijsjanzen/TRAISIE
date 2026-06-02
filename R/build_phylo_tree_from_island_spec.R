@@ -8,7 +8,7 @@ build_phylo_tree_from_island_spec <- function(island_spec) {
   }
   island_spec <- island_spec[order(island_spec[, 5]), ]
   # Convert colonisation time column to numeric
-  colonisation_times <- as.numeric( island_spec [, "Colonisation time (BP)"])
+  colonisation_times <- as.numeric(island_spec [, "Colonisation time (BP)"])
 
   # Check if there are at least 2 unique colonisation times
   if (length(unique(colonisation_times)) > 1) {
@@ -22,16 +22,16 @@ build_phylo_tree_from_island_spec <- function(island_spec) {
 
 
   # Inputs
-  history_vec = island_spec[, 9]  # e.g., character vector like c("NA 1.7 1.3", ...)
-  bt_vec = island_spec[, 6]
-  col_time = island_spec[, 3] # e.g., numeric or character vector
-  branch_codes = island_spec[,5]
-  traits_vec = island_spec[, 8]
+  history_vec  <- island_spec[, 9]  # e.g., character vector like c("NA 1.7 1.3", ...)
+  bt_vec       <- island_spec[, 6]
+  col_time     <- island_spec[, 3] # e.g., numeric or character vector
+  branch_codes <- island_spec[, 5]
+  traits_vec   <- island_spec[, 8]
 
 
   # Convert bt_vec to numeric for comparison
   bt_vec_num <- suppressWarnings(as.numeric(bt_vec))
-  tolerance <- 1e-8
+  tolerance  <- 1e-8
 
   # Initialize cleaned vector
   cleaned_history <- character(length(history_vec))
@@ -147,8 +147,6 @@ build_phylo_tree_from_island_spec <- function(island_spec) {
     c(node_map[as.character(edges[, 1])], node_map[as.character(edges[, 2])]),
     ncol = 2
   )
-  # branch_codes <- as.vector(sim[[2]][[22]]$island_spec[[1]][, 5])
-  # traits_vec <- as.vector(sim[[2]][[22]]$island_spec[[1]][, 8])
   # Step 9: Build phylo object
   tree <- list()
   tree$edge <- matrix(as.integer(edge_remapped), ncol = 2)
@@ -157,11 +155,5 @@ build_phylo_tree_from_island_spec <- function(island_spec) {
   tree$tip.label <- branch_codes
   class(tree) <- "phylo"
 
-  # Optional validation
-  # ape::checkValidPhylo(tree)
-
   return(tree)
 }
-
-
-

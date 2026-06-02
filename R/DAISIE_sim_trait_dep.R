@@ -2,10 +2,10 @@
 #'
 #' @description
 #' Simulates island communities under a **trait-dependent** diversification
-#' process with optional hidden states. This function runs multiple replicates by calling
-#' \code{DAISIE_sim_core_mult_trait_dep()} once per replicate.
-#' If species share a single macro evolutionary process, supply the corresponding
-#' entries in \code{trait_pars} for one observed state and set
+#' process with optional hidden states. This function runs multiple replicates
+#' by calling \code{DAISIE_sim_core_mult_trait_dep()} once per replicate.
+#' If species share a single macro evolutionary process, supply the c
+#' orresponding entries in \code{trait_pars} for one observed state and set
 #' \code{num_observed_states = 1}. If multiple observed states (and optionally
 #' hidden states) are modeled, supply rate/transition parameters per state in
 #' \code{trait_pars} and set \code{num_observed_states} and
@@ -23,9 +23,14 @@
 #'
 #' @param time Island age in Myr.
 #'   \code{time = 4} simulates the full 4 Myr history;
-#' @param mainland List or numeric vector describing the mainland source pool per trait state.
+#' @param mainland List or numeric vector describing the mainland source pool
+#' per trait state.
 #' @param trait_pars List of trait-dependent parameters consumed by
-#'   \code{DAISIE_sim_core_mult_trait_dep()}, which includes parameters for cladogenesis, extinction, colonization, anagenesis, and state transitions. These parameters define the evolutionary processes within the model for each observed trait state and its possible transitions. The components of \code{trait_pars} are as follows:
+#'   \code{DAISIE_sim_core_mult_trait_dep()}, which includes parameters for
+#'   cladogenesis, extinction, colonization, anagenesis, and state transitions.
+#'   These parameters define the evolutionary processes within the model for
+#'   each observed trait state and its possible transitions. The components of
+#'   \code{trait_pars} are as follows:
 #'
 #'   \describe{
 #'     \item{immig_rateX}{Immigration rate for trait X (numeric).}
@@ -52,8 +57,8 @@
 #'   }
 #' @param replicates Integer. Number of independent island replicates to simulate.
 #' @param num_observed_states Integer (>= 1). Number of **observed** trait states.
-#' @param num_hidden_states Integer (>= 1). Number of **hidden** trait states; set
-#'   to \code{1} if no hidden state is used.
+#' @param num_hidden_states Integer (>= 1). Number of **hidden** trait states;
+#' set to \code{1} if no hidden state is used.
 #'
 #'
 #' @returns
@@ -104,7 +109,8 @@ DAISIE_sim_trait_dep <- function(time,
   fail_msg  <- character(0)
 
   for (rep in seq_len(replicates)) {
-    cat(sprintf("replicate %d/%d ... ", rep, replicates)); utils::flush.console()
+    cat(sprintf("replicate %d/%d ... ", rep, replicates))
+    utils::flush.console()
 
     res <- tryCatch(
       {
@@ -138,6 +144,3 @@ DAISIE_sim_trait_dep <- function(time,
 
   island_replicates
 }
-
-
-

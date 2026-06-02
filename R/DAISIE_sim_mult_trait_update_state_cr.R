@@ -8,12 +8,10 @@ DAISIE_sim_mult_trait_update_state_cr <- function(timeval,
                                                   trait_pars,
                                                   num_observed_states,
                                                   num_hidden_states,
-                                                  mainland)
-{
+                                                  mainland) {
 
-  n <- num_observed_states*num_hidden_states
+  n <- num_observed_states * num_hidden_states
   p <- trait_pars$p
-
 
   ##########################################
   #IMMIGRATION
@@ -23,12 +21,8 @@ DAISIE_sim_mult_trait_update_state_cr <- function(timeval,
     trait_state <- i + 1  # Maps event to trait state dynamically
 
     # IMMIGRATION (4*i + 1)
-    if (possible_event == (4*i + 1)) {
-
-
-      mainland_total = sum(unlist(mainland))
-
-
+    if (possible_event == (4 * i + 1)) {
+      mainland_total <- sum(unlist(mainland))
 
       # Determine which trait block the species belongs to
       block <- ceiling(trait_state / num_hidden_states)
@@ -52,11 +46,13 @@ DAISIE_sim_mult_trait_update_state_cr <- function(timeval,
       # Check if species is already present
       testit::assert(length(isitthere) <= 1)
       if (length(isitthere) == 0) {
-        island_spec = rbind(island_spec, c(colonist, colonist, timeval, "I", NA, NA, NA, trait_state, NA))
+        island_spec = rbind(island_spec, c(colonist, colonist, timeval,
+                                           "I", NA, NA, NA, trait_state, NA))
       }
 
       if (length(isitthere) != 0) {
-        island_spec[isitthere, ] = c(colonist, colonist, timeval, "I", NA, NA, NA, trait_state, NA)
+        island_spec[isitthere, ] = c(colonist, colonist, timeval,
+                                     "I", NA, NA, NA, trait_state, NA)
       }
     }
 
@@ -268,7 +264,6 @@ DAISIE_sim_mult_trait_update_state_cr <- function(timeval,
   }
 
   # Add a final row of zeros
-  #stt_table <- rbind(stt_table, rep(0, ncol(stt_table)))
 
   updated_state <- list(island_spec = island_spec,
                         maxspecID = maxspecID,
@@ -277,5 +272,3 @@ DAISIE_sim_mult_trait_update_state_cr <- function(timeval,
 
 
 }
-
-

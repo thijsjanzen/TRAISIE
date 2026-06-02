@@ -45,37 +45,24 @@ DAISIE_sim_core_mult_trait_dep <- function(
   mainland_total <- sum(unlist(mainland))
 
   testit::assert(mainland_total > 0)
-  if(mainland[[1]] != 0){
+  if (mainland[[1]] != 0) {
     mainland_spec <- seq(1, mainland[[1]], 1)
-  }else{
+  } else{
     mainland_spec <- c()
   }
   maxspecID <- mainland_total
 
   island_spec <- c()
 
-
-  # if  (num_observed_states == 2)
-  #  {
-  #  stt_table <- matrix(ncol = 7)
-  #  colnames(stt_table) <- c("Time","nI","nA","nC","nI2","nA2","nC2")
-  #  stt_table[1,] <- c(total_time,0,0,0,0,0,0)
-
-  #  } else if  (num_observed_states == 3) {
-  #   stt_table <- matrix(ncol = 10)
-  #   colnames(stt_table) <- c("Time","nI","nA","nC","nI2","nA2","nC2","nI3","nA3","nC3")
-  #   stt_table[1,] <- c(total_time,0,0,0,0,0,0,0,0,0)
-  #}
-
-
-  stt_table <- matrix(ncol = 3 *(num_observed_states*num_hidden_states) + 1)  # 3 for each state (nI, nA, nC) and 1 for Time
+  stt_table <- matrix(ncol = 3 * (num_observed_states * num_hidden_states) + 1)  # 3 for each state (nI, nA, nC) and 1 for Time
   colnames(stt_table) <- c("Time",
-                           paste0("nI", 1:(num_observed_states*num_hidden_states)),
-                           paste0("nA", 1:(num_observed_states*num_hidden_states)),
-                           paste0("nC", 1:(num_observed_states*num_hidden_states)))
+                           paste0("nI", 1:(num_observed_states * num_hidden_states)),
+                           paste0("nA", 1:(num_observed_states * num_hidden_states)),
+                           paste0("nC", 1:(num_observed_states * num_hidden_states)))
 
   # Initialize the first row
-  stt_table[1,] <- c(total_time, rep(0, 3 * (num_observed_states*num_hidden_states)))
+  stt_table[1, ] <- c(total_time,
+                      rep(0, 3 * (num_observed_states * num_hidden_states)))
 
 
   num_spec <- length(island_spec[, 1])
@@ -86,7 +73,7 @@ DAISIE_sim_core_mult_trait_dep <- function(
     rates <- update_rates_mult_trait(timeval = timeval,
                                      total_time = total_time,
                                      num_spec = num_spec,
-                                     mainland= mainland,
+                                     mainland = mainland,
                                      trait_pars = trait_pars,
                                      island_spec = island_spec,
                                      num_observed_states = num_observed_states,
@@ -104,7 +91,7 @@ DAISIE_sim_core_mult_trait_dep <- function(
     timeval <- timeval_and_dt$timeval
 
     if (timeval < total_time) {
-      rates <- update_rates_mult_trait(timeval= timeval,
+      rates <- update_rates_mult_trait(timeval = timeval,
                                        total_time = total_time,
                                        num_spec = num_spec,
                                        mainland = mainland,
@@ -114,9 +101,11 @@ DAISIE_sim_core_mult_trait_dep <- function(
                                        num_hidden_states = num_hidden_states)
 
 
-      possible_event <- DAISIE_sample_event_trait_dep( rates = rates,
-                                                       num_observed_states = num_observed_states,
-                                                       num_hidden_states = num_hidden_states)
+      possible_event <- DAISIE_sample_event_trait_dep(rates = rates,
+                                                      num_observed_states =
+                                                        num_observed_states,
+                                                      num_hidden_states =
+                                                        num_hidden_states)
 
       #print(possible_event)
       updated_state <- DAISIE_sim_mult_trait_update_state_cr(
@@ -142,38 +131,20 @@ DAISIE_sim_core_mult_trait_dep <- function(
     }
   }
 
-  # ### change the true traits to the observed traits because the hidden states are unknown
-  # for (i in 1:length(island_spec[,1])) {
-  #
-  #   state <- as.numeric(island_spec[i,][8])
-  #
-  #   if (state >= 1 && state <= num_hidden_states) {
-  #     island_spec[i,][8] = "0"
-  #
-  #   } else if (state >= (num_hidden_states + 1) && state <= (2 * num_hidden_states)) {
-  #     island_spec[i,][8] = "1"
-  #     # Colonist species in state
-  #   } else if (state >= (2 * num_hidden_states + 1) && state <= 3 * num_hidden_states) {
-  #     island_spec[i,][8] = "2"
-  #   } else if (state >= (3 * num_hidden_states + 1) && state <= 4 * num_hidden_states) {
-  #     island_spec[i,][8] = "3"
-  #   }
-  # }
-
-
   # Loop through all rows of island_spec
-  if (length(island_spec) > 0){
-  for (i in 1:nrow(island_spec)) {
+  if (length(island_spec) > 0) {
+    for (i in seq_len(nrow(island_spec))) {
 
-    # Get the current state (convert to numeric)
-    state <- as.numeric(island_spec[i, 8])
+      # Get the current state (convert to numeric)
+      state <- as.numeric(island_spec[i, 8])
 
-    # Determine the new block: divide by num_hidden_states, round up, subtract 1
-    new_state <- ceiling(state / num_hidden_states) - 1
+      # Determine the new block: divide by num_hidden_states,
+      # round up, subtract 1
+      new_state <- ceiling(state / num_hidden_states) - 1
 
-    # Assign it back as a character
-    island_spec[i, 8] <- as.character(new_state)
-  }
+      # Assign it back as a character
+      island_spec[i, 8] <- as.character(new_state)
+    }
   }
 
 

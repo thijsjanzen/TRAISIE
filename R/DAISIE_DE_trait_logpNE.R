@@ -103,7 +103,7 @@ DAISIE_DE_trait_logpNE <- function(
         s[((j - 1) * num_hidden_states + 1):(j * num_hidden_states)] <- rep(trait_mainland_ancestor[j], num_hidden_states)
 
       }
-      weights <- s/sum(s)
+      weights <- s / sum(s)
 
 
     }else { # this is the case where nothing is provided, i.e. NA
@@ -115,7 +115,7 @@ DAISIE_DE_trait_logpNE <- function(
     }
   }
   log_Lk <- log(sum(Lk_vec * weights))
-  return( list (loglik = log_Lk, lik_states = Lk_vec, weights = weights))
+  return(list(loglik = log_Lk, lik_states = Lk_vec, weights = weights))
 }
 
 

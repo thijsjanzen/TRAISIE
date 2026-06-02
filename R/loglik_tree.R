@@ -69,8 +69,6 @@ calcThruNodes_hidden <- function(
     reltol,
     abstol
 ) {
-
-  nb_node <- phy$Nnode
   focal <- ances
   desRows <- which(phy$edge[, 1] == focal)
   desNodes <- phy$edge[desRows, 2]
@@ -134,8 +132,7 @@ calc_init_state_hidden <- function(trait,
   E   <- rep(0, num_unique_states)
   DA3 <- 1
 
-  if (num_unique_states == 1)
-  {
+  if (num_unique_states == 1) {
       sampling_fraction = sampling_fraction[1]
       DE[1:num_unique_states] <- sampling_fraction
       E[1:num_unique_states] <- 1 - sampling_fraction
@@ -167,9 +164,14 @@ calc_init_state_hidden <- function(trait,
 
     steps <- num_hidden_states * trait
 
-    DE[(steps + 1):(num_hidden_states + steps)] <- sampling_fraction[1 + trait]
+    DE[(steps + 1):(num_hidden_states + steps)] <-     sampling_fraction[1 + trait]
      E[(steps + 1):(num_hidden_states + steps)] <- 1 - sampling_fraction[1 + trait]
-     rest_idx <- setdiff(seq_along(E), (num_hidden_states * trait + 1):(num_hidden_states + num_hidden_states * trait))
+
+     hidden_times_trait <- num_hidden_states * trait
+
+     rest_idx <-
+       setdiff(seq_along(E),
+              (hidden_times_trait + 1):(num_hidden_states + hidden_times_trait))
      for (i in rest_idx) {
        trait_i <- (i - 1) %/% num_hidden_states
        sf_i <- sampling_fraction[1 + trait_i]
@@ -248,7 +250,6 @@ loglik_R_tree <- function(parameter,
                                    abstol = atol)
     states <- calcul$states
     loglik <- calcul$loglik
-    nodeN <- calcul$nodeN
   }
 
   prob_states <- calcul$combined_state

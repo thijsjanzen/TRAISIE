@@ -2,9 +2,8 @@
 dist_gamma_tma <- function(gamma,
                            trait_mainland_ancestor,
                            num_unique_states) {
-
   dist_gamma <- c()
-  if (num_unique_states == 1){
+  if (num_unique_states == 1) {
 
     dist_gamma <- gamma
 
@@ -30,30 +29,31 @@ use_stationary_weights <- function(Q) {
   diag(Q) <- -rowSums(Q)
   pi <- pracma::null(t(Q))
   diff <- 1
-  for(i in 1:dim(pi)[[2]]) {
-    if (pi[which.max(abs(pi[,i])),i] < 0) {
-      pi[,i] <- -pi[,i]
+  for (i in 1:dim(pi)[[2]]) {
+    if (pi[which.max(abs(pi[, i])), i] < 0) {
+      pi[, i] <- -pi[, i]
     }
-    if (any(pi[,i] < 0) && max(abs(pi[which(pi[,i] < 0),i])) > 1E-10) {
-      warning('Substantial negative weights detected')
+    if (any(pi[, i] < 0) && max(abs(pi[which(pi[, i] < 0), i])) > 1E-10) {
+      warning("Substantial negative weights detected")
     }
-    pi[which(pi[,i] < 0),i] <- 0
-    pi[,i] <- pi[,i]/sum(pi[,i])
-    diff_new <- abs(max(pi[,i])) - abs(min(pi[,i]))
+    pi[which(pi[, i] < 0), i] <- 0
+    pi[,i] <- pi[, i] / sum(pi[, i])
+    diff_new <- abs(max(pi[, i])) - abs(min(pi[, i]))
     if (diff_new < diff) {
       diff <- diff_new
       i_choice <- i
     }
   }
-  weight_states <- pi[,i_choice]
+  weight_states <- pi[, i_choice]
   return(weight_states)
 }
 ################
 
+#' @keywords internal
 compute_mainland_stationary_weights <- function(stat_weights,
-                                     Mp,
-                                     M,
-                                     num_hidden_states) {
+                                                Mp,
+                                                M,
+                                                num_hidden_states) {
 
   weights1 <- c()
 
@@ -62,12 +62,10 @@ compute_mainland_stationary_weights <- function(stat_weights,
     idx <- ((j - 1) * num_hidden_states + 1):(j * num_hidden_states)
 
     weights_j <- stat_weights[idx]
-    if (sum(weights_j) == 0){
-
+    if (sum(weights_j) == 0) {
       weights_j <- weights_j
-    } else{
+    } else {
       weights_j <- weights_j * (Mp[j] / M) / sum(weights_j)
-
     }
     weights1 <- c(weights1, weights_j)
   }
@@ -95,10 +93,10 @@ compute_likelihood_stationary_weights <- function(Lk_vec,
     idx <- ((j - 1) * num_hidden_states + 1):(j * num_hidden_states)
 
     weights_j <- Lk_vec[idx]
-    if (sum(weights_j) == 0){
+    if (sum(weights_j) == 0) {
 
       weights_j <- weights_j
-    } else{
+    } else {
       weights_j <- weights_j * (Mp[j] / M) / sum(weights_j)
 
     }
@@ -309,4 +307,3 @@ interval4 <- function(t, state, parameter) {
     return(list(c(dDM1, dE, dDA1)))
   })
 }
-

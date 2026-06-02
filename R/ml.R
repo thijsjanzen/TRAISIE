@@ -2,13 +2,15 @@
 #'
 #' @inheritParams default_params_doc
 #' @description
-#' This function estimates the maximum likelihood (ML) for a given dataset using a trait-dependent model.
-#' The model includes parameters for cladogenesis, extinction, colonization, anagenesis, and state transitions.
+#' This function estimates the maximum likelihood (ML) for a given dataset
+#' using a trait-dependent model. The model includes parameters for
+#' cladogenesis, extinction, colonization, anagenesis, and state transitions.
 #' The optimization is done using the `TRAISIE::calc_ml` function.
 #' @param datalist A list containing the data used for likelihood calculation.
 #' @param num_observed_states The number of observed trait states.
 #' @param num_hidden_states The number of hidden trait states.
-#' @param idparslist A list containing the model parameters required for the trait-dependent diversification process.
+#' @param idparslist A list containing the model parameters required for the
+#' trait-dependent diversification process.
 #' Each element in the list corresponds to a specific set of parameters:
 #'
 #' \describe{
@@ -64,13 +66,18 @@
 #'   }
 #' }
 
-#' @param idparsopt A vector of integers specifying which parameters are to be optimized.
-#' @param idparsfix A vector of integers specifying which parameters are to be kept fixed.
-#' @param parsfix A vector of values corresponding to the fixed parameters specified in `idparsfix`.
+#' @param idparsopt A vector of integers specifying which parameters are to be
+#' optimized.
+#' @param idparsfix A vector of integers specifying which parameters are to be
+#' kept fixed.
+#' @param parsfix A vector of values corresponding to the fixed parameters
+#' specified in `idparsfix`.
 #' @param atol  A numeric specifying the absolute tolerance of integration.
 #' @param rtol  A numeric specifying the relative tolerance of integration.
 #' @param num_threads number of threads to be used. Default is one thread.
-#' @param verbose sets verbose output; default is TRUE when optimmethod is "simplex". If optimmethod is set to "simplex", then even if set to FALSE, optimizer output will be shown.
+#' @param verbose sets verbose output; default is TRUE when optimmethod is
+#' "simplex". If optimmethod is set to "simplex", then even if set to FALSE,
+#' optimizer output will be shown.
 #' @param use_Rcpp Integer. Specifies whether to use C++ for optimization:
 #'   \describe{
 #'     \item{0}{Use R implementation (default).}
@@ -79,9 +86,11 @@
 #'   }
 #'
 #' @details
-#' This function runs the maximum likelihood estimation for a dataset based on the trait-dependent model.
-#' The optimization process uses the `TRAISIE::calc_ml` function to adjust the parameters for the best fit to the data.
-#' The function assumes that the dataset is prepared correctly, and the parameter IDs are provided for both optimization and fixing.
+#' This function runs the maximum likelihood estimation for a dataset based on
+#' the trait-dependent model. The optimization process uses the
+#' `TRAISIE::calc_ml` function to adjust the parameters for the best fit to the
+#' data. The function assumes that the dataset is prepared correctly, and the
+#' parameter IDs are provided for both optimization and fixing.
 #'
 #' @returns
 #' A list containing the following elements:
@@ -180,8 +189,6 @@ calc_ml <- function(datalist,
     stop("All elements in idparslist must be included in either
              idparsopt or idparsfix ")
   }
-
-  see_ancestral_states <- FALSE
 
   trparsopt <- initparsopt / (1 + initparsopt)
   trparsopt[which(initparsopt == Inf)] <- 1
@@ -313,4 +320,3 @@ loglik_choosepar <- function(trparsopt,
   }
   return(loglik)
 }
-

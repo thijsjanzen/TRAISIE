@@ -15,7 +15,8 @@ test_that("CS", {
       datalist[[1]]$M1 <- datalist[[1]]$not_present / 2
 
       for (i in 2:length(datalist)) {
-        datalist[[i]]$phylogeny <- DDD::brts2phylo(datalist[[i]]$branching_times[-c(1, 2)])
+        datalist[[i]]$phylogeny <-
+              DDD::brts2phylo(datalist[[i]]$branching_times[-c(1, 2)])
         datalist[[i]]$phylogeny$root.edge <- 0
         num_tips <- length(datalist[[i]]$phylogeny$tip.label)
         datalist[[i]]$sampling_fraction <- rep(1, 2)

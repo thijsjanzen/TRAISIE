@@ -371,7 +371,7 @@ get_initial_conditions4 <- function(status,
   n <- num_observed_states * num_hidden_states
   num_unique_states <- n
 
-  if( num_unique_states == 1){
+  if (num_unique_states == 1) {
 
     if (status == 2 || status == 3 || status == 4) {
 
@@ -432,4 +432,3 @@ get_initial_conditions4 <- function(status,
   }
   return(matrix(initial_conditions4, nrow = 1))
 }
-

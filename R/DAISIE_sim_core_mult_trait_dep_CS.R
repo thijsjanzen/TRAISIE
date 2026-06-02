@@ -53,20 +53,6 @@ DAISIE_sim_core_mult_trait_dep_CS <- function(
 
   island_spec <- c()
 
-
-  # if  (num_observed_states == 2)
-  #  {
-  #  stt_table <- matrix(ncol = 7)
-  #  colnames(stt_table) <- c("Time","nI","nA","nC","nI2","nA2","nC2")
-  #  stt_table[1,] <- c(total_time,0,0,0,0,0,0)
-
-  #  } else if  (num_observed_states == 3) {
-  #   stt_table <- matrix(ncol = 10)
-  #   colnames(stt_table) <- c("Time","nI","nA","nC","nI2","nA2","nC2","nI3","nA3","nC3")
-  #   stt_table[1,] <- c(total_time,0,0,0,0,0,0,0,0,0)
-  #}
-
-
   stt_table <- matrix(ncol = 3 * (num_observed_states*num_hidden_states) + 1)  # 3 for each state (nI, nA, nC) and 1 for Time
   colnames(stt_table) <- c("Time",
                            paste0("nI", 1:(num_observed_states*num_hidden_states)),

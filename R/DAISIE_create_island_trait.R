@@ -10,15 +10,12 @@ DAISIE_create_island_trait <- function(stt_table,
   ### Check if island_spec is a matrix and convert it if not
 
 
-  if (length((island_spec)) > 1)
-  {
+  if (length((island_spec)) > 1) {
     island_spec <- island_spec[order(island_spec[, 5]), ]
     if (!is.matrix(island_spec)) {
 
       island_spec <- t(as.matrix(island_spec))
     }
-
-
   }
 
   ### if there are no species on the island branching_times = island_age, stac = 0, missing_species = 0
@@ -27,7 +24,6 @@ DAISIE_create_island_trait <- function(stt_table,
                    branching_times = total_time,
                    stac = 0,
                    missing_species = 0)
-
   } else {
     cnames <- c("Species",
                 "Mainland Ancestor",
@@ -50,14 +46,12 @@ DAISIE_create_island_trait <- function(stt_table,
 
 
       ### Number of colonists present
-      colonists_present <- sort(as.numeric(unique(island_spec[, 'Mainland Ancestor'])))
+      colonists_present <- sort(as.numeric(unique(island_spec[, "Mainland Ancestor"])))
       number_colonists_present <- length(colonists_present)
 
       island_clades_info <- list()
 
-      for (i in seq_along(island_spec[,1])) {
-
-        #
+      for (i in seq_along(island_spec[, 1])) {
         mainland_spec <- island_spec[i, 2]
 
         all_spec <- island_spec[which(island_spec[, "Mainland Ancestor"] == mainland_spec), ]
