@@ -137,9 +137,7 @@ DAISIE_DE_trait_logpES <- function(
 }
 
 
-
-
-
+#' @keywords internal
 DAISIE_DE_trait_logpES_core <- function(brts,
                                         status,
                                         trait,

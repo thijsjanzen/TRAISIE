@@ -120,7 +120,7 @@ DAISIE_DE_trait_logpNE <- function(
 
 
 
-
+#' @keywords internal
 DAISIE_DE_trait_logpNE_core <- function(brts,
                                         status,
                                         trait,

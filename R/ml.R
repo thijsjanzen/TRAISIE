@@ -1,5 +1,6 @@
 #' Maximum Likelihood Estimation for the DAISIE Trait Model
 #'
+#' @inheritParams default_params_doc
 #' @description
 #' This function estimates the maximum likelihood (ML) for a given dataset using a trait-dependent model.
 #' The model includes parameters for cladogenesis, extinction, colonization, anagenesis, and state transitions.
@@ -24,7 +25,6 @@
 #' }
 
 #' @param idparsopt A vector of integers specifying which parameters are to be optimized.
-#' @param initvals2 A numeric vector providing the initial values for the parameters to be optimized.
 #' @param idparsfix A vector of integers specifying which parameters are to be kept fixed.
 #' @param parsfix A vector of values corresponding to the fixed parameters specified in `idparsfix`.
 #' @param atol  A numeric specifying the absolute tolerance of integration.

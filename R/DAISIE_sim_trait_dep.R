@@ -92,8 +92,6 @@
 #'
 #' }
 #' @export
-
-
 DAISIE_sim_trait_dep <- function(time,
                                  mainland,
                                  trait_pars,

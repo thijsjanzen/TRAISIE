@@ -23,9 +23,6 @@
 #' supports multiple observed and hidden states, with final output
 #' collapsing hidden states into observed states.
 #'
-#' @seealso \code{\link{DAISIE_create_island_trait}},
-#'   \code{\link{update_rates_mult_trait}},
-#'   \code{\link{DAISIE_sim_mult_trait_update_state_cr}}
 #' @export
 
 DAISIE_sim_core_mult_trait_dep <- function(

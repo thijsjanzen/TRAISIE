@@ -52,9 +52,39 @@ Each element in the list corresponds to a specific set of parameters:
 
 \item{idparsopt}{A vector of integers specifying which parameters are to be optimized.}
 
+\item{initparsopt}{a numeric vector with the initial guess of the parameters
+to be estimated.}
+
 \item{idparsfix}{A vector of integers specifying which parameters are to be kept fixed.}
 
 \item{parsfix}{A vector of values corresponding to the fixed parameters specified in `idparsfix`.}
+
+\item{cond}{condition on the existence of a node root: `"maddison_cond"`,
+`"proper_cond"` (default). For details, see vignette.}
+
+\item{tol}{A numeric vector with the maximum tolerance of the optimization
+algorithm. Default is `c(1e-04, 1e-05, 1e-05)`.}
+
+\item{maxiter}{max number of iterations. Default is
+`1000 * round((1.25) ^ length(idparsopt))`.}
+
+\item{optimmethod}{A string with method used for optimization. Default is
+`"simplex"`. Alternative is `"subplex"`. Both are called from
+[DDD::optimizer()], simplex is implemented natively in the package [DDD],
+while subplex is ultimately called from [subplex::subplex()].}
+
+\item{methode}{used integration method, default is ode45}
+
+\item{rcpp_methode}{Used integration methode when using Rcpp to integrate,
+options available are:
+ `"odeint::runge_kutta_cash_karp54"`, `"odeint::runge_kutta_fehlberg78"`,
+ `"odeint::runge_kutta_dopri5"`, `"odeint::bulirsch_stoer"` and
+ `"odeint::runge_kutta4"`. Default method is:
+ `"odeint::runge_kutta_cash_karp54"`.}
+
+\item{num_cycles}{Number of cycles of the optimization. When set to `Inf`,
+the optimization will be repeated until the result is, within the
+tolerance, equal to the starting values, with a maximum of 10 cycles.}
 
 \item{verbose}{sets verbose output; default is TRUE when optimmethod is "simplex". If optimmethod is set to "simplex", then even if set to FALSE, optimizer output will be shown.}
 
@@ -70,8 +100,6 @@ Each element in the list corresponds to a specific set of parameters:
   \item 1: Use a mix of R and C++.
   \item 2: Use C++ implementation.
 }}
-
-\item{initvals2}{A numeric vector providing the initial values for the parameters to be optimized.}
 }
 \value{
 A list containing the following elements:

@@ -135,7 +135,7 @@ DAISIE_DE_trait_logpEC <- function(
 
 
 
-
+#' @keywords internal
 DAISIE_DE_trait_logpEC_core <- function(
     brts,
     parameter,

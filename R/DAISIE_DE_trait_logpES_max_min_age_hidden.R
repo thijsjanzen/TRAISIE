@@ -132,12 +132,7 @@ DAISIE_DE_trait_logpES_max_min_age_hidden <- function(
 }
 
 
-
-
-
-
-
-
+#' @keywords internal
 DAISIE_DE_trait_logpES_max_min_age_hidden_core <- function(brts,
                                                       trait,
                                                       status,

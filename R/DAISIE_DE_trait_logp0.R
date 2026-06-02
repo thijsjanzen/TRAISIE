@@ -1,4 +1,4 @@
-#' testing fuction, for comparison with DAISIE
+#' testing function, for comparison with DAISIE
 #' @description
 #' This function compute the likelihood that all species that colonize the island
 #' have gone extinct prior to the present.
@@ -39,8 +39,6 @@
 #'   rcpp_methode ="odeint::runge_kutta_cash_karp54",
 #'   use_Rcpp                = 2)
 #'
-
-
 DAISIE_DE_trait_logp0 <- function(
     datalist,
     parameter,
@@ -48,7 +46,7 @@ DAISIE_DE_trait_logp0 <- function(
     rtol = 1e-15,
     num_observed_states,
     num_hidden_states,
-    trait_mainland_ancestor= trait_mainland_ancestor_extended,
+    trait_mainland_ancestor,
     methode = "ode45",
     rcpp_methode ="odeint::runge_kutta_cash_karp54",
     use_Rcpp = 2) {
@@ -106,6 +104,8 @@ DAISIE_DE_trait_logp0 <- function(
   return(log_Lk)
 }
 
+
+#' @keywords internal
 DAISIE_DE_trait_logp0_core <- function(datalist,
                                        parameter,
                                        atol = 1e-15,

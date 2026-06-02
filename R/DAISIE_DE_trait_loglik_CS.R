@@ -1,3 +1,10 @@
+#' testing function, for comparison with DAISIE
+#' @description
+#' This function compute the likelihood that all species that colonize the island
+#' have gone extinct prior to the present.
+#' @export
+#' @inheritParams default_params_doc
+#'
 DAISIE_DE_trait_loglik_CS <- function( parameter,
                                        datalist,
                                        methode = "lsodes",

@@ -2,7 +2,7 @@
 % Please edit documentation in R/DAISIE_DE_trait_logp0.R
 \name{DAISIE_DE_trait_logp0}
 \alias{DAISIE_DE_trait_logp0}
-\title{testing fuction, for comparison with DAISIE}
+\title{testing function, for comparison with DAISIE}
 \usage{
 DAISIE_DE_trait_logp0(
   datalist,
@@ -11,7 +11,7 @@ DAISIE_DE_trait_logp0(
   rtol = 1e-15,
   num_observed_states,
   num_hidden_states,
-  trait_mainland_ancestor = trait_mainland_ancestor_extended,
+  trait_mainland_ancestor,
   methode = "ode45",
   rcpp_methode = "odeint::runge_kutta_cash_karp54",
   use_Rcpp = 2

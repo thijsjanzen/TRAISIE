@@ -1,3 +1,4 @@
+#' @keywords internal
 DAISIE_sim_mult_trait_update_state_CS <- function(timeval,
                                                   total_time,
                                                   possible_event,
@@ -269,5 +270,3 @@ DAISIE_sim_mult_trait_update_state_CS <- function(timeval,
 
 
 }
-
-

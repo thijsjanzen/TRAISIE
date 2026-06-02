@@ -9,7 +9,8 @@
 #' @examples
 #' # load DAISIE package and data
 #' library(DAISIE)
-#'
+#' data("Galapagos_datalist")
+#' datalist <- Galapagos_datalist
 #' parameter <- list(
 #'   c(2.546591, 1.2, 1, 0.2),
 #'   c(2.678781, 2, 1.9, 3),
@@ -42,8 +43,6 @@
 #'   methode               = "ode45",
 #'   rcpp_methode = "odeint::runge_kutta_cash_karp54"
 #' )
-
-
 DAISIE_DE_trait_logpNE_max_min_age_hidden <- function(
     datalist,
     brts,
@@ -118,7 +117,7 @@ DAISIE_DE_trait_logpNE_max_min_age_hidden <- function(
 
 
 
-
+#' @keywords internal
 DAISIE_DE_trait_logpNE_max_min_age_hidden_core <-
   function(brts,
            trait,

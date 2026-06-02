@@ -41,8 +41,9 @@ test_that("R vs Rcpp", {
                   c(0, 0, 1, 1),
                   c(NA, NA, NA, NA))
 
+  testthat::expect_warning(
   for (i in seq_along(all_tma)) {
-
+    # this call generates warnings, but they are harmless
     res_hidden <- TRAISIE::loglik_R_tree(parameter = parameters,
                                         phy = phy,
                                         traits = traits,
@@ -58,4 +59,5 @@ test_that("R vs Rcpp", {
                                        trait_mainland_ancestor = all_tma[[i]])
     testthat::expect_equal(res_hidden, res_cpp)
   }
+  )
 })

@@ -25,6 +25,6 @@ test_that("NA values", {
       rtol                    = 1e-10,
       methode                 = "ode45"
     )
-
+    testthat::expect_true(!is.na(res1$loglik))
   }
 })

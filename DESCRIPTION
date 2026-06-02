@@ -21,17 +21,18 @@ Authors@R: c(
         comment = c(ORCID = "0000-0002-6784-1037")))
 Description: Provides a back-bone architecture that allows for integrating a rhs along a tree.
 Depends: R (>= 4.2.0)
-Imports: 
+Imports:
+ DAISIE,
  DDD,
  deSolve,
  ape,
  Rcpp (>= 1.0.10),
  RcppParallel,
  digest,
- testit
+ testit,
+ pracma
 Suggests: 
  secsse,
- DAISIE,
  testthat,
  rmarkdown
 LinkingTo: 

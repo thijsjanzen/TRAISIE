@@ -24,9 +24,6 @@
 #' supports multiple observed and hidden states, with final output
 #' collapsing hidden states into observed states.
 #'
-#' @seealso \code{\link[DAISIE]{DAISIE_create_island_trait}},
-#'   \code{\link{update_rates_mult_trait}},
-#'   \code{\link{DAISIE_sim_mult_trait_update_state_cr}}
 #' @export
 
 DAISIE_sim_core_mult_trait_dep_CS <- function(
@@ -42,18 +39,14 @@ DAISIE_sim_core_mult_trait_dep_CS <- function(
   timeval <- 0
   total_time <- time
 
-
-
   testit::assert(length(trait_pars) > 5)
-
-
 
   mainland_total <- sum(unlist(mainland))
 
   testit::assert(mainland_total > 0)
-  if(mainland[[1]] != 0){
+  if (mainland[[1]] != 0) {
     mainland_spec <- seq(1, mainland[[1]], 1)
-  }else{
+  } else {
     mainland_spec <- c()
   }
   maxspecID <- mainland_total
@@ -74,7 +67,7 @@ DAISIE_sim_core_mult_trait_dep_CS <- function(
   #}
 
 
-  stt_table <- matrix(ncol = 3 *(num_observed_states*num_hidden_states) + 1)  # 3 for each state (nI, nA, nC) and 1 for Time
+  stt_table <- matrix(ncol = 3 * (num_observed_states*num_hidden_states) + 1)  # 3 for each state (nI, nA, nC) and 1 for Time
   colnames(stt_table) <- c("Time",
                            paste0("nI", 1:(num_observed_states*num_hidden_states)),
                            paste0("nA", 1:(num_observed_states*num_hidden_states)),
@@ -89,10 +82,10 @@ DAISIE_sim_core_mult_trait_dep_CS <- function(
 
   #### Start Monte Carlo iterations ####
   while (timeval < total_time) {
-    rates <- update_rates_mult_trait(timeval= timeval,
+    rates <- update_rates_mult_trait(timeval = timeval,
                                      total_time = total_time,
                                      num_spec = num_spec,
-                                     mainland= mainland,
+                                     mainland = mainland,
                                      trait_pars = trait_pars,
                                      island_spec = island_spec,
                                      num_observed_states = num_observed_states,
@@ -111,7 +104,7 @@ DAISIE_sim_core_mult_trait_dep_CS <- function(
     timeval <- timeval_and_dt$timeval
 
     if (timeval < total_time) {
-      rates <- update_rates_mult_trait(timeval= timeval,
+      rates <- update_rates_mult_trait(timeval = timeval,
                                        total_time = total_time,
                                        num_spec = num_spec,
                                        mainland = mainland,
@@ -170,7 +163,7 @@ DAISIE_sim_core_mult_trait_dep_CS <- function(
 
 
   # Loop through all rows of island_spec
-  if (length(island_spec) > 0){
+  if (length(island_spec) > 0) {
     for (i in 1:nrow(island_spec)) {
 
       # Get the current state (convert to numeric)
