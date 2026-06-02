@@ -28,9 +28,14 @@
 #'       (\text{num_observed_states} \times \text{num_hidden_states})^2}
 #'
 #' This includes:
-#' \itemize{
-#'   \item Immigration, extinction, anagenesis, and cladogenesis events for each state.
-#'   \item Transition events between all combinations of states.
+#' This includes:
+#' \describe{
+#'   \item{State-specific events}{
+#'     Immigration, extinction, anagenesis, and cladogenesis events for each state.
+#'   }
+#'   \item{Transition events}{
+#'     Transition events between all combinations of states.
+#'   }
 #' }
 #' The function returns a sampled index (not the event name), so the caller is responsible
 #' for mapping the index back to the actual event type if needed.
@@ -52,22 +57,22 @@
 #'   rates[[paste0("trans_rate", i)]] <- runif(1, 0.01, 0.1)
 #' }
 #'
-#' event <- DAISIE:::DAISIE_sample_event_trait_dep(
+#' event <- TRAISIE:::DAISIE_sample_event_trait_dep(
 #'                   rates,
 #'                   num_observed_states = 2,
 #'                   num_hidden_states = 2)
 #' print(event)
 #' @keywords internal
-DAISIE_sample_event_trait_dep <- function(rates, num_observed_states, num_hidden_states) {
-
-
+DAISIE_sample_event_trait_dep <- function(rates,
+                                          num_observed_states,
+                                          num_hidden_states) {
   # Initialize the probability vector
 
-
   # Add the rates for each state
-  number_of_possible_events <- 4*(num_observed_states * num_hidden_states) + ((num_observed_states * num_hidden_states)^2)
+  number_of_possible_events <- 4 * (num_observed_states * num_hidden_states) +
+                                  ((num_observed_states * num_hidden_states) ^ 2)
 
-  prob <- unlist (rates[1:number_of_possible_events])
+  prob <- unlist(rates[1:number_of_possible_events])
 
 
   # Check for invalid probabilities

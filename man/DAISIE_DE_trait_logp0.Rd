@@ -11,7 +11,7 @@ DAISIE_DE_trait_logp0(
   rtol = 1e-15,
   num_observed_states,
   num_hidden_states,
-  trait_mainland_ancestor,
+  trait_mainland_ancestor = NA,
   methode = "ode45",
   rcpp_methode = "odeint::runge_kutta_cash_karp54",
   use_Rcpp = 2

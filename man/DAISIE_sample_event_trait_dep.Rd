@@ -38,9 +38,14 @@ The total number of possible events is:
       (\text{num_observed_states} \times \text{num_hidden_states})^2}
 
 This includes:
-\itemize{
-  \item Immigration, extinction, anagenesis, and cladogenesis events for each state.
-  \item Transition events between all combinations of states.
+This includes:
+\describe{
+  \item{State-specific events}{
+    Immigration, extinction, anagenesis, and cladogenesis events for each state.
+  }
+  \item{Transition events}{
+    Transition events between all combinations of states.
+  }
 }
 The function returns a sampled index (not the event name), so the caller is responsible
 for mapping the index back to the actual event type if needed.
@@ -62,7 +67,7 @@ for (i in 1:(num_states^2)) {
   rates[[paste0("trans_rate", i)]] <- runif(1, 0.01, 0.1)
 }
 
-event <- DAISIE:::DAISIE_sample_event_trait_dep(
+event <- TRAISIE:::DAISIE_sample_event_trait_dep(
                   rates,
                   num_observed_states = 2,
                   num_hidden_states = 2)

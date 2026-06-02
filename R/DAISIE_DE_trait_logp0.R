@@ -46,7 +46,7 @@ DAISIE_DE_trait_logp0 <- function(
     rtol = 1e-15,
     num_observed_states,
     num_hidden_states,
-    trait_mainland_ancestor,
+    trait_mainland_ancestor = NA,
     methode = "ode45",
     rcpp_methode ="odeint::runge_kutta_cash_karp54",
     use_Rcpp = 2) {
@@ -97,7 +97,6 @@ DAISIE_DE_trait_logp0 <- function(
       num_hidden_states <- num_hidden_states
       weights <- compute_mainland_weights(Mp, M, num_hidden_states)
       weights <- compute_mainland_weights(Mp, M, num_hidden_states)
-
     }
   }
   log_Lk <- log(sum(Lk_vec * weights))

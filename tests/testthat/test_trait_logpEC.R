@@ -3,6 +3,8 @@ test_that("logpEC", {
   if (requireNamespace("DAISIE")) {
     data("Galapagos_datalist", package = "DAISIE")
     datalist <- Galapagos_datalist
+    datalist[[1]]$Mainland_pool_sizes <- c(550, 250)
+    datalist[[1]]$M <- 1000
 
     i <- 4
     phy <- DDD::brts2phylo(datalist[[i]]$branching_times[-c(1, 2)])

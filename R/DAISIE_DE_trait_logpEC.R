@@ -53,9 +53,6 @@
 #'   methode                 = "ode45",
 #'   num_threads             = 8,
 #'   use_Rcpp                = 2)
-
-
-
 DAISIE_DE_trait_logpEC <- function(
     datalist,
     brts,

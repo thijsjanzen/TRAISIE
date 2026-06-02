@@ -37,17 +37,57 @@ calc_ml(
 \item{idparslist}{A list containing the model parameters required for the trait-dependent diversification process.
 Each element in the list corresponds to a specific set of parameters:
 
-\itemize{
-  \item \code{idparslist[[1]]}: A numeric vector specifying the **cladogenesis rates** (\( \eqn{\lambda_c} \)) for each trait state. Each element in the vector corresponds to the cladogenesis rate for a different state.
-  \item \code{idparslist[[2]]}: A numeric vector specifying the **extinction rates** (\( \eqn{\mu} \)) for each trait state. Each element in the vector corresponds to the extinction rate for a different state.
-  \item \code{idparslist[[3]]}: A numeric vector specifying the **immigration rates** (\( \eqn{\gamma} \)) for each trait state. Each element in the vector corresponds to the immigration rate for a different state.
-  \item \code{idparslist[[4]]}: A numeric vector specifying the **anagenesis rates** (\( \eqn{\lambda_a} \)) for each trait state. Each element in the vector corresponds to the anagenesis rate for a different state.
-  \item \code{idparslist[[5]]}: A **transition matrix** for the model, describing the transition rates between all trait states. The matrix is square, and the entries represent the transition rates between states:
-    \itemize{
-      \item \code{idparslist[[5]][i, j]}: The transition rate from state \(i\) to state \(j\), where \(i\) and \(j\) range from 1 to the total number of states.
-      \item Diagonal elements \code{idparslist[[5]][i, i]} represent the self-transition rate are are equal to 0.
+\describe{
+  \item{\code{idparslist[[1]]}}{
+    A numeric vector specifying the \strong{cladogenesis rates}
+    (\eqn{\lambda_c}) for each trait state. Each element in the vector
+    corresponds to the cladogenesis rate for a different state.
+  }
+
+  \item{\code{idparslist[[2]]}}{
+    A numeric vector specifying the \strong{extinction rates}
+    (\eqn{\mu}) for each trait state. Each element in the vector
+    corresponds to the extinction rate for a different state.
+  }
+
+  \item{\code{idparslist[[3]]}}{
+    A numeric vector specifying the \strong{immigration rates}
+    (\eqn{\gamma}) for each trait state. Each element in the vector
+    corresponds to the immigration rate for a different state.
+  }
+
+  \item{\code{idparslist[[4]]}}{
+    A numeric vector specifying the \strong{anagenesis rates}
+    (\eqn{\lambda_a}) for each trait state. Each element in the vector
+    corresponds to the anagenesis rate for a different state.
+  }
+
+  \item{\code{idparslist[[5]]}}{
+    A transition matrix describing the transition rates between all
+    trait states. The matrix is square, and its entries represent
+    transition rates between states:
+
+    \describe{
+      \item{\code{idparslist[[5]][i, j]}}{
+        The transition rate from state \eqn{i} to state \eqn{j},
+        where \eqn{i} and \eqn{j} range from 1 to the total number
+        of states.
+      }
+
+      \item{Diagonal elements}{
+        \code{idparslist[[5]][i, i]} represents the self-transition
+        rate and is equal to 0.
+      }
     }
-  \item \code{idparslist[[6]]}: A fixed value for the parameter \( p \), which specifies the probability that a trait transition results in a new species. If \( p = 1 \), every transition will result in a new species. If \( p = 0 \), the transition does not lead to the creation of a new species.
+  }
+
+  \item{\code{idparslist[[6]]}}{
+    A fixed value for the parameter \eqn{p}, which specifies the
+    probability that a trait transition results in a new species.
+    If \eqn{p = 1}, every transition results in a new species.
+    If \eqn{p = 0}, the transition does not lead to the creation
+    of a new species.
+  }
 }}
 
 \item{idparsopt}{A vector of integers specifying which parameters are to be optimized.}
@@ -95,18 +135,18 @@ tolerance, equal to the starting values, with a maximum of 10 cycles.}
 \item{rtol}{A numeric specifying the relative tolerance of integration.}
 
 \item{use_Rcpp}{Integer. Specifies whether to use C++ for optimization:
-\itemize{
-  \item 0: Use R implementation (default).
-  \item 1: Use a mix of R and C++.
-  \item 2: Use C++ implementation.
+\describe{
+  \item{0}{Use R implementation (default).}
+  \item{1}{Use a mix of R and C++.}
+  \item{2}{Use C++ implementation.}
 }}
 }
 \value{
 A list containing the following elements:
-\itemize{
-  \item `MLpars`: The optimized parameter values.
-  \item `ML`: The calculated log-likelihood value for the model.
-  \item `conv`: The convergence status of the optimization process.
+\describe{
+  \item{\code{MLpars}}{The optimized parameter values.}
+  \item{\code{ML}}{The calculated log-likelihood value for the model.}
+  \item{\code{conv}}{The convergence status of the optimization process.}
 }
 }
 \description{

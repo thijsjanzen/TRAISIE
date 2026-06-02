@@ -22,7 +22,7 @@ DAISIE_sim_trait_dep(
 \item{trait_pars}{List of trait-dependent parameters consumed by
   \code{DAISIE_sim_core_mult_trait_dep()}, which includes parameters for cladogenesis, extinction, colonization, anagenesis, and state transitions. These parameters define the evolutionary processes within the model for each observed trait state and its possible transitions. The components of \code{trait_pars} are as follows:
 
-  \itemize{
+  \describe{
     \item{immig_rateX}{Immigration rate for trait X (numeric).}
     \item{ext_rateX}{Extinction rate for trait X (numeric).}
     \item{ana_rateX}{Anagenesis rate for trait X (numeric).}
@@ -31,7 +31,7 @@ DAISIE_sim_trait_dep(
   This matrix defines the rates at which species transition between different
   observed trait states. Each element in the matrix \( \code{trans_rate}[i,j] \)
   represents the rate of transition from state \(i\) to state \(j\).
-      \itemize{
+      \describe{
         \item{\code{trans_rateX[i, j]}}{The rate at which species in state \(i\) transition to state \(j\).}
         \item{Diagonal elements}{\code{trans_rate[i, i]} represent the self-transition rate, and is equal to 0.}
       }
