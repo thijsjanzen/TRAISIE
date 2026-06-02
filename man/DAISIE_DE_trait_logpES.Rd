@@ -5,6 +5,7 @@
 \title{Testing function for comparison with DAISIE}
 \usage{
 DAISIE_DE_trait_logpES(
+  datalist,
   brts,
   parameter,
   trait,
@@ -21,6 +22,13 @@ DAISIE_DE_trait_logpES(
 )
 }
 \arguments{
+\item{datalist}{a list containing in the first entry: island age and the
+number of species not present, then from entry 2 until n it contains
+individual datasets for which to estimate the loglikelihood together, each
+dataset has the following fields: 1) colonist_name, 2) b ranching_times,
+3) stac, 4) missing_species, 5) type1or2, 6) traits, 7) sampling fraction,
+8) phylogeny}
+
 \item{brts}{branching times, being: island age, colonization time, branching
 times}
 
@@ -73,7 +81,8 @@ given known colonization time. It is designed for comparison with DAISIE-based m
 library(DAISIE)
 data("Galapagos_datalist")
 datalist <- Galapagos_datalist
-
+datalist[[1]]$Mainland_pool_sizes <- c(500, 500)
+datalist[[1]]$M <- 1000
 i <- 9
 brts <- datalist[[i]]$branching_times
 trait <- 0
@@ -88,8 +97,8 @@ parameter <- list(
     0,    0,    0,  0,
     0,    0,    0.00,0.00,
     rep(0, 8)
-  ), nrow = 4),
-  1
+  ), nrow = 4, byrow = TRUE),
+  0
 )
 
 
@@ -99,22 +108,23 @@ parameter <- list(
   c(0.009326754, 0.003, 0.002, 0.2),
   c(1.008583, 1, 2, 1.5),
   matrix(c(
-    0,    .001,    0.005,  0,
-    .001,    0,    0.000,0.005,
+    0,    0.1,    0.05,  0,
+    0.33,    0,    0.000,0.0086,
     0.005,    000,    0,  0.005,
-    0,   0.005,  0.005,0.00
-  ), nrow = 4),
+    0,   0.5,  0.35,0.00
+  ), nrow = 4, byrow = TRUE),
   1
 )
 
 status = 2
 DAISIE_DE_trait_logpES(
+  datalist              = datalist,
   brts                    = brts,
   trait                   = trait,
   status                  = status,
   sampling_fraction       = sampling_fraction,
   parameter               = parameter,
-  trait_mainland_ancestor = NA,
+  trait_mainland_ancestor = c(1,0),
   num_observed_states     = 2,
   num_hidden_states       = 2,
   atol                    = 1e-15,

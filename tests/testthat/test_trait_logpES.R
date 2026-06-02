@@ -13,7 +13,7 @@ test_that("logpES", {
                       matrix(c(0), nrow = 1), 0, NA)
 
 
-    res1 <-  treeLL::DAISIE_DE_trait_logpES(
+    res1 <-  TRAISIE::DAISIE_DE_trait_logpES(
       brts                    = brts,
       trait                   = trait,
       status                  = 2,
@@ -37,7 +37,7 @@ test_that("logpES", {
 
     testthat::expect_equal(res1$loglik, res2)
 
-    res3 <-  treeLL::DAISIE_DE_trait_logpES(
+    res3 <-  TRAISIE::DAISIE_DE_trait_logpES(
       brts                    = brts,
       trait                   = trait,
       status                  = 2,
@@ -50,7 +50,7 @@ test_that("logpES", {
 
     testthat::expect_equal(res1, res3)
 
-    res4 <-  treeLL::DAISIE_DE_trait_logpES(
+    res4 <-  TRAISIE::DAISIE_DE_trait_logpES(
       brts                    = brts,
       trait                   = trait,
       status                  = 2,

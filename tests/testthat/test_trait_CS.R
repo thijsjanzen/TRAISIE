@@ -24,7 +24,7 @@ test_that("CS", {
         datalist[[i]]$root_state <- c(0.5, 0.5)
       }
 
-      res1 <-  treeLL::DAISIE_DE_trait_loglik_CS(
+      res1 <-  TRAISIE::DAISIE_DE_trait_loglik_CS(
         datalist            = datalist,
         parameter           = parameter,
         num_observed_states = 2,
@@ -35,7 +35,7 @@ test_that("CS", {
         use_Rcpp            = 0
       )
 
-      res3 <-  treeLL::DAISIE_DE_trait_loglik_CS(
+      res3 <-  TRAISIE::DAISIE_DE_trait_loglik_CS(
         datalist            = datalist,
         parameter           = parameter,
         num_observed_states = 2,

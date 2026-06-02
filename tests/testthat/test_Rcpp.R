@@ -43,14 +43,14 @@ test_that("R vs Rcpp", {
 
   for (i in seq_along(all_tma)) {
 
-    res_hidden <- treeLL::loglik_R_tree(parameter = parameters,
+    res_hidden <- TRAISIE::loglik_R_tree(parameter = parameters,
                                         phy = phy,
                                         traits = traits,
                                         trait_mainland_ancestor = all_tma[[i]],
                                         num_hidden_states = 2,
                                         sampling_fraction = c(1, 1))
 
-    res_cpp <- treeLL::loglik_cpp_tree(parameter = parameters,
+    res_cpp <- TRAISIE::loglik_cpp_tree(parameter = parameters,
                                        phy = phy,
                                        traits = traits,
                                        num_hidden_states = 2,

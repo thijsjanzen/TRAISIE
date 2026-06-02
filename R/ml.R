@@ -3,7 +3,7 @@
 #' @description
 #' This function estimates the maximum likelihood (ML) for a given dataset using a trait-dependent model.
 #' The model includes parameters for cladogenesis, extinction, colonization, anagenesis, and state transitions.
-#' The optimization is done using the `treeLL::calc_ml` function.
+#' The optimization is done using the `TRAISIE::calc_ml` function.
 #' @param datalist A list containing the data used for likelihood calculation.
 #' @param num_observed_states The number of observed trait states.
 #' @param num_hidden_states The number of hidden trait states.
@@ -40,7 +40,7 @@
 #'
 #' @details
 #' This function runs the maximum likelihood estimation for a dataset based on the trait-dependent model.
-#' The optimization process uses the `treeLL::calc_ml` function to adjust the parameters for the best fit to the data.
+#' The optimization process uses the `TRAISIE::calc_ml` function to adjust the parameters for the best fit to the data.
 #' The function assumes that the dataset is prepared correctly, and the parameter IDs are provided for both optimization and fixing.
 #'
 #' @returns
@@ -94,7 +94,7 @@
 #' trparsfix[which(parsfix == Inf)] <- 1
 #'
 #' # Run the ML estimation with the provided dataset
-#' ml_estimates <- treeLL::calc_ml(datalist,
+#' ml_estimates <- TRAISIE::calc_ml(datalist,
 #'                                 num_observed_states = 2,
 #'                                 num_hidden_states = 1,
 #'                                 idparslist = idparslist,

@@ -5,6 +5,7 @@
 \title{Testing function for comparison with DAISIE}
 \usage{
 DAISIE_DE_trait_logpEC(
+  datalist,
   brts,
   parameter,
   phy,
@@ -23,6 +24,13 @@ DAISIE_DE_trait_logpEC(
 )
 }
 \arguments{
+\item{datalist}{a list containing in the first entry: island age and the
+number of species not present, then from entry 2 until n it contains
+individual datasets for which to estimate the loglikelihood together, each
+dataset has the following fields: 1) colonist_name, 2) b ranching_times,
+3) stac, 4) missing_species, 5) type1or2, 6) traits, 7) sampling fraction,
+8) phylogeny}
+
 \item{brts}{branching times, being: island age, colonization time, branching
 times}
 
@@ -89,6 +97,8 @@ num_observed_states     =  2
 num_hidden_states       =  2
 sampling_fraction       =  sample(c(1, 1), num_observed_states, replace = TRUE)
 trait_mainland_ancestor = c(1, 0)
+datalist[[1]]$Mainland_pool_sizes <- c(550, 250)
+datalist[[1]]$M <- 1000
 
 parameter <- list(
   c(2.546591, 1.2, 1, 0.2),
@@ -98,20 +108,21 @@ parameter <- list(
   matrix(c(
     0,    .001,    0.005,  0,
     .001,    0,    0.000,0.005,
-    0.005,    000,    0,  0.005,
-    0,   0.005,  0.005,0.00
-  ), nrow = 4),
+    0.015,    000,    0,  0.005,
+    0,   0.0025,  0.005,0.00
+  ), nrow = 4, byrow = TRUE),
   1
 )
   status                  = 2
 DAISIE_DE_trait_logpEC(
+  datalist              = datalist,
   brts                    = brts,
   phy                     = phy,
   traits                  = traits,
   status                  = 2,
   sampling_fraction       = sampling_fraction,
   parameter               = parameter,
-  trait_mainland_ancestor = NA,
+  trait_mainland_ancestor = c(1,0),
   num_observed_states     = 2,
   num_hidden_states       = 2,
   atol                    = 1e-15,

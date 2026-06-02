@@ -3,6 +3,6 @@
 # We should remove it when the issue is resolved.
 Sys.unsetenv("R_TESTS")
 library(testthat)
-library(treeLL)
+library(TRAISIE)
 
-test_check("treeLL")
+test_check("TRAISIE")
