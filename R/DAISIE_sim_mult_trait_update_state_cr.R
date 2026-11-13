@@ -34,7 +34,7 @@ DAISIE_sim_mult_trait_update_state_cr <- function(timeval,
 
 
       # Determine which trait block the species belongs to
-      block <- ceiling(trait_state / num_hidden_states)
+      block <- trait_state   # mainland gives one number per state (observed and hidden), so the block is the state itself
 
       # Compute start and end indices for that block
       start_idx <- if (block == 1) 1 else sum(unlist(mainland[1:(block - 1)])) + 1
