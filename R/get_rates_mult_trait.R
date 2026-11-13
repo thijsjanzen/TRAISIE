@@ -130,9 +130,6 @@ get_trans_rate <- function(trait_pars,
     num_spec_trait <- length(which(island_spec[, 8] == as.character(ceiling(i / n))))
 
 
-    #from_state <- ((i - 1) %/% num_hidden_states) + 1
-    # num_spec_trait <- sum(island_spec[,8] == as.character(from_state))
-
     trans_rate <- trait_pars[[paste("trans_rate", i, sep = "")]] * num_spec_trait
     trans_list[[paste("trans_rate", i, sep = "")]] <- trans_rate
   }
