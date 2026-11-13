@@ -85,7 +85,7 @@ DAISIE_sim_trait_dep_CS <- function (total_time,
 
   if (files_to_write == 0) {
     island_replicates <- DAISIE:::DAISIE_format_CS(island_replicates = island_replicates,
-                                                   time = total_time, M = mainland[[1]], sample_freq = sample_freq,
+                                                   time = total_time, M = sum(unlist(mainland)), sample_freq = sample_freq,
                                                    verbose = verbose)
   }
 
@@ -98,8 +98,8 @@ DAISIE_sim_trait_dep_CS <- function (total_time,
       start <- min(which(chunks == filenum))
       end <- max(which(chunks == filenum))
       load(paste0("DAISIE_sims", start, "-", end, ".Rdata"))
-      island_replicates <- DAISIE:::DAISIE_format_CS(island_replicates = island_reps,
-                                                     time = total_time, M = mainland[[1]], sample_freq = sample_freq,
+      island_replicates <- DAISIE:::DAISIE_format_CS(island_replicates = island_replicates,
+                                                     time = total_time, M = sum(unlist(mainland)), sample_freq = sample_freq,
                                                      verbose = verbose)
       save(start, end, island_replicates, file = paste0("DAISIE_sims_formatted",
                                                         start, "-", end, ".Rdata"))
