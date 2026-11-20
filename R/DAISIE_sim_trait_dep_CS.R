@@ -12,6 +12,7 @@ DAISIE_sim_trait_dep_CS <- function (total_time,
                                      num_hidden_states)
 {
   island_replicates <- list()
+  not_present_by_state_list <- list()
 
   for (rep in 1:replicates) {
     island_replicates[[rep]] <- list()
@@ -76,8 +77,14 @@ DAISIE_sim_trait_dep_CS <- function (total_time,
       stac_vec <- unlist(full_list)[which(names(unlist(full_list)) == "stac")]
       present <- which(stac_vec != 0)
       number_present <- length(present)
+      # observed trait state of each mainland species (same rule as line 49)
+      obs_state_vec <- ceiling(rep(seq_len(G), counts) / num_hidden_states)
+      # mainland species that never colonised, counted per observed state
+      not_present_by_state <- sapply(seq_len(num_observed_states),
+                                     function(k) sum(stac_vec[obs_state_vec == k] == 0))
     }
-    island_replicates[[rep]] <- full_list
+    island_replicates[[rep]] <- full_list                       # line 80 (unchanged)
+    not_present_by_state_list[[rep]] <- not_present_by_state
     if (verbose == TRUE) {
       message("Island replicate ", rep)
     }
@@ -87,6 +94,9 @@ DAISIE_sim_trait_dep_CS <- function (total_time,
     island_replicates <- DAISIE:::DAISIE_format_CS(island_replicates = island_replicates,
                                                    time = total_time, M = sum(unlist(mainland)), sample_freq = sample_freq,
                                                    verbose = verbose)
+    for (rep in seq_along(island_replicates)) {
+      island_replicates[[rep]][[1]]$not_present_by_state <- not_present_by_state_list[[rep]]
+    }
   }
 
 
